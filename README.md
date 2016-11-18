@@ -1,6 +1,14 @@
 # Ti.Android.Admob
 Appcelerator Android module wrapping Admob functionalities
 
+```xml
+<android xmlns:android="http://schemas.android.com/apk/res/android">
+	<application>
+		<meta-data android:name="com.google.android.gms.version" android:value="9683000"/>
+	</application>
+</android>
+```
+
 ### Usage
 ```javascript
 var admob = require("ti.android.admob");
