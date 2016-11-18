@@ -83,6 +83,6 @@ interstitialAd.addEventListener('ad_being_shown', function(e) {
 });
 
 interstitialAd.addEventListener('ad_closed', function(e) {
-	Titanium.API.warn("Interstital ad close successfully. RIP!");
+	Titanium.API.warn("Interstital ad closed successfully. RIP!");
 });
 ```
