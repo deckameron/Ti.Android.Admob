@@ -1,6 +1,7 @@
 # Ti.Android.Admob
 Appcelerator Android module wrapping Admob functionalities
 
+### Add this to your Tiapp.xml
 ```xml
 <android xmlns:android="http://schemas.android.com/apk/res/android">
 	<application>
