@@ -36,8 +36,8 @@ bannerAd.addEventListener('ad_not_received', function(e) {
 //NATIVE ADVIEW
 var nativeAd = admob.createView({
 	adSizeType: 'NATIVE',
-	height : 132, //Enter a valid width between 280 and 1200
-	width : 360, //Enter a valid width between 280 and 1200
+	height : 132,
+	width : 360,
 	publisherId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR PUBLISHER ID HERE
 	testing: false
 });		
