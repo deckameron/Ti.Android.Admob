@@ -7,6 +7,9 @@ Appcelerator Android module wrapping Admob functionalities
 	<application>
 		<meta-data android:name="com.google.android.gms.version" android:value="9683000"/>
 	</application>
+	<activity 
+	android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+	android:name="com.google.android.gms.ads.AdActivity"/>
 </android>
 ```
 
