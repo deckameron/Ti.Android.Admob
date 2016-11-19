@@ -1,0 +1,18 @@
+%define lookup-function-name lookupGeneratedInit
+%define class-name AdmobBindings
+%{
+
+#include <string.h>
+#include <v8.h>
+#include <KrollBindings.h>
+
+#include "ti.android.admob.ViewProxy.h"
+#include "ti.android.admob.AdmobModule.h"
+
+
+%}
+struct titanium::bindings::BindEntry;
+%%
+ti.android.admob.ViewProxy, ::ti::android::admob::admob::ViewProxy::bindProxy, ::ti::android::admob::admob::ViewProxy::dispose
+ti.android.admob.AdmobModule, ::ti::android::admob::AdmobModule::bindProxy, ::ti::android::admob::AdmobModule::dispose
+%%
