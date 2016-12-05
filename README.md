@@ -7,7 +7,7 @@ Appcelerator Android module wrapping Admob functionalities
 	<manifest android:installLocation="auto"
             android:versionCode="1" android:versionName="1.0">
 	    
-	    	<!-- Important part-->
+	    <!-- Important part-->
 		<application>
 			<meta-data android:name="com.google.android.gms.version" android:value="9683000"/>
 		</application>
