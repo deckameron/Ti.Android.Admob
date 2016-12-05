@@ -4,12 +4,15 @@ Appcelerator Android module wrapping Admob functionalities
 ### Add this to your tiapp.xml
 ```xml
 <android xmlns:android="http://schemas.android.com/apk/res/android">
-	<application>
-		<meta-data android:name="com.google.android.gms.version" android:value="9683000"/>
-	</application>
-	<activity 
-	android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-	android:name="com.google.android.gms.ads.AdActivity"/>
+	<manifest android:installLocation="auto"
+            android:versionCode="1" android:versionName="1.0">
+		<application>
+			<meta-data android:name="com.google.android.gms.version" android:value="9683000"/>
+		</application>
+		<activity 
+		android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+		android:name="com.google.android.gms.ads.AdActivity"/>
+	</manifest>
 </android>
 ```
 
