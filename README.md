@@ -4,6 +4,8 @@ Appcelerator Android module wrapping Admob functionalities
 ### Add this to your tiapp.xml
 ```xml
 <android xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	
 	<manifest android:installLocation="auto"
             android:versionCode="1" android:versionName="1.0">
 		<application>
@@ -12,6 +14,8 @@ Appcelerator Android module wrapping Admob functionalities
 		<activity 
 		android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
 		android:name="com.google.android.gms.ads.AdActivity"/>
+		
+		
 	</manifest>
 </android>
 ```
