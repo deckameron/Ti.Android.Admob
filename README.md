@@ -28,7 +28,7 @@ var admob = require("ti.android.admob");
 //TRADITIONAL ADVIEW
 var bannerAd = admob.createView({
 	top: 0,
-	adSizeType: 'BANNER', //RECTANGLE, FULLBANNER, LEADERBOARD, SMART
+	adSizeType: 'BANNER', //RECTANGLE, FULLBANNER, LEADERBOARD, SMART, FLUID
 	publisherId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR PUBLISHER ID HERE
 	testing: true
 });	
