@@ -8,9 +8,13 @@
  */
 package ti.android.admob;
 
+import java.util.ArrayList;
+
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
+
+import com.google.android.gms.ads.AdSize;
 
 @Kroll.module(name="Admob", id="ti.android.admob")
 public class AdmobModule extends KrollModule
@@ -24,8 +28,10 @@ public class AdmobModule extends KrollModule
     public static final String AD_NOT_READY = "ad_not_ready_yet";
     public static final String AD_SHOWING = "ad_being_showed";
     public static final String AD_DESTROYED = "ad_destroyed";
+    public static String TEST_DEVICE_ID;
     public static Boolean TESTING = false;
     public static String PUBLISHER_ID;
+    public static String AD_UNIT_ID;
     public static String PROPERTY_COLOR_BG;
     public static int AD_HEIGHT = 132;
     public static int AD_WIDTH = 360;
@@ -37,6 +43,7 @@ public class AdmobModule extends KrollModule
     public static String PROPERTY_COLOR_TEXT_DEPRECATED;
     public static String PROPERTY_COLOR_LINK_DEPRECATED;
     public static String AD_SIZE_TYPE;
+    public static ArrayList<AdSize> AD_SIZES;
 
     public AdmobModule() {
         Log.d(TAG, "Admob Module Instantiated");
@@ -74,4 +81,3 @@ public class AdmobModule extends KrollModule
         AD_SIZE_TYPE = "adSizeType";
     }
 }
-
