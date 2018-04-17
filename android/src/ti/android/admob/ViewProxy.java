@@ -8,26 +8,25 @@
  */
 package ti.android.admob;
 
-import ti.android.admob.View;
+import ti.android.admob.AdmobView;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.titanium.TiContext;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
 
 import android.app.Activity;
 
 @Kroll.proxy(creatableInModule=AdmobModule.class)
-public class ViewProxy extends TiViewProxy implements TiContext.OnLifecycleEvent
+public class ViewProxy extends TiViewProxy
 {
-	private View adMob;
+	private AdmobView adMob;
     
     public ViewProxy()
 	{
 		super();
 	}
-    
+        
     @Override
     protected KrollDict getLangConversionTable() {
         KrollDict table = new KrollDict();
@@ -37,7 +36,7 @@ public class ViewProxy extends TiViewProxy implements TiContext.OnLifecycleEvent
     
     @Override
     public TiUIView createView(Activity activity) {
-        this.adMob = new View(this);
+        this.adMob = new AdmobView(this);
         return this.adMob;
     }
     
@@ -50,7 +49,7 @@ public class ViewProxy extends TiViewProxy implements TiContext.OnLifecycleEvent
     public void destoyAdViewAndCancelRequest(){
     	this.adMob.destroy();
     }
-
+   
     @Override
     public void onPause(Activity activity) {
     }
