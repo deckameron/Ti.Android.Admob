@@ -26,21 +26,44 @@ var admob = require("ti.android.admob");
 
 //===================================
 //TRADITIONAL ADVIEW
-var bannerAd = admob.createView({
+var adView = admob.createView({
 	top: 0,
 	adSizeType: 'BANNER', //RECTANGLE, FULLBANNER, LEADERBOARD, SMART, FLUID
 	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
         testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336" //USE YOUR DEVICE ID HERE
 	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 });	
-window.add(bannerAd);	
+window.add(adView);	
 
-bannerAd.addEventListener('ad_received', function(e) {
-	Titanium.API.info("Banner Ad received");
+adView.addEventListener('ad_received', function(e) {
+	Titanium.API.info("Ad received");
 });
 
-bannerAd.addEventListener('ad_not_received', function(e) {
-	Titanium.API.info("Banner Ad failed");
+adView.addEventListener('ad_not_received', function(e) {
+	Titanium.API.info("Ad failed");
+});
+
+//===================================
+//MULTIPLE ADSIZES
+var multipleAds = admob.createView({
+	top: 0,
+	adSizes: [
+		{width: 320, height: 100},
+		{width: 320, height: 50},
+		{width: 320, height: 240}
+	],
+	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
+        testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336" //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
+});	
+window.add(bannerAd);	
+
+multipleAds.addEventListener('ad_received', function(e) {
+	Titanium.API.info("Ad received");
+});
+
+multipleAds.addEventListener('ad_not_received', function(e) {
+	Titanium.API.info("Ad failed");
 });
 
 //===================================
