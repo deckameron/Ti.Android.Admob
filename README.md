@@ -29,7 +29,9 @@ var admob = require("ti.android.admob");
 var bannerAd = admob.createView({
 	top: 0,
 	adSizeType: 'BANNER', //RECTANGLE, FULLBANNER, LEADERBOARD, SMART, FLUID
-	publisherId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR PUBLISHER ID HERE
+	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
+        testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336" //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 	testing: true
 });	
 window.add(bannerAd);	
@@ -48,7 +50,9 @@ var nativeAd = admob.createView({
 	adSizeType: 'NATIVE',
 	height : 132,
 	width : 360,
-	publisherId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR PUBLISHER ID HERE
+        publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
+        testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336" //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 	testing: false
 });		
 window.add(nativeAd);
@@ -66,7 +70,9 @@ nativeAd.addEventListener('ad_not_received', function(e) {
 var interstitialAd = admob.createView({
 	top: 0,
 	adSizeType: 'INTERSTITIALAD',
-	publisherId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR PUBLISHER ID HERE
+	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
+        testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336" //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 	testing: true
 });	
 window.add(bannerAd);	
