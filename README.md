@@ -1,4 +1,4 @@
-# Ti.Android.Admob
+# Ti.Android.Admob (http://gitt.io/badge.svg))
 Appcelerator Android module wrapping Admob functionalities
 
 ### Add this to your tiapp.xml
