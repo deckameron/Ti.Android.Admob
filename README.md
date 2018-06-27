@@ -123,8 +123,8 @@ interstitialAd.addEventListener('ad_closed', function(e) {
 	Titanium.API.warn("Interstital ad closed successfully. RIP!");
 });
 ```
-## DOING
+### DOING
 - Support GDPR consent requests
 
-## TODO
+### TODO
 - Support Titanium Views when creating native ads
