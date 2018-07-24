@@ -125,7 +125,7 @@ public class AdmobView extends TiUIView {
             }
 
             public void onAdFailedToLoad(int errorCode) {
-                Log.e(TAG, ("onAdFailedToLoad(): " + errorCode));
+                Log.e(TAG, ("onAdFailedToLoad(): " + getErrorReason(errorCode)));
                 if(AdmobView.this.proxy != null){
                 	AdmobView.this.proxy.fireEvent("ad_not_received", (Object)new KrollDict());
                 }
