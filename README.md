@@ -70,7 +70,7 @@ var adView = admob.createView({
 	viewType : Admob.TYPE_ADS,
 	adSizeType: 'BANNER', //LARGE_BANNER, SMART_BANNER, MEDIUM_RECTANGLE, FULLBANNER, LEADERBOARD, FLUID,  WIDE_SKYSCRAPER, SEARCH
 	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
 	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(adView);	
@@ -90,7 +90,7 @@ var rewarded = admob.createView({
 	viewType : Admob.TYPE_ADS,
 	adSizeType: 'REWARDED',
 	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
 	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(adView);
@@ -150,7 +150,7 @@ var interstitialAd = admob.createView({
 	viewType : Admob.TYPE_ADS,
 	adSizeType: 'INTERSTITIALAD',
 	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
 	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(interstitialAd);
@@ -445,7 +445,7 @@ var nativeAd = admob.createView({
 	logoOrIconImageView : contentad_logo,
 	advertiserLabel : contentad_advertiser,
 
-	//ONLY NATIVE_APP_INSTALL NEEDS THESE VIEWS
+	//ONLY NATIVE_APP_INSTALL NEED THESE VIEWS
 	storeLabel : contentad_store_view,
 	mediaView : mediaView,
 	starsView : ratingView,
