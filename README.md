@@ -147,6 +147,7 @@ multipleAds.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
 ```javascript
 var interstitialAd = admob.createView({
 	top: 0,
+	viewType : Admob.TYPE_ADS,
 	adSizeType: 'INTERSTITIALAD',
 	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
     testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
