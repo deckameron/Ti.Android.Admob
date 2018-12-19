@@ -22,6 +22,9 @@ for instructions on getting started with using this module in your application.
 
 All AdViews, except Rewarded, have the parameters **_keyword_** and **_contentUrl_** and can be used with DFP mapping
 
+## Download
+You can get it [here](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-4.2.0.zip?raw=true)
+
 ## How to use it
 
 First you need to require the module
