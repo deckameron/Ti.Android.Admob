@@ -429,7 +429,7 @@ masterView.add(contentad_advertiser);
 //THE NATIVE AD
 var nativeAd = admob.createView({
 	viewType : Admob.TYPE_ADS,
-	adSizeType: 'NATIVE',
+	adSizeType: 'NATIVE_APP_INSTALL',
 	height : 132,
 	width : 360,
     	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
