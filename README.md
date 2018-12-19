@@ -303,7 +303,7 @@ nativeAd.addEventListener(Admob.AD_DESTROYED, function(e) {
 	Titanium.API.info("Native Ad AD_DESTROYED");
 });
 ```
-# NATIVE ADVANCED VIDEO
+# NATIVE ADVANCED APP INSTALL
 ```javascript
 var masterView = Titanium.UI.createView({
 	width : Titanium.UI.FILL,
