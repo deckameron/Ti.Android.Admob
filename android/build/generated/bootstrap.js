@@ -24,25 +24,23 @@ function moduleBootstrap(moduleBinding) {
 		invocationAPIs.push({ namespace: namespace, api: api });
 	}
 
-		addInvocationAPI(module, "Admob", "Admob", "createView");
+	addInvocationAPI(module, "Admob", "Admob", "createView");
+		if (!("__propertiesDefined__" in module)) {Object.defineProperties(module, {
+"View": {
+get: function() {
+var View =  lazyGet(this, "ti.android.admob.ViewProxy", "View", "View");
+return View;
+},
+configurable: true
+},
 
-			if (!("__propertiesDefined__" in module)) {		
-		Object.defineProperties(module, {
-			"View": {
-				get: function() {
-					var View = lazyGet(this, "ti.android.admob.ViewProxy", "View", "View");
-					return View;
-				},
-				configurable: true
-			},
-		
-		});
-		module.constructor.prototype.createView = function() {
-			return new module.View(arguments);
-		}
-		}
-		module.__propertiesDefined__ = true;
-		return module;
+});
+module.constructor.prototype.createView = function() {
+return new module["View"](arguments);
+}
+}
+module.__propertiesDefined__ = true;
+return module;
 
 }
 exports.bootstrap = moduleBootstrap;

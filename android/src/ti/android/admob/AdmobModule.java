@@ -8,52 +8,70 @@
  */
 package ti.android.admob;
 
-import java.util.ArrayList;
-
-import android.os.AsyncTask;
-
 import java.io.IOException;
-
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
+import org.appcelerator.kroll.KrollObject;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
-import org.appcelerator.kroll.KrollObject;
-
-import java.util.List;
-import java.net.URL;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
-import com.google.ads.consent.ConsentInformation;
+import com.google.ads.consent.AdProvider;
 import com.google.ads.consent.ConsentForm;
 import com.google.ads.consent.ConsentFormListener;
 import com.google.ads.consent.ConsentInfoUpdateListener;
+import com.google.ads.consent.ConsentInformation;
 import com.google.ads.consent.ConsentStatus;
 import com.google.ads.consent.DebugGeography;
-import com.google.ads.consent.AdProvider;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
 @Kroll.module(name="Admob", id="ti.android.admob")
 public class AdmobModule extends KrollModule
 {
 	private static final String TAG = "Admob Module";
     public static String MODULE_NAME = "Android Admob Module";
+    
+    @Kroll.constant
     public static final String AD_RECEIVED = "ad_received";
+    
+    @Kroll.constant
     public static final String AD_CLOSED = "ad_closed";
+    
+    @Kroll.constant
     public static final String AD_NOT_RECEIVED = "ad_not_received";
-    public static final String AD_READY = "ad_ready_to_be_shown";
-    public static final String AD_NOT_READY = "ad_not_ready_yet";
-    public static final String AD_SHOWING = "ad_being_showed";
+    
+    @Kroll.constant
+    public static final String AD_READY_TO_BE_SHOWN = "ad_ready_to_be_shown";
+    
+    @Kroll.constant
+    public static final String AD_NOT_READY_YET = "ad_not_ready_yet";
+    
+    @Kroll.constant
+    public static final String AD_BEING_SHOWN = "ad_being_shown";
+    
+    @Kroll.constant
     public static final String AD_DESTROYED = "ad_destroyed";
+    
+    @Kroll.constant
+    public static final String AD_OPENED = "ad_opened";
+    
+    @Kroll.constant
+    public static final String AD_VIDEO_STARTED = "ad_video_started";
+    
+    @Kroll.constant
+    public static final String AD_REWARDED = "ad_rewarded";
+    
     public static String TEST_DEVICE_ID;
     public static Boolean TESTING = false;
     public static String PUBLISHER_ID;
@@ -70,6 +88,32 @@ public class AdmobModule extends KrollModule
     public static String PROPERTY_COLOR_LINK_DEPRECATED;
     public static String AD_SIZE_TYPE;
     public static ArrayList<AdSize> AD_SIZES;
+    public static String AD_SIZES_LABEL;
+    public static String KEYWORD;
+    public static String CONTENT_URL;
+    
+    public static String VIEW_TYPE;
+    
+    @Kroll.constant
+    public static final String TYPE_ADS = "ads";
+    
+    @Kroll.constant
+    public static final String TYPE_STARS = "stars";
+    
+    @Kroll.constant
+    public static final String TYPE_MEDIA = "media";
+    
+    public static String MASTER_VIEW;
+    public static String MEDIA_VIEW;
+    public static String HEADLINE_LABEL;
+    public static String IMAGE_VIEW;
+    public static String BODY_LABEL;
+    public static String CALL_TO_ACTION_BUTTON;
+    public static String LOGO_OR_ICON_IMAGE_VIEW;
+    public static String ADVERTISER_LABEL;
+    public static String STORE_LABEL;
+    public static String STARS_VIEW;
+    public static String PRICE_LABEL;
 
     public AdmobModule() {
         Log.d(TAG, "Admob Module Instantiated");
@@ -100,6 +144,24 @@ public class AdmobModule extends KrollModule
         PROPERTY_COLOR_TEXT_DEPRECATED = "primaryTextColor";
         PROPERTY_COLOR_LINK_DEPRECATED = "secondaryTextColor";
         AD_SIZE_TYPE = "adSizeType";
+        AD_SIZES_LABEL = "adSizes";
+        
+        VIEW_TYPE = "viewType";
+        
+        MASTER_VIEW = "masterView";
+        MEDIA_VIEW = "mediaView";
+        HEADLINE_LABEL = "headlineLabel";
+        IMAGE_VIEW = "imageView";
+        BODY_LABEL = "bodyLabel";
+        CALL_TO_ACTION_BUTTON = "callToActionButton";
+        LOGO_OR_ICON_IMAGE_VIEW = "logoOrIconImageView";
+        ADVERTISER_LABEL = "advertiserLabel";
+        STORE_LABEL = "storeLabel";
+        STARS_VIEW = "starsView";
+        PRICE_LABEL = "priceLabel";
+        
+        KEYWORD = "keyword";
+        CONTENT_URL = "contentUrl";
     }
     
     private final String ANDROID_ADVERTISING_ID = "androidAdId";
@@ -133,14 +195,7 @@ public class AdmobModule extends KrollModule
 	public static final int DEBUG_GEOGRAPHY_EEA = 1;
 	@Kroll.constant
 	public static final int DEBUG_GEOGRAPHY_NOT_EEA = 3;
-    
-	@Kroll.method
-	public int isGooglePlayServicesAvailable()
-	{
-    	return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(TiApplication.getAppRootOrCurrentActivity());
-		//return GooglePlayServicesUtil.isGooglePlayServicesAvailable(TiApplication.getAppRootOrCurrentActivity());
-	}
-    
+	
 	// clang-format off
 	@Kroll.setProperty
 	@Kroll.method
@@ -149,13 +204,6 @@ public class AdmobModule extends KrollModule
 	{
 		Log.d(TAG, "setPublisherId(): " + pubId);
 		PUBLISHER_ID = pubId;
-	}
-
-	@Kroll.method
-	public void setTesting(boolean testing)
-	{
-		Log.d(TAG, "setTesting(): " + testing);
-		TESTING = testing;
 	}
 
 	@Kroll.method

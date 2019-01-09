@@ -1,325 +1,190 @@
-/var/folders/4j/52hn_v_n7ndgkynp8w6hjhwm0000gp/T//douglasalves/admob-generated/obj/local/armeabi-v7a/objs/ti.android.admob/__/AdmobBootstrap.o: \
- jni/../AdmobBootstrap.cpp \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/v8.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/v8stdint.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stddef.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stdio.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/AndroidUtil.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stdlib.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/KrollBindings.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/map \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_prolog.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/debug/_debug.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_map.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_tree.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_algobase.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstddef.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstring.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/using/cstring \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/climits \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/limits.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstdlib.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cmath.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/math.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_pair.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/type_traits.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/type_manips.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_move_construct_fwk.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iterator_base.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ptrs_specialize.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_algobase.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_function_base.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iterator.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_alloc.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_new.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/new \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/cstddef \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/cstddef \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/exception \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/exception \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/gabixx_config.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstdio.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_construct.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_alloc.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_tree.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_relops_cont.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/string \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_fwd.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iosfwd.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/char_traits.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cwchar.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_mbstate_t.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_uninitialized.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_base.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_npos.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_operators.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ctraits_fns.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_function.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_function_adaptors.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_range_errors.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_hash.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_hash_fun.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_io.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ostream.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ios.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ios_base.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_stdexcept_base.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_exception.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_locale.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_threads.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/pthread.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_threads.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ctime.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_facets_fwd.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ctype.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/c_locale.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_numpunct.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ios.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_streambuf.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_streambuf.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ostreambuf_iterator.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ostream.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_put.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iostream_string.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_put.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_limits.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/cfloat \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/float.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_limits.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_istream.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_istreambuf_iterator.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_istream.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_get.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_get.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_io.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/vector \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_vector.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_vector.c \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_bvector.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/V8Util.h \
- jni/../BootstrapJS.cpp jni/../KrollGeneratedBindings.cpp \
- jni/ti.android.admob.ViewProxy.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/Proxy.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/JavaObject.h \
- /Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/assert.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/EventEmitter.h \
- /Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/NativeObject.h \
- jni/ti.android.admob.AdmobModule.h
+/Users/sandrobarnabe/Documents/Appcelerator_Studio_Workspace/admob/android/build/generated/obj/local/armeabi-v7a/objs/ti.android.admob/__/AdmobBootstrap.o: \
+  jni/../AdmobBootstrap.cpp \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/v8.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stddef.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stdio.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/memory \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/type_traits \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstddef \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/typeinfo \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/exception \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstdlib \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stdlib.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstdint \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/new \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/utility \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__tuple \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/initializer_list \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstring \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/string.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__debug \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/limits \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/iterator \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/iosfwd \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/wchar.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__functional_base \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/tuple \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stdexcept \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cassert \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/atomic \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/vector \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__bit_reference \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/algorithm \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/climits \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__split_buffer \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/v8-version.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/v8config.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/AndroidUtil.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/JNIUtil.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/JSException.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/KrollBindings.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/map \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__tree \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/functional \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/string \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/string_view \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__string \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstdio \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cwchar \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cwctype \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cctype \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/ctype.h \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/wctype.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/V8Util.h \
+  jni/../BootstrapJS.cpp jni/../KrollGeneratedBindings.cpp \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/unordered_map \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__hash_table \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cmath \
+  /Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/math.h \
+  jni/ti.android.admob.ViewProxy.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/Proxy.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/JavaObject.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/EventEmitter.h \
+  /Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/NativeObject.h \
+  jni/ti.android.admob.AdmobModule.h
 
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/v8.h:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/v8.h:
 
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/v8stdint.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stddef.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stddef.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stdio.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stdio.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/memory:
 
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/AndroidUtil.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/type_traits:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stdlib.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstddef:
 
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/KrollBindings.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/typeinfo:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/map:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/exception:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_prolog.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstdlib:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/debug/_debug.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stdlib.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_map.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstdint:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_tree.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/new:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_algobase.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/utility:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstddef.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__tuple:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstring.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/initializer_list:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/using/cstring:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstring:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/climits:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/string.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/limits.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__debug:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstdlib.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/limits:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cmath.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/iterator:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/math.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/iosfwd:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_pair.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/wchar.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/type_traits.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__functional_base:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/type_manips.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/tuple:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_move_construct_fwk.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/stdexcept:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iterator_base.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cassert:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ptrs_specialize.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/atomic:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_algobase.c:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/vector:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_function_base.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__bit_reference:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iterator.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/algorithm:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_alloc.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/climits:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_new.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__split_buffer:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/new:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/v8-version.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/cstddef:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/v8config.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/cstddef:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/AndroidUtil.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/exception:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/JNIUtil.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/exception:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/JSException.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/../../gabi++/include/gabixx_config.h:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/KrollBindings.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cstdio.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/map:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_construct.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__tree:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_alloc.c:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/functional:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_tree.c:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/string:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_relops_cont.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/string_view:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/string:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__string:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cstdio:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_fwd.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cwchar:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iosfwd.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cwctype:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/char_traits.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cctype:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_cwchar.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/ctype.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_mbstate_t.h:
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/wctype.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_uninitialized.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_base.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_npos.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_operators.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ctraits_fns.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_function.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_function_adaptors.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_range_errors.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_hash.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_hash_fun.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_io.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ostream.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ios.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ios_base.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_stdexcept_base.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_exception.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_locale.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_threads.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/pthread.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_threads.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ctime.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_facets_fwd.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ctype.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/c_locale.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_numpunct.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ios.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_streambuf.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_streambuf.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ostreambuf_iterator.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_ostream.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_put.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_iostream_string.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_put.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_limits.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/cfloat:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/float.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_limits.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_istream.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_istreambuf_iterator.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_istream.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_get.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_num_get.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_string_io.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/vector:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_vector.h:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_vector.c:
-
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/stl/_bvector.h:
-
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/V8Util.h:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/V8Util.h:
 
 jni/../BootstrapJS.cpp:
 
 jni/../KrollGeneratedBindings.cpp:
 
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/unordered_map:
+
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/__hash_table:
+
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/cmath:
+
+/Users/sandrobarnabe/Library/android-ndk-macosx/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include/math.h:
+
 jni/ti.android.admob.ViewProxy.h:
 
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/Proxy.h:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/Proxy.h:
 
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/JavaObject.h:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/JavaObject.h:
 
-/Users/douglasalves/Library/android-ndk-r11c/sources/cxx-stl/stlport/stlport/assert.h:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/EventEmitter.h:
 
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/EventEmitter.h:
-
-/Users/douglasalves/Library/Application\ Support/Titanium/mobilesdk/osx/5.5.1.GA/android/native/include/NativeObject.h:
+/Users/sandrobarnabe/Library/Application\ Support/Titanium/mobilesdk/osx/7.5.0.GA/android/native/include/NativeObject.h:
 
 jni/ti.android.admob.AdmobModule.h:

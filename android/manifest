@@ -2,9 +2,9 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 1.0
-apiversion: 2
-architectures: armeabi armeabi-v7a x86
+version: 4.2.0
+apiversion: 4
+architectures: arm64-v8a armeabi-v7a x86
 description: admob
 author: John Snow
 license: Specify your license
@@ -15,4 +15,4 @@ name: admob
 moduleid: ti.android.admob
 guid: 31ef3ff7-d048-4e25-bb31-a110c1989807
 platform: android
-minsdk: 5.5.1.GA
+minsdk: 7.0.0.GA
