@@ -96,16 +96,16 @@ var rewarded = admob.createView({
     	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
 	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
 });	
-window.add(adView);
+window.add(rewarded);
 
 window.addEventListener("open", function(){
 	//You can preload the ads at any moment you judge the best
-	nativeAd.loadRewardedAd();
+	rewarded.loadRewardedAd();
 });
 
 rewarded.addEventListener(Admob.AD_RECEIVED, function(e) {
 	Titanium.API.info("Rewarded Ad AD_RECEIVED");
-	nativeAd.showAdNow();
+	rewarded.showAdNow();
 });
 
 rewarded.addEventListener(Admob.AD_REWARDED, function(e) {
