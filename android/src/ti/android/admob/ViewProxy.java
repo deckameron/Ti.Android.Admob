@@ -56,7 +56,7 @@ public class ViewProxy extends TiViewProxy {
             AdmobModule.TEST_DEVICE_ID = options.getString("testDeviceId");
         }
 	}
-
+	
 	@Kroll.method
 	public void showAdNow() {
 		this.adMob.showAdNow();

@@ -42,41 +42,66 @@ public class AdmobModule extends KrollModule
 	private static final String TAG = "Admob Module";
     public static String MODULE_NAME = "Android Admob Module";
     
+    //EVENTS
     @Kroll.constant
     public static final String AD_RECEIVED = "ad_received";
-    
     @Kroll.constant
     public static final String AD_CLOSED = "ad_closed";
-    
     @Kroll.constant
     public static final String AD_NOT_RECEIVED = "ad_not_received";
-    
     @Kroll.constant
     public static final String AD_READY_TO_BE_SHOWN = "ad_ready_to_be_shown";
-    
     @Kroll.constant
     public static final String AD_NOT_READY_YET = "ad_not_ready_yet";
-    
     @Kroll.constant
     public static final String AD_BEING_SHOWN = "ad_being_shown";
-    
     @Kroll.constant
     public static final String AD_DESTROYED = "ad_destroyed";
-    
     @Kroll.constant
     public static final String AD_OPENED = "ad_opened";
-    
     @Kroll.constant
     public static final String AD_VIDEO_STARTED = "ad_video_started";
-    
+    @Kroll.constant
+    public static final String AD_VIDEO_ENDED = "ad_video_ended";
     @Kroll.constant
     public static final String AD_REWARDED = "ad_rewarded";
+    
+    //AD SIZES
+    @Kroll.constant
+    public static final String BANNER = "BANNER";
+    @Kroll.constant
+    public static final String REWARDED_VIDEO = "REWARDED_VIDEO";
+    @Kroll.constant
+    public static final String MEDIUM_RECTANGLE = "MEDIUM_RECTANGLE";
+    @Kroll.constant
+    public static final String FULL_BANNER = "FULL_BANNER";
+    @Kroll.constant
+    public static final String LEADERBOARD = "LEADERBOARD";
+    @Kroll.constant
+    public static final String SMART_BANNER = "SMART_BANNER";
+    @Kroll.constant
+    public static final String INTERSTITIAL = "INTERSTITIAL";
+    @Kroll.constant
+    public static final String NATIVE_APP_INSTALL = "NATIVE_APP_INSTALL";
+    @Kroll.constant
+    public static final String UNIFIED_NATIVE_ADS = "UNIFIED_NATIVE_ADS";
+    @Kroll.constant
+    public static final String NATIVE = "NATIVE";
+    @Kroll.constant
+    public static final String FLUID = "FLUID";
+    @Kroll.constant
+    public static final String LARGE_BANNER = "LARGE_BANNER";
+    @Kroll.constant
+    public static final String SEARCH = "SEARCH";
+    @Kroll.constant
+    public static final String WIDE_SKYSCRAPER = "WIDE_SKYSCRAPER";
     
     public static String TEST_DEVICE_ID;
     public static Boolean TESTING = false;
     public static String PUBLISHER_ID;
     public static String AD_UNIT_ID;
     public static String PROPERTY_COLOR_BG;
+    public static String NATIVE_ADS_BACKGROUND_COLOR;
     public static int AD_HEIGHT = 132;
     public static int AD_WIDTH = 360;
     public static String PROPERTY_COLOR_BG_TOP;
@@ -135,7 +160,7 @@ public class AdmobModule extends KrollModule
     }
 
     static {
-        PROPERTY_COLOR_BG = "adBackgroundColor";
+        PROPERTY_COLOR_BG = "backgroundColor";
         PROPERTY_COLOR_BG_TOP = "backgroundTopColor";
         PROPERTY_COLOR_BORDER = "borderColor";
         PROPERTY_COLOR_TEXT = "textColor";
@@ -159,6 +184,7 @@ public class AdmobModule extends KrollModule
         STORE_LABEL = "storeLabel";
         STARS_VIEW = "starsView";
         PRICE_LABEL = "priceLabel";
+        NATIVE_ADS_BACKGROUND_COLOR = "backgroundColor";
         
         KEYWORD = "keyword";
         CONTENT_URL = "contentUrl";
