@@ -66,15 +66,14 @@ if (!Titanium.Geolocation.hasLocationPermissions(Titanium.Geolocation.AUTHORIZAT
 |_SEARCH_         |A special variant of FLUID to be set on [SearchAdView](https://developers.google.com/android/reference/com/google/android/gms/ads/search/SearchAdView.html) when loading a [DynamicHeightSearchAdRequest](https://developers.google.com/android/reference/com/google/android/gms/ads/search/DynamicHeightSearchAdRequest.html)`.
 
 ```javascript
-var adView = admob.createView({
+var adView = Admob.createView({
 	top: 0,
 	//keyword : "titanium",
 	//contentUrl : "www.myur.com",
 	viewType : Admob.TYPE_ADS,
-	adSizeType: 'BANNER', //LARGE_BANNER, SMART_BANNER, MEDIUM_RECTANGLE, FULLBANNER, LEADERBOARD, FLUID,  WIDE_SKYSCRAPER, SEARCH
-	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
+	adSizeType: Admob.BANNER, //LARGE_BANNER, SMART_BANNER, MEDIUM_RECTANGLE, FULL_BANNER, LEADERBOARD, FLUID,  WIDE_SKYSCRAPER, SEARCH
+	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(adView);	
 
@@ -88,15 +87,13 @@ adView.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
 ```
 # REWARDED VIDEOS
 ```javascript
-var rewarded = admob.createView({
-	top: 0,
+var rewarded = Admob.createView({
 	viewType : Admob.TYPE_ADS,
-	adSizeType: 'REWARDED',
-	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
+	adSizeType: Admob.REWARDED_VIDEO,
+	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-3940256099942544/5224354917', //USE YOUR AD_UNIT ID HERE
 });	
-window.add(rewarded);
+window.add(adView);
 
 window.addEventListener("open", function(){
 	//You can preload the ads at any moment you judge the best
@@ -124,7 +121,7 @@ rewarded.addEventListener(Admob.AD_VIDEO_STARTED, function(e) {
 ```
 # MULTIPLE AD SIZES
 ```javascript
-var multipleAds = admob.createView({
+var multipleAds = Admob.createView({
 	top: 0,
 	viewType : Admob.TYPE_ADS,
 	adSizes: [
@@ -132,11 +129,10 @@ var multipleAds = admob.createView({
 		{width: 320, height: 50},
 		{width: 320, height: 240}
 	],
-	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-        testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
+	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 });	
-window.add(bannerAd);	
+window.add(multipleAds);	
 
 multipleAds.addEventListener(Admob.AD_RECEIVED, function(e) {
 	Titanium.API.info("Ad received");
@@ -146,15 +142,13 @@ multipleAds.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
 	Titanium.API.info("Ad failed");
 });
 ```
-# INTERSTITIAL AD VIEW
+# INTERSTITIAL AD
 ```javascript
-var interstitialAd = admob.createView({
-	top: 0,
+var interstitialAd = Admob.createView({
 	viewType : Admob.TYPE_ADS,
-	adSizeType: 'INTERSTITIALAD',
-	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
+	adSizeType: Admob.INTERSTITIAL,
+	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+	adUnitId: 'ca-app-pub-3940256099942544/1033173712', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(interstitialAd);
 
@@ -183,232 +177,96 @@ interstitialAd.addEventListener(Admob.AD_CLOSED, function(e) {
 	Titanium.API.warn("Interstital ad close successfully. RIP!");
 });
 ```
-# NATIVE ADVANCED
-
+# UNIFIED NATIVE ADS
 ```javascript
 var masterView = Titanium.UI.createView({
 	width : Titanium.UI.FILL,
 	height : Titanium.UI.SIZE,
-	layout : "vertical",
-	borderRadius : 5,
-	elevation : 8
+	layout : "vertical"
 });
 
-var topImageWrapper = Titanium.UI.createView({
+var topView = Titanium.UI.createView({
+	top : 0,
+	left : 0,
+	right : 0,
 	height : Titanium.UI.SIZE,
-	top : 16,
-	left : 16,
-	right : 16
+	layout : "horizontal"
 });
-masterView.add(topImageWrapper);
-
-var contentad_image = Titanium.UI.createImageView({
-	height : Titanium.UI.SIZE,
-	borderRadius : 8,
-	zIndex : 0
-});
-topImageWrapper.add(contentad_image);
+masterView.add(topView);
 
 var contentad_logo = Titanium.UI.createImageView({
-	top : 16,
-	left : 16,
 	elevation : 12,
-	height : 48,
-	width : 48,
-	zIndex : 10
+	height : 50
 });
-topImageWrapper.add(contentad_logo);
+topView.add(contentad_logo);
 
 var contentad_advertiser = Titanium.UI.createLabel({
-	right : 16,
-	bottom : 8,
 	color : "#575757",
+	left : 16,
+	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
+	verticalAlign : Titanium.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
 	height : 35,
 	font : {
-		fontSize : 18,
-		fontFamily : "Merriweather-Heavy",
-	},
-	zIndex : 10
+	fontSize : 18,
+		fontWeight : "bold"
+	}
 });
-topImageWrapper.add(contentad_advertiser);
+topView.add(contentad_advertiser);
+
+var mediaView = Admob.createView({
+	viewType : Admob.TYPE_MEDIA,
+	top : 0,
+	left : 0,
+	right : 0,
+	height : 250
+});
+masterView.add(mediaView);
 
 var contentad_headline = Titanium.UI.createLabel({
 	top : 16,
-	left: 16,
-	right : 16,
 	maxLines : 2,
-	color : "#212121",
+	color : "#000000",
+	left : 16,
+	right : 16,
 	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
 	font : {
-		fontSize : 24,
-		fontFamily : "Merriweather-Heavy",
-		fontWeight : "bold"
+	fontSize : 20,
+	f	ontWeight : "bold"
 	}
 });
 masterView.add(contentad_headline);
 
 var contentad_body = Titanium.UI.createLabel({
-	top : 8,
-	left: 16,
-	right : 16,
-	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
-	color : "#424242",
-	font : {
-		fontSize : 16,
-		fontWeight : "bold"
-	}
-});
-masterView.add(contentad_body);
-
-var contentad_call_to_action = Titanium.UI.createButton({
-	right : 16,
-	elevation : 8,
-	width : 100,
-	height : 50,
-	font : {
-		fontSize : 14,
-		fontWeight : "bold"
-	}
-});
-masterView.add(contentad_call_to_action);
-
-//THE NATIVE AD
-var nativeAd = admob.createView({
-	viewType : Admob.TYPE_ADS,
-	adSizeType: 'NATIVE',
-	height : 132,
-	width : 360,
-    	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
-	
-	//ALL NATIVE MUST HAVE THESE VIEWS
-	masterView : masterView,
-	headlineLabel : contentad_headline,
-	imageView : contentad_image,
-	bodyLabel : contentad_body,
-	callToActionButton : contentad_call_to_action,
-	logoOrIconImageView : contentad_logo,
-	advertiserLabel : contentad_advertiser,
-});		
-window.add(nativeAd);
-
-nativeAd.addEventListener(Admob.AD_RECEIVED, function(e) {
-	Titanium.API.info("Native Ad AD_RECEIVED");
-	nativeAd.showAdNow();
-});
-
-nativeAd.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-	Titanium.API.info("Native Ad AD_NOT_RECEIVED");
-});
-
-nativeAd.addEventListener(Admob.AD_DESTROYED, function(e) {
-	Titanium.API.info("Native Ad AD_DESTROYED");
-});
-```
-# NATIVE ADVANCED APP INSTALL
-```javascript
-var masterView = Titanium.UI.createView({
-	width : Titanium.UI.FILL,
-	height : Titanium.UI.SIZE,
-	layout : "vertical",
-	borderRadius : 5,
-	elevation : 8
-});
-
-var topImageWrapper = Titanium.UI.createView({
-	height : Titanium.UI.SIZE,
-	top : 16,
-	left : 16,
-	right : 16
-});
-masterView.add(topImageWrapper);
-
-var contentad_image = Titanium.UI.createImageView({
-	height : Titanium.UI.SIZE,
-	borderRadius : 8,
-	zIndex : 0
-});
-topImageWrapper.add(contentad_image);
-
-var contentad_logo = Titanium.UI.createImageView({
-	top : 16,
-	left : 16,
-	elevation : 12,
-	height : 48,
-	width : 48,
-	zIndex : 10
-});
-topImageWrapper.add(contentad_logo);
-
-var contentad_advertiser = Titanium.UI.createLabel({
-	right : 16,
-	bottom : 8,
 	color : "#575757",
-	height : 35,
-	font : {
-		fontSize : 18,
-		fontFamily : "Merriweather-Heavy",
-	},
-	zIndex : 10
-});
-topImageWrapper.add(contentad_advertiser);
-
-var contentad_headline = Titanium.UI.createLabel({
-	top : 16,
-	left: 16,
-	right : 16,
-	maxLines : 2,
-	color : "#212121",
-	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
-	font : {
-		fontSize : 24,
-		fontFamily : "Merriweather-Heavy",
-		fontWeight : "bold"
-	}
-});
-masterView.add(contentad_headline);
-
-var contentad_body = Titanium.UI.createLabel({
-	top : 8,
-	left: 16,
+	left : 16,
 	right : 16,
 	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
-	color : "#424242",
 	font : {
-		fontSize : 16,
-		fontWeight : "bold"
+	f	ontSize : 16
 	}
 });
 masterView.add(contentad_body);
 
 var contentad_call_to_action = Titanium.UI.createButton({
-	right : 16,
+	top : 16,
 	elevation : 8,
-	width : 100,
-	height : 50,
+	right : 16,
+	width : Titanium.UI.SIZE,
+	height : 35,
+	backgroundColor : "#ff5722",
 	font : {
-		fontSize : 14,
+	fontSize : 14,
 		fontWeight : "bold"
 	}
 });
 masterView.add(contentad_call_to_action);
 
-//ONLY NATIVE_APP_INSTALL NEEDS THESE VIEWS
 var ratingView = Admob.createView({
 	viewType : Admob.TYPE_STARS,
 	left : 0,
 	right : 0
 });
 masterView.add(ratingView);
-
-var mediaView = Admob.createView({
-	viewType : Admob.TYPE_MEDIA,
-	left : 16,
-	right : 16,
-	height : 250
-});
-masterView.add(mediaView);
 
 var contentad_store_view = Titanium.UI.createLabel({
 	color : "#D50000",
@@ -429,46 +287,44 @@ var contentad_price_view = Titanium.UI.createLabel({
 });
 masterView.add(contentad_advertiser);
 
-//THE NATIVE AD
-var nativeAd = admob.createView({
-	viewType : Admob.TYPE_ADS,
-	adSizeType: 'NATIVE_APP_INSTALL',
-	height : 132,
-	width : 360,
-    	publisherId : "ca-app-pub-xxxxxxxxxxxxx~xxxxxxx", //USE YOUR PUBLISHER ID HERE
-    	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-xxxxxxxxxxxxx/xxxxxxx', //USE YOUR AD_UNIT ID HERE
-	
-	//ALL NATIVE MUST HAVE THESE VIEWS
+var nativeAd = Admob.createView({
+	//Standard Widgets
 	masterView : masterView,
 	headlineLabel : contentad_headline,
-	imageView : contentad_image,
 	bodyLabel : contentad_body,
 	callToActionButton : contentad_call_to_action,
 	logoOrIconImageView : contentad_logo,
 	advertiserLabel : contentad_advertiser,
-
-	//ONLY NATIVE_APP_INSTALL NEED THESE VIEWS
-	storeLabel : contentad_store_view,
 	mediaView : mediaView,
+
+	//Store Widgets
+	storeLabel : contentad_store_view,
 	starsView : ratingView,
 	priceLabel : contentad_price_view,
-});		
+	viewType : Admob.TYPE_ADS,
+	adSizeType : Admob.UNIFIED_NATIVE_ADS,
+
+	top : 16,
+	left : 16,
+	right : 16,
+	height : Titanium.UI.SIZE,
+	backgroundColor : "#FFFFFF",
+
+	viewType : Admob.TYPE_ADS,
+	adSizeType: Admob.UNIFIED_NATIVE_ADS,
+	adUnitId : "ca-app-pub-3940256099942544/2247696110",
+	testDeviceId : "E6BB08637D19DA5B1C7BBA4758FC0F95",
+});
 window.add(nativeAd);
 
 nativeAd.addEventListener(Admob.AD_RECEIVED, function(e) {
-	Titanium.API.info("Native AD_RECEIVED");
+	Titanium.API.info("Native Ad received");
 });
 
 nativeAd.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-	Titanium.API.info("Native AD_NOT_RECEIVED");
-});
-
-nativeAd.addEventListener(Admob.AD_DESTROYED, function(e) {
-	Titanium.API.info("Native AD_DESTROYED");
+	Titanium.API.info("Native Ad failed");
 });
 ```
-
 # Events
 
 |Events                |Description                          |
@@ -613,8 +469,4 @@ Returned by `debugGeography` if geography appears as not in EEA for debug device
 |[Interstitial](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/1033173712
 |[Interstitial Video](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/8691691433
 |[Rewarded Video](https://developers.google.com/admob/android/rewarded-video#request_rewarded_video_ad) | ca-app-pub-3940256099942544/5224354917
-|[Native Advanced](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/2247696110
-|[Native Advanced Video](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/1044960115
-
-# TODO
-- Update the SDK to newer version. (Depending on Ti.Playservices)
+|[Unified Native](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/2247696110
