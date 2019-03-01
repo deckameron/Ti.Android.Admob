@@ -14,7 +14,7 @@ for instructions on getting started with using this module in your application.
 ## Requirements
 
 - [x] Titanium SDK 7.0.0+
-- [x] [Ti.PlayServices](https://github.com/appcelerator-modules/ti.playservices) module
+- [x] [Ti.PlayServices](https://github.com/appcelerator-modules/ti.playservices) 16.1.0 module
 
 ## Doubleclick for Publishers Developer Docs
 
