@@ -71,8 +71,8 @@ var adView = Admob.createView({
 	//keyword : "titanium",
 	//contentUrl : "www.myur.com",
 	extras : {
-        'npa' : '1' //Disable personalized ads
-    }
+        	'npa' : '1' //Disable personalized ads
+    	}
 	viewType : Admob.TYPE_ADS,
 	adSizeType: Admob.BANNER, //LARGE_BANNER, SMART_BANNER, MEDIUM_RECTANGLE, FULL_BANNER, LEADERBOARD, FLUID,  WIDE_SKYSCRAPER, SEARCH
 	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
