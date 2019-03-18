@@ -1,20 +1,25 @@
 package ti.android.admob;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.titanium.TiBlob;
+import org.appcelerator.titanium.io.TiBaseFile;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.proxy.TiWindowProxy;
 import org.appcelerator.titanium.view.TiUIView;
 import org.appcelerator.titanium.util.TiColorHelper;
+import org.appcelerator.titanium.util.TiConvert;
 
 import ti.modules.titanium.ui.ButtonProxy;
 import ti.modules.titanium.ui.ImageViewProxy;
 import ti.modules.titanium.ui.LabelProxy;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -37,6 +42,7 @@ import com.google.android.gms.ads.formats.MediaView;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.android.gms.ads.mediation.admob.AdMobExtras;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
@@ -84,6 +90,7 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener{
 	private View master_view;
 	private MediaView contentad_media_view;
 
+	Bundle extras;
 
 	private TiViewProxy contentad_media_proxy;
 	private TiViewProxy master_view_proxy;
@@ -115,9 +122,9 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener{
 		myInflater = LayoutInflater.from((Context) this.proxy.getActivity());
 
 		// Initialize the Mobile Ads SDK.
-		MobileAds.initialize((Context) this.proxy.getActivity(), AdmobModule.AD_UNIT_ID);
+		//MobileAds.initialize((Context) this.proxy.getActivity(), AdmobModule.AD_UNIT_ID);
 	}
-
+	
 	private void createAdView(String type, AdSize SIZE) {
 		Log.d(TAG, "createAdView() " + type);
 		this.adView = new PublisherAdView((Context) this.proxy.getActivity());
@@ -137,6 +144,12 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener{
 		PublisherAdRequest.Builder AdRequestBuilder = new PublisherAdRequest.Builder();
 		
 		AdRequestBuilder.addTestDevice(PublisherAdRequest.DEVICE_ID_EMULATOR).addTestDevice(AdmobModule.TEST_DEVICE_ID);
+		
+		Bundle bundle = createAdRequestProperties();
+		if (bundle.size() > 0) {
+			Log.d(TAG, "extras.size() > 0 -- set ad properties");
+			AdRequestBuilder.addNetworkExtras(new AdMobExtras(bundle));
+		}
 		
 		if(keyword != null){
 			AdRequestBuilder.addKeyword(keyword);
@@ -304,6 +317,12 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener{
 		
 		AdRequestBuilder.addTestDevice(PublisherAdRequest.DEVICE_ID_EMULATOR)
 						.addTestDevice(AdmobModule.TEST_DEVICE_ID);
+		
+		Bundle bundle = createAdRequestProperties();
+		if (bundle.size() > 0) {
+			Log.d(TAG, "extras.size() > 0 -- set ad properties");
+			AdRequestBuilder.addNetworkExtras(new AdMobExtras(bundle));
+		}
 		
 		if(keyword != null){
 			AdRequestBuilder.addKeyword(keyword);
@@ -549,6 +568,12 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener{
 		
 		AdRequestBuilder.addTestDevice(PublisherAdRequest.DEVICE_ID_EMULATOR).addTestDevice(AdmobModule.TEST_DEVICE_ID);
 		
+		Bundle bundle = createAdRequestProperties();
+		if (bundle.size() > 0) {
+			Log.d(TAG, "extras.size() > 0 -- set ad properties");
+			AdRequestBuilder.addNetworkExtras(new AdMobExtras(bundle));
+		}
+		
 		if(keyword != null){
 			AdRequestBuilder.addKeyword(keyword);
 		}
@@ -631,6 +656,11 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener{
 			}else if(view_type.equals(AdmobModule.TYPE_ADS)){
 				
 				Log.d(TAG, ("view_type = " + view_type) + " searching p");
+				
+				if (d.containsKey(AdmobModule.EXTRA_BUNDLE)) {
+					Log.d(TAG, "Has extras");
+					extras = mapToBundle(d.getKrollDict("extras"));
+				}
 				
 				if (d.containsKey(AdmobModule.MASTER_VIEW)) {
 					Object view = d.get(AdmobModule.MASTER_VIEW);
@@ -910,6 +940,56 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener{
 		}
 		}
 		return errorReason;
+	}
+	
+	private Bundle createAdRequestProperties() {
+		Bundle bundle = new Bundle();
+		if (prop_color_bg != null) {
+			Log.d(TAG, "color_bg: " + prop_color_bg);
+			bundle.putString("color_bg", prop_color_bg);
+		}
+		if (prop_color_bg_top != null)
+			bundle.putString("color_bg_top", prop_color_bg_top);
+		if (prop_color_border != null)
+			bundle.putString("color_border", prop_color_border);
+		if (prop_color_text != null)
+			bundle.putString("color_text", prop_color_text);
+		if (prop_color_link != null)
+			bundle.putString("color_link", prop_color_link);
+		if (prop_color_url != null)
+			bundle.putString("color_url", prop_color_url);
+		if (extras != null)
+			bundle.putAll(extras);
+
+		return bundle;
+	}
+	
+	private Bundle mapToBundle(Map<String, Object> map)
+	{
+		if (map == null) {
+			return new Bundle();
+		}
+
+		Bundle bundle = new Bundle(map.size());
+
+		for (String key : map.keySet()) {
+			Object val = map.get(key);
+			if (val == null) {
+				bundle.putString(key, null);
+			} else if (val instanceof TiBlob) {
+				bundle.putByteArray(key, ((TiBlob) val).getBytes());
+			} else if (val instanceof TiBaseFile) {
+				try {
+					bundle.putByteArray(key, ((TiBaseFile) val).read().getBytes());
+				} catch (IOException e) {
+					Log.e(TAG, "Unable to put '" + key + "' value into bundle: " + e.getLocalizedMessage(), e);
+				}
+			} else {
+				bundle.putString(key, TiConvert.toString(val));
+			}
+		}
+
+		return bundle;
 	}
 	
 	//REWARED VIDEOS EVENTS

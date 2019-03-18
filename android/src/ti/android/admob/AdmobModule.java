@@ -139,6 +139,7 @@ public class AdmobModule extends KrollModule
     public static String STORE_LABEL;
     public static String STARS_VIEW;
     public static String PRICE_LABEL;
+    public static String EXTRA_BUNDLE;
 
     public AdmobModule() {
         Log.d(TAG, "Admob Module Instantiated");
@@ -188,6 +189,8 @@ public class AdmobModule extends KrollModule
         
         KEYWORD = "keyword";
         CONTENT_URL = "contentUrl";
+        
+        EXTRA_BUNDLE = "extras";
     }
     
     private final String ANDROID_ADVERTISING_ID = "androidAdId";
