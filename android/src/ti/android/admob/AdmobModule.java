@@ -86,6 +86,8 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String UNIFIED_NATIVE_ADS = "UNIFIED_NATIVE_ADS";
     @Kroll.constant
+    public static final String DFP_CUSTOM_NATIVE_ADS = "DFP_CUSTOM_NATIVE_ADS";
+    @Kroll.constant
     public static final String NATIVE = "NATIVE";
     @Kroll.constant
     public static final String FLUID = "FLUID";
@@ -116,6 +118,7 @@ public class AdmobModule extends KrollModule
     public static String AD_SIZES_LABEL;
     public static String KEYWORD;
     public static String CONTENT_URL;
+    public static String CUSTOM_NATIVE_TEMPLATE_ID;
     
     public static String VIEW_TYPE;
     
@@ -189,6 +192,7 @@ public class AdmobModule extends KrollModule
         
         KEYWORD = "keyword";
         CONTENT_URL = "contentUrl";
+        CUSTOM_NATIVE_TEMPLATE_ID = "customNativeTemplateId";
         
         EXTRA_BUNDLE = "extras";
     }
