@@ -52,6 +52,7 @@ import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
+@SuppressWarnings("deprecation")
 public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 
 	private static final String TAG = "AdmobView";
@@ -124,7 +125,9 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 	static TiApplication appContext = TiApplication.getInstance();
 
 	public AdmobView(TiViewProxy proxy) {
+		
 		super(proxy);
+		
 		Log.d(TAG, "Creating AdMob AdView");
 		Log.d(TAG, ("AdmobModule.PUBLISHER_ID: " + AdmobModule.PUBLISHER_ID));
 		Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.AD_UNIT_ID));
@@ -136,7 +139,6 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 		// AdmobModule.AD_UNIT_ID);
 	}
 
-	@SuppressWarnings("deprecation")
 	private void createAdView(String type, AdSize SIZE) {
 		Log.d(TAG, "createAdView() " + type);
 		this.adView = new PublisherAdView((Context) this.proxy.getActivity());
@@ -202,7 +204,6 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 		this.setNativeView((View) this.adView);
 	}
 
-	@SuppressWarnings("deprecation")
 	private void createUnifiedNativeAds() {
 
 		AdLoader.Builder builder = new AdLoader.Builder((Context) this.proxy.getActivity(), AdmobModule.AD_UNIT_ID);
@@ -587,7 +588,6 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void loadRewardedAdVideo() {
 
 		AdRequest.Builder AdRequestBuilder = new AdRequest.Builder();
@@ -1086,7 +1086,6 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 	}
 
 	// CUSTOM DFP NATIVE AD
-	@SuppressWarnings("deprecation")
 	private void createNativeCustomTemplateAd() {
 
 		AdLoader.Builder builder = new AdLoader.Builder((Context) this.proxy.getActivity(), AdmobModule.AD_UNIT_ID);
@@ -1245,7 +1244,6 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 	 * @param adView
 	 *            the view to be populated
 	 */
-	@SuppressWarnings("deprecation")
 	private void populateNativeCustomTemplateAd(NativeCustomTemplateAd nativeAd, NativeContentAdView adView) {
 		// Set the media view. Media content will be automatically populated in the
 		// media view once
