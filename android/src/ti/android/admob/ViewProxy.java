@@ -71,7 +71,12 @@ public class ViewProxy extends TiViewProxy {
 	public void loadRewardedAd() {
 		this.adMob.loadRewardedAdVideo();
 	}
-
+	
+	@Kroll.method
+	public void requestInterstitalAd() {
+		this.adMob.requestInterstitalAd();
+	}
+	
 	@Override
 	public void onPause(Activity activity) {
 	}

@@ -32,7 +32,7 @@ import android.view.View;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdRequest; 
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
@@ -140,6 +140,7 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 	}
 
 	private void createAdView(String type, AdSize SIZE) {
+		
 		Log.d(TAG, "createAdView() " + type);
 		this.adView = new PublisherAdView((Context) this.proxy.getActivity());
 
@@ -151,7 +152,7 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 		} else {
 			this.adView.setAdSizes(SIZE);
 		}
-
+		
 		Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.AD_UNIT_ID));
 		this.adView.setAdUnitId(AdmobModule.AD_UNIT_ID);
 
@@ -172,6 +173,10 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 		if (contentUrl != null) {
 			AdRequestBuilder.setContentUrl(contentUrl);
 		}
+		
+		// add Criteo bids into Ad Manager request builder
+		//BannerAdUnit adUnit = new BannerAdUnit(AdmobModule.AD_UNIT_ID, new com.criteo.publisher.model.AdSize(320, 50));
+		//Criteo.getInstance().setBidsForAdUnit(AdRequestBuilder, adUnit);
 
 		PublisherAdRequest adRequest = AdRequestBuilder.build();
 
@@ -199,11 +204,12 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 				}
 			}
 		});
+		
 		this.adView.loadAd(adRequest);
 		this.adView.setPadding(this.prop_left, this.prop_top, this.prop_right, 0);
 		this.setNativeView((View) this.adView);
 	}
-
+	
 	private void createUnifiedNativeAds() {
 
 		AdLoader.Builder builder = new AdLoader.Builder((Context) this.proxy.getActivity(), AdmobModule.AD_UNIT_ID);
@@ -497,10 +503,10 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 
 		Log.d(TAG, "createInterstitialAdView()");
 
-		this.intAd = new InterstitialAd((Context) this.proxy.getActivity());
-		this.intAd.setAdUnitId(AdmobModule.AD_UNIT_ID);
+		intAd = new InterstitialAd((Context) this.proxy.getActivity());
+		intAd.setAdUnitId(AdmobModule.AD_UNIT_ID);
 
-		this.intAd.setAdListener(new AdListener() {
+		intAd.setAdListener(new AdListener() {
 
 			@Override
 			public void onAdLoaded() {
@@ -509,7 +515,7 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_RECEIVED)) {
 						AdmobView.this.proxy.fireEvent(AdmobModule.AD_RECEIVED, (Object) new KrollDict());
 					}
-					if (AdmobView.this.intAd.isLoaded()) {
+					if (intAd.isLoaded()) {
 						// View.this.intAd.show();
 						if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_READY_TO_BE_SHOWN)) {
 							AdmobView.this.proxy.fireEvent(AdmobModule.AD_READY_TO_BE_SHOWN, (Object) new KrollDict());
@@ -523,8 +529,10 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 
 			@Override
 			public void onAdFailedToLoad(int errorCode) {
+				
 				String message = String.format("onAdFailedToLoad (%s)", AdmobView.this.getErrorReason(errorCode));
 				Log.d(TAG, message + getErrorReason(errorCode));
+				
 				if (AdmobView.this.proxy != null) {
 					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
 						KrollDict errorCallback = new KrollDict();
@@ -537,8 +545,10 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 
 			@Override
 			public void onAdClosed() {
+				
 				Log.d(TAG, "onAdClosed");
 				Log.d(TAG, "Ad Closed");
+				
 				if (AdmobView.this.proxy != null) {
 					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_CLOSED)) {
 						AdmobView.this.proxy.fireEvent(AdmobModule.AD_CLOSED, (Object) new KrollDict());
@@ -546,9 +556,31 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 				}
 			}
 		});
+		
+		// existing Ad manager request builder
+		AdRequest.Builder builder = new AdRequest.Builder();
+		builder.addTestDevice(AdmobModule.TEST_DEVICE_ID);
 
-		AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdmobModule.TEST_DEVICE_ID).build();
-		this.intAd.loadAd(adRequest);
+		// add Criteo bids into Ad manager request builder
+		//InterstitialAdUnit interstitialAdUnit = new InterstitialAdUnit(AdmobModule.AD_UNIT_ID);
+		//Criteo.getInstance().setBidsForAdUnit(builder, interstitialAdUnit);
+
+		AdRequest adRequest = builder.build();
+		
+		//AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdmobModule.TEST_DEVICE_ID).build();
+		intAd.loadAd(adRequest);
+	}
+	
+	public void requestInterstitalAd() {
+		if (!intAd.isLoading() && !intAd.isLoaded()) {
+			
+			Log.w(TAG, "Requesting a new Interstital Ad");
+			
+            AdRequest.Builder builder = new AdRequest.Builder();
+    		builder.addTestDevice(AdmobModule.TEST_DEVICE_ID);
+            AdRequest adRequest = builder.build();
+            intAd.loadAd(adRequest);
+        }
 	}
 
 	public void showAdNow() {
@@ -595,6 +627,7 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 		AdRequestBuilder.addTestDevice(PublisherAdRequest.DEVICE_ID_EMULATOR).addTestDevice(AdmobModule.TEST_DEVICE_ID);
 
 		Bundle bundle = createAdRequestProperties();
+		
 		if (bundle.size() > 0) {
 			Log.d(TAG, "extras.size() > 0 -- set ad properties");
 			AdRequestBuilder.addNetworkExtras(new AdMobExtras(bundle));
@@ -614,6 +647,7 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 	}
 
 	private void createRatingView() {
+		
 		Log.d(TAG, "createRatingView()");
 
 		LinearLayout layout = new LinearLayout((Context) proxy.getActivity());
