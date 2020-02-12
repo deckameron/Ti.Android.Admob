@@ -178,6 +178,7 @@ interstitialAd.addEventListener(Admob.AD_BEING_SHOWN, function(e) {
 
 interstitialAd.addEventListener(Admob.AD_CLOSED, function(e) {
 	Titanium.API.warn("Interstital ad close successfully. RIP!");
+	interstitialAd.requestInterstitalAd();
 });
 ```
 # UNIFIED NATIVE ADS
