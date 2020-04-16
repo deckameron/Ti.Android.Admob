@@ -13,8 +13,12 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
+For Ti.Android.Admob [5.1.5](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-5.1.5.zip) 
 - [x] Titanium SDK 7.0.0+
-- [x] [Ti.PlayServices](https://github.com/appcelerator-modules/ti.playservices) 16.1.0 module
+- [x] [Ti.PlayServices](https://github.com/appcelerator-modules/ti.playservices) 16.1.3 module
+
+For Ti.Android.Admob [6.0.2](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-6.0.2.zip)
+- [x] Titanium SDK 9.0.0+
 
 ## Doubleclick for Publishers Developer Docs
 
@@ -55,6 +59,7 @@ if (!Titanium.Geolocation.hasLocationPermissions(Titanium.Geolocation.AUTHORIZAT
 
 |Types                |Description                          |
 |----------------|-------------------------------|
+|_ADAPTATIVE_BANNER_			|Drop-in replacement for the industry standard 320x50 banner size, as well as the smart banner format they supersede.
 |_BANNER_			|Mobile Marketing Association (MMA) banner ad size (320x50 density-independent pixels).                      
 |_LARGE_BANNER_    	|Large banner ad size (320x100 density-independent pixels).              
 |_SMART_BANNER_    |A dynamically sized banner that is full-width and auto-height.
@@ -67,14 +72,14 @@ if (!Titanium.Geolocation.hasLocationPermissions(Titanium.Geolocation.AUTHORIZAT
 
 ```javascript
 var adView = Admob.createView({
-	top : 16,
+	bottom : 0,
 	//keyword : "titanium",
 	//contentUrl : "www.myur.com",
 	extras : {
-        	'npa' : '1' //Disable personalized ads
-    	}
+    	'npa' : '1' //Disable personalized ads
+    }
 	viewType : Admob.TYPE_ADS,
-	adSizeType: Admob.BANNER, //LARGE_BANNER, SMART_BANNER, MEDIUM_RECTANGLE, FULL_BANNER, LEADERBOARD, FLUID,  WIDE_SKYSCRAPER, SEARCH
+	adSizeType: Admob.ADAPTATIVE_BANNER,
 	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
 	adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 });	
@@ -96,7 +101,7 @@ var rewarded = Admob.createView({
 	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
 	adUnitId: 'ca-app-pub-3940256099942544/5224354917', //USE YOUR AD_UNIT ID HERE
 });	
-window.add(adView);
+window.add(rewarded);
 
 window.addEventListener("open", function(){
 	//You can preload the ads at any moment you judge the best
@@ -469,6 +474,7 @@ Returned by `debugGeography` if geography appears as not in EEA for debug device
 # Google Test Ads Ids
 |Events                |Description                          |
 |----------------|-------------------------------|
+|[Adaptative Banner](https://developers.google.com/admob/android/banner/adaptive) | ca-app-pub-3940256099942544/9214589741
 |[Banner](https://developers.google.com/admob/android/banner#add_adview) | ca-app-pub-3940256099942544/6300978111
 |[Interstitial](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/1033173712
 |[Interstitial Video](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/8691691433
