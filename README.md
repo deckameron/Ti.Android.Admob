@@ -17,7 +17,7 @@ For Ti.Android.Admob [5.1.5](https://github.com/deckameron/Ti.Android.Admob/blob
 - [x] Titanium SDK 7.0.0+
 - [x] [Ti.PlayServices](https://github.com/appcelerator-modules/ti.playservices) 16.1.3 module
 
-For Ti.Android.Admob [6.0.2](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-6.0.2.zip)
+For Ti.Android.Admob [6.0.3](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-6.0.3.zip)
 - [x] Titanium SDK 9.0.0+
 
 ## Doubleclick for Publishers Developer Docs
@@ -310,8 +310,6 @@ var nativeAd = Admob.createView({
 	storeLabel : contentad_store_view,
 	starsView : ratingView,
 	priceLabel : contentad_price_view,
-	viewType : Admob.TYPE_ADS,
-	adSizeType : Admob.UNIFIED_NATIVE_ADS,
 
 	top : 16,
 	left : 16,
