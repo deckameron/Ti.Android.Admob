@@ -4,9 +4,10 @@ dependencies {
 	// See:  https://developer.android.com/studio/build/dependencies
 	// implementation 'com.google.android.gms:play-services-ads:19.0.1'
 	
-	implementation 'com.google.android.ads.consent:consent-library:1.0.6' 
+	implementation 'com.google.android.ads.consent:consent-library:1.0.8' 
 	
-	implementation 'com.google.firebase:firebase-ads:19.0.1'
+	//implementation 'com.google.android.gms:play-services-ads:19.1.0'
+	implementation 'com.google.firebase:firebase-ads:19.1.0'
 	//compile group: 'com.google.firebase', name: 'firebase-ads', version: '19.0.1'
 	
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
