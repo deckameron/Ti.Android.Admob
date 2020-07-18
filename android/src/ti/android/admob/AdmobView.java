@@ -175,7 +175,7 @@ public class AdmobView extends TiUIView implements RewardedVideoAdListener {
 			public void onAdLoaded() {
 				Log.d(TAG, "onAdLoaded()");
 				if (AdmobView.this.proxy != null) {
-					Log.d(TAG, "onAdLoaded() " + adView.getWidth() + ", " + adView.getHeight());
+					//Log.d(TAG, "onAdLoaded() " + adView.getWidth() + ", " + adView.getHeight());
 					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_RECEIVED)) {
 						AdmobView.this.proxy.fireEvent(AdmobModule.AD_RECEIVED, (Object) new KrollDict());
 					}
