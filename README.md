@@ -103,16 +103,16 @@ if (!Titanium.Geolocation.hasLocationPermissions(Titanium.Geolocation.AUTHORIZAT
 
 ```javascript
 var adView = Admob.createView({
-	bottom : 0,
-	//keyword : "titanium",
-	//contentUrl : "www.myur.com",
-	extras : {
-    	'npa' : '1' //Disable personalized ads
-    }
-	viewType : Admob.TYPE_ADS,
-	adSizeType: Admob.ADAPTATIVE_BANNER,
-	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
+    bottom : 0,
+    //keyword : "titanium",
+    //contentUrl : "www.myur.com",
+    extras : {
+        'npa': '1' //Disable personalized ads
+    },
+    viewType : Admob.TYPE_ADS,
+    adSizeType: Admob.ADAPTATIVE_BANNER,
+    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(adView);	
 
