@@ -60,11 +60,12 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdError;
-
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
 
 
 @SuppressWarnings("deprecation")
-public class AdmobView extends TiUIView {
+public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 
 	private static final String TAG = "AdmobView";
 
@@ -73,6 +74,7 @@ public class AdmobView extends TiUIView {
 	private AdManagerAdView adView;
 	private InterstitialAd _interstitialAd;
 	private RewardedAd _rewardedAd;
+	private RewardedInterstitialAd rewardedInterstitialAd;
 
 	NativeAd tempNativeAd;
 
@@ -614,6 +616,92 @@ public class AdmobView extends TiUIView {
 //		}
 	}
 
+	// REWARDED INTERSTITAL AD
+	private void createRewardedInterstitialView(){
+		Log.d(TAG, "createRewardedInterstitialView()");
+		requestRewardedInterstitialAd();
+	}
+
+	public void requestRewardedInterstitialAd(){
+		RewardedInterstitialAd.load(appContext, AdmobModule.AD_UNIT_ID,
+				new AdRequest.Builder().build(),  new RewardedInterstitialAdLoadCallback() {
+					@Override
+					public void onAdLoaded(RewardedInterstitialAd ad) {
+						rewardedInterstitialAd = ad;
+						Log.e(TAG, "onAdLoaded");
+						setRewardedInterstitialEvents();
+						if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_LOADED)) {
+							AdmobView.this.proxy.fireEvent(AdmobModule.AD_LOADED, (Object) new KrollDict());
+						}
+					}
+					@Override
+					public void onAdFailedToLoad(LoadAdError loadAdError) {
+						Log.e(TAG, "onAdFailedToLoad");
+						rewardedInterstitialAd = null;
+						KrollDict rewardedError = new KrollDict();
+						rewardedError.put("cause", loadAdError.getCause());
+						rewardedError.put("code", loadAdError.getCode());
+						rewardedError.put("message", loadAdError.getMessage());
+						if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+							AdmobView.this.proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, (Object) rewardedError);
+						}
+					}
+				});
+	}
+
+	private void setRewardedInterstitialEvents(){
+		rewardedInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+			/** Called when the ad failed to show full screen content. */
+			@Override
+			public void onAdFailedToShowFullScreenContent(AdError adError) {
+				Log.i(TAG, "onAdFailedToShowFullScreenContent");
+				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {
+					KrollDict rewardedError = new KrollDict();
+					rewardedError.put("cause", adError.getCause());
+					rewardedError.put("code", adError.getCode());
+					rewardedError.put("message", adError.getMessage());
+					AdmobView.this.proxy.fireEvent(AdmobModule.AD_FAILED_TO_SHOW, (Object) rewardedError);
+				}
+			}
+
+			/** Called when ad showed the full screen content. */
+			@Override
+			public void onAdShowedFullScreenContent() {
+				Log.i(TAG, "onAdShowedFullScreenContent");
+				rewardedInterstitialAd = null;
+				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_OPENED)) {
+					AdmobView.this.proxy.fireEvent(AdmobModule.AD_OPENED, (Object) new KrollDict());
+				}
+			}
+
+			/** Called when full screen content is dismissed. */
+			@Override
+			public void onAdDismissedFullScreenContent() {
+				Log.i(TAG, "onAdDismissedFullScreenContent");
+				rewardedInterstitialAd = null;
+				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_CLOSED)) {
+					AdmobView.this.proxy.fireEvent(AdmobModule.AD_CLOSED, (Object) new KrollDict());
+				}
+			}
+		});
+	}
+
+	@Override
+	public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+		Log.i(TAG, "onUserEarnedReward");
+		if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_REWARDED)) {
+			KrollDict errorCallback = new KrollDict();
+			errorCallback.put("amount", rewardItem.getAmount());
+			errorCallback.put("type", rewardItem.getType());
+			AdmobView.this.proxy.fireEvent(AdmobModule.AD_REWARDED, (Object) errorCallback);
+		}
+	}
+
+	public void showRewardedInterstitialAd(){
+		rewardedInterstitialAd.show(/* Activity */ this.proxy.getActivity(),/*
+    OnUserEarnedRewardListener */ (OnUserEarnedRewardListener) this.proxy.getActivity());
+	}
+
 	// REWARDED AD
 	private void createRewardedAdView() {
 		Log.d(TAG, "createRewardedAdView()");
@@ -646,7 +734,7 @@ public class AdmobView extends TiUIView {
 					public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
 						_rewardedAd = rewardedAd;
 						setRewardedEvents();
-						Log.d(TAG, "onAdFailedToLoad");
+						Log.d(TAG, "onAdLoaded");
 						if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_LOADED)) {
 							AdmobView.this.proxy.fireEvent(AdmobModule.AD_LOADED, (Object) new KrollDict());
 						}
@@ -1088,8 +1176,10 @@ public class AdmobView extends TiUIView {
 						createAdaptativeAdView();
 					} else if(adType.equals(AdmobModule.OPEN_APP)) {
 						createAppOpenAdView();
-					} else if (adType.equals(AdmobModule.REWARDED_VIDEO)) {
+					} else if (adType.equals(AdmobModule.REWARDED)) {
 						this.createRewardedAdView();
+					} else if (adType.equals(AdmobModule.REWARDED_INTERSTITIAL)) {
+						this.createRewardedInterstitialView();
 					} else if (adType.equals(AdmobModule.MEDIUM_RECTANGLE)) {
 						this.createAdView(adType, AdSize.MEDIUM_RECTANGLE);
 					} else if (adType.equals(AdmobModule.FULL_BANNER)) {

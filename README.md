@@ -17,7 +17,7 @@ For Ti.Android.Admob [5.1.5](https://github.com/deckameron/Ti.Android.Admob/blob
 - [x] Titanium SDK 7.0.0+
 - [x] [Ti.PlayServices](https://github.com/appcelerator-modules/ti.playservices) 16.1.3 module
 
-For Ti.Android.Admob [7.0.0](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-7.0.0.zip)
+For Ti.Android.Admob [7.0.1](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-7.0.1.zip)
 - [x] Titanium SDK 9.3.2+
 
 ## Doubleclick for Publishers Developer Docs
@@ -27,7 +27,7 @@ For Ti.Android.Admob [7.0.0](https://github.com/deckameron/Ti.Android.Admob/blob
 All AdViews, except Rewarded, have the parameters **_keyword_** and **_contentUrl_** and can be used with DFP mapping
 
 ## Download
-You can get it [here](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-7.0.0.zip?raw=true)
+You can get it [here](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-7.0.1.zip?raw=true)
 
 ## How to use it
 
@@ -124,11 +124,34 @@ adView.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
 	Titanium.API.info("Ad failed");
 });
 ```
-# REWARDED ADS
+# MULTIPLE AD SIZES
+```javascript
+var multipleAds = Admob.createView({
+    top: 0,
+    viewType : Admob.TYPE_ADS,
+    adSizes: [
+        {width: 320, height: 100},
+        {width: 320, height: 50},
+        {width: 320, height: 240}
+    ],
+    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
+});	
+window.add(multipleAds);	
+
+multipleAds.addEventListener(Admob.AD_RECEIVED, function(e) {
+   Titanium.API.info("Ad received");
+});
+
+multipleAds.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
+   Titanium.API.info("Ad failed");
+});
+```
+# REWARDED VIDEOS or REWARDED INTERSTITIAL (Open Beta)
 ```javascript
 var rewarded = Admob.createView({
     viewType : Admob.TYPE_ADS,
-    adSizeType: Admob.REWARDED_VIDEO,
+    adSizeType: Admob.REWARDED, // or Admob.REWARDED_INTERSTITIAL
     testDeviceId : "3F8D8AFD10D0211B8EDB393DD17E1CED", //USE YOUR DEVICE ID HERE
     adUnitId: 'ca-app-pub-3940256099942544/5224354917', //USE YOUR AD_UNIT ID HERE
 });
@@ -156,29 +179,6 @@ rewarded.addEventListener(Admob.AD_FAILED_TO_SHOW, function(e) {
 
 rewarded.addEventListener(Admob.AD_CLOSED, function(e) {
     Titanium.API.info("Rewarded Ad AD_CLOSED");
-});
-```
-# MULTIPLE AD SIZES
-```javascript
-var multipleAds = Admob.createView({
-    top: 0,
-    viewType : Admob.TYPE_ADS,
-    adSizes: [
-        {width: 320, height: 100},
-        {width: 320, height: 50},
-        {width: 320, height: 240}
-    ],
-    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
-});	
-window.add(multipleAds);	
-
-multipleAds.addEventListener(Admob.AD_RECEIVED, function(e) {
-   Titanium.API.info("Ad received");
-});
-
-multipleAds.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-   Titanium.API.info("Ad failed");
 });
 ```
 # INTERSTITIAL AD

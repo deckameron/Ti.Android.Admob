@@ -75,7 +75,9 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String ADAPTATIVE_BANNER = "ADAPTATIVE_BANNER";
     @Kroll.constant
-    public static final String REWARDED_VIDEO = "REWARDED_VIDEO";
+    public static final String REWARDED = "REWARDED";
+    @Kroll.constant
+    public static final String REWARDED_INTERSTITIAL = "REWARDED_INTERSTITIAL";
     @Kroll.constant
     public static final String MEDIUM_RECTANGLE = "MEDIUM_RECTANGLE";
     @Kroll.constant
