@@ -158,7 +158,7 @@ var interstitialAd = Admob.createView({
     testDeviceId : "3F8D8AFD10D0211B8EDB393DD17E1CED", //USE YOUR DEVICE ID HERE
     adUnitId : 'ca-app-pub-3940256099942544/1033173712', //USE YOUR AD_UNIT ID HERE
 });
-win.add(interstitialAd);
+window.add(interstitialAd);
 
 interstitialAd.addEventListener(Admob.AD_LOADED, function(e) {
     Titanium.API.warn("Interstital Ad Received");
@@ -396,4 +396,4 @@ In testing your app with the UMP SDK, you may find it helpful to reset the state
 |[Interstitial](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/1033173712
 |[Interstitial Video](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/8691691433
 |[Rewarded Video](https://developers.google.com/admob/android/rewarded-video#request_rewarded_video_ad) | ca-app-pub-3940256099942544/5224354917
-|[Unified Native](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/2247696110
+|[Native](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/2247696110
