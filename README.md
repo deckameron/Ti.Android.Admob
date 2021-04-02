@@ -161,24 +161,24 @@ rewarded.addEventListener(Admob.AD_CLOSED, function(e) {
 # MULTIPLE AD SIZES
 ```javascript
 var multipleAds = Admob.createView({
-	top: 0,
-	viewType : Admob.TYPE_ADS,
-	adSizes: [
-		{width: 320, height: 100},
-		{width: 320, height: 50},
-		{width: 320, height: 240}
-	],
-	testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-	adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
+    top: 0,
+    viewType : Admob.TYPE_ADS,
+    adSizes: [
+        {width: 320, height: 100},
+        {width: 320, height: 50},
+        {width: 320, height: 240}
+    ],
+    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(multipleAds);	
 
 multipleAds.addEventListener(Admob.AD_RECEIVED, function(e) {
-	Titanium.API.info("Ad received");
+   Titanium.API.info("Ad received");
 });
 
 multipleAds.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-	Titanium.API.info("Ad failed");
+   Titanium.API.info("Ad failed");
 });
 ```
 # INTERSTITIAL AD
