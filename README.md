@@ -392,6 +392,8 @@ Reset consent state
 
 In testing your app with the UMP SDK, you may find it helpful to reset the state of the SDK so that you can simulate a user's first install experience. The SDK provides the resetConsentForm() method to do this.
 
+
+### How to use it:
 ```javascript
 Admob.addEventListener(Admob.CONSENT_READY, function (){
     console.log("Admod.CONSENT_READY");
@@ -400,9 +402,13 @@ Admob.addEventListener(Admob.CONSENT_READY, function (){
 Admob.addEventListener(Admob.CONSENT_INFO_UPDATE_FAILURE, function (){
     console.log("Admod.CONSENT_INFO_UPDATE_FAILURE");
 });
-           
+
 Admob.addEventListener(Admob.CONSENT_FORM_DISMISSED, function (){
     console.log("Admod.CONSENT_FORM_DISMISSED");
+});
+           
+Admob.addEventListener(Admob.CONSENT_FORM_LOADED, function (){
+    console.log("Admod.CONSENT_FORM_LOADED");
 });
 
 Admob.addEventListener(Admob.CONSENT_ERROR, function (e){

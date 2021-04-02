@@ -29,13 +29,6 @@ import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.FormError;
 import com.google.android.ump.UserMessagingPlatform;
 
-import com.google.android.ump.ConsentDebugSettings;
-import com.google.android.ump.ConsentForm;
-import com.google.android.ump.ConsentInformation;
-import com.google.android.ump.ConsentRequestParameters;
-import com.google.android.ump.FormError;
-import com.google.android.ump.UserMessagingPlatform;
-
 @Kroll.module(name="Admob", id="ti.android.admob")
 public class AdmobModule extends KrollModule
 {
@@ -71,6 +64,8 @@ public class AdmobModule extends KrollModule
     public static final String CONSENT_INFO_UPDATE_FAILURE = "consent_info_update_failure";
     @Kroll.constant
     public static final String CONSENT_FORM_DISMISSED = "consent_form_dismissed";
+    @Kroll.constant
+    public static final String CONSENT_FORM_LOADED = "consent_form_loaded";
     
     //AD SIZES
     @Kroll.constant
@@ -276,6 +271,11 @@ public class AdmobModule extends KrollModule
                 new UserMessagingPlatform.OnConsentFormLoadSuccessListener() {
                     @Override
                     public void onConsentFormLoadSuccess(ConsentForm consentForm) {
+
+                        if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_LOADED)) {
+                            AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_LOADED, (Object) new KrollDict());
+                        }
+
                         _consentForm = consentForm;
                         if(consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
                             consentForm.show((Activity) currentActivity,
