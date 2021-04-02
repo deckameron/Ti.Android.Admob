@@ -31,7 +31,38 @@ You can get it [here](https://github.com/deckameron/Ti.Android.Admob/blob/master
 
 ## How to use it
 
-First you need to require the module
+First you need add this meta-data to your tiapp.xml
+```xml
+<android>
+    <manifest>
+        <application
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+        
+            <!-- ========================== -->
+            <!-- THIS IS THE IMPORTANT PART -->
+            <meta-data
+                android:name="com.google.android.gms.ads.APPLICATION_ID"
+                android:value="YOUR-APP-ID"/>
+            <!-- THIS IS THE IMPORTANT PART -->
+            <!-- ========================== -->
+        
+            <activity android:name=".MainActivity">
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+            </activity>
+        </application>
+    </manifest>
+</android>
+```
+
+You need to require the module
 ```javascript
 var admob = require("ti.android.admob");
 ```
@@ -336,32 +367,6 @@ To create a Funding Choices account, go to Privacy & messaging in the AdMob UI a
 
 For more information, see [How IAB requirements affect EU consent messages](https://support.google.com/fundingchoices/answer/10207733).
 
-```xml
-<application
-    android:allowBackup="true"
-    android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:supportsRtl="true"
-    android:theme="@style/AppTheme">
-
-    <!-- ========================== -->
-    <!-- THIS IS THE IMPORTANT PART -->
-    <meta-data
-        android:name="com.google.android.gms.ads.APPLICATION_ID"
-        android:value="YOUR-APP-ID"/>
-    <!-- THIS IS THE IMPORTANT PART -->
-    <!-- ========================== -->
-
-    <activity android:name=".MainActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-</application>
-```
-
 ## Introduction
 
 Under the Google [EU User Consent Policy](https://www.google.com/about/company/user-consent-policy/), you must make certain disclosures to your users in the European Economic Area (EEA) along with the UK and obtain their consent to use cookies or other local storage, where legally required, and to use personal data (such as AdID) to serve ads. This policy reflects the requirements of the EU ePrivacy Directive and the General Data Protection Regulation (GDPR).
@@ -386,6 +391,27 @@ Shows a consent modal form. Arguments:
 Reset consent state
 
 In testing your app with the UMP SDK, you may find it helpful to reset the state of the SDK so that you can simulate a user's first install experience. The SDK provides the resetConsentForm() method to do this.
+
+```javascript
+Admob.addEventListener(Admob.CONSENT_READY, function (){
+    console.log("Admod.CONSENT_READY");
+});
+
+Admob.addEventListener(Admob.CONSENT_INFO_UPDATE_FAILURE, function (){
+    console.log("Admod.CONSENT_INFO_UPDATE_FAILURE");
+});
+           
+Admob.addEventListener(Admob.CONSENT_FORM_DISMISSED, function (){
+    console.log("Admod.CONSENT_FORM_DISMISSED");
+});
+
+Admob.addEventListener(Admob.CONSENT_ERROR, function (e){
+    console.log("Admod.CONSENT_ERROR");
+    console.log(e.message);
+});
+
+Admob.requestConsentForm();
+```
 
 
 # Google Test Ads Ids
