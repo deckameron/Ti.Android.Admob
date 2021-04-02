@@ -358,8 +358,8 @@ For more information, see [How IAB requirements affect EU consent messages](http
     <meta-data
         android:name="com.google.android.gms.ads.APPLICATION_ID"
         android:value="YOUR-APP-ID"/>
-<!-- THIS IS THE IMPORTANT PART -->
-<!-- ========================== -->
+    <!-- THIS IS THE IMPORTANT PART -->
+    <!-- ========================== -->
 
     <activity android:name=".MainActivity">
         <intent-filter>
