@@ -56,27 +56,36 @@ public class ViewProxy extends TiViewProxy {
             AdmobModule.TEST_DEVICE_ID = options.getString("testDeviceId");
         }
 	}
-	
-	@Kroll.method
-	public void showAdNow() {
-		this.adMob.showAdNow();
-	}
 
+	// DESTROY ADS
 	@Kroll.method
 	public void destoyAdViewAndCancelRequest() {
 		this.adMob.destroy();
 	}
-	
+
+	// REWARDED
 	@Kroll.method
-	public void loadRewardedAd() {
-		this.adMob.loadRewardedAdVideo();
+	public void requestNewRewardedAd() {
+		this.adMob.requestNewRewardedAd();
 	}
-	
+
 	@Kroll.method
-	public void requestInterstitalAd() {
-		this.adMob.requestInterstitalAd();
+	public void showRewardedAd() {
+		this.adMob.showRewardedAd();
 	}
-	
+
+	// INTERSTITIAL
+	@Kroll.method
+	public void requestNewInterstitialAd() {
+		this.adMob.requestNewInterstitialAd();
+	}
+
+	@Kroll.method
+	public void showInterstitialAd() {
+		this.adMob.showInterstitialAd();
+	}
+
+	// EVENTS
 	@Override
 	public void onPause(Activity activity) {
 	}
