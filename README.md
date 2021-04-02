@@ -177,148 +177,140 @@ interstitialAd.addEventListener(Admob.AD_CLOSED, function(e) {
 # NATIVE ADS
 ```javascript
 var masterView = Titanium.UI.createView({
-	width : Titanium.UI.FILL,
-	height : Titanium.UI.SIZE,
-	layout : "vertical"
+    width : Titanium.UI.FILL,
+    height : Titanium.UI.SIZE,
+    layout : "vertical"
 });
 
 var topView = Titanium.UI.createView({
-	top : 0,
-	left : 0,
-	right : 0,
-	height : Titanium.UI.SIZE,
-	layout : "horizontal"
+    top : 0,
+    left : 0,
+    right : 0,
+    height : Titanium.UI.SIZE,
+    layout : "horizontal"
 });
 masterView.add(topView);
 
 var contentad_logo = Titanium.UI.createImageView({
-	elevation : 12,
-	height : 50
+    elevation : 12,
+    height : 50
 });
 topView.add(contentad_logo);
 
 var contentad_advertiser = Titanium.UI.createLabel({
-	color : "#575757",
-	left : 16,
-	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
-	verticalAlign : Titanium.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-	height : 35,
-	font : {
-	fontSize : 18,
-		fontWeight : "bold"
-	}
+    color : "#575757",
+    left : 16,
+    textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
+    verticalAlign : Titanium.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+    height : 35,
+    font : {
+        fontSize : 18,
+        fontWeight : "bold"
+    }
 });
 topView.add(contentad_advertiser);
 
 var mediaView = Admob.createView({
-	viewType : Admob.TYPE_MEDIA,
-	top : 0,
-	left : 0,
-	right : 0,
-	height : 250
+    viewType : Admob.TYPE_MEDIA,
+    top : 0,
+    left : 0,
+    right : 0,
+    height : 250
 });
 masterView.add(mediaView);
 
 var contentad_headline = Titanium.UI.createLabel({
-	top : 16,
-	maxLines : 2,
-	color : "#000000",
-	left : 16,
-	right : 16,
-	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
-	font : {
-	fontSize : 20,
-	f	ontWeight : "bold"
-	}
+    top : 16,
+    maxLines : 2,
+    color : "#000000",
+    left : 16,
+    right : 16,
+    textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
+    font : {
+        fontSize : 20,
+        fontWeight : "bold"
+    }
 });
 masterView.add(contentad_headline);
 
 var contentad_body = Titanium.UI.createLabel({
-	color : "#575757",
-	left : 16,
-	right : 16,
-	textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
-	font : {
-	f	ontSize : 16
-	}
+    color : "#575757",
+    left : 16,
+    right : 16,
+    textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
+    font : {
+        fontSize : 16
+    }
 });
 masterView.add(contentad_body);
 
 var contentad_call_to_action = Titanium.UI.createButton({
-	top : 16,
-	elevation : 8,
-	right : 16,
-	width : Titanium.UI.SIZE,
-	height : 35,
-	backgroundColor : "#ff5722",
-	font : {
-	fontSize : 14,
-		fontWeight : "bold"
-	}
+    top : 16,
+    elevation : 8,
+    right : 16,
+    width : Titanium.UI.SIZE,
+    height : 35,
+    backgroundColor : "#ff5722",
+    font : {
+        fontSize : 14,
+        fontWeight : "bold"
+    }
 });
 masterView.add(contentad_call_to_action);
 
 var ratingView = Admob.createView({
-	viewType : Admob.TYPE_STARS,
-	left : 0,
-	right : 0
+    viewType : Admob.TYPE_STARS,
+    left : 0,
+    right : 0
 });
 masterView.add(ratingView);
 
 var contentad_store_view = Titanium.UI.createLabel({
-	color : "#D50000",
-	top : 8,
-	font : {
-		fontSize : 16
-	}
+    color : "#D50000",
+    top : 8,
+    font : {
+        fontSize : 16
+    }
 });
 masterView.add(contentad_store_view);
 
 var contentad_price_view = Titanium.UI.createLabel({
-	color : "#575757",
-	height : Titanium.UI.SIZE,
-	width : Titanium.UI.SIZE,
-	font : {
-		fontSize : 12
-	}
+    color : "#575757",
+    height : Titanium.UI.SIZE,
+    width : Titanium.UI.SIZE,
+    font : {
+        fontSize : 12
+    }
 });
 masterView.add(contentad_advertiser);
 
 var nativeAd = Admob.createView({
-	//Standard Widgets
-	masterView : masterView,
-	headlineLabel : contentad_headline,
-	bodyLabel : contentad_body,
-	callToActionButton : contentad_call_to_action,
-	logoOrIconImageView : contentad_logo,
-	advertiserLabel : contentad_advertiser,
-	mediaView : mediaView,
+    //Standard Widgets
+    masterView : masterView,
+    headlineLabel : contentad_headline,
+    bodyLabel : contentad_body,
+    callToActionButton : contentad_call_to_action,
+    logoOrIconImageView : contentad_logo,
+    advertiserLabel : contentad_advertiser,
+    mediaView : mediaView,
 
-	//Store Widgets
-	storeLabel : contentad_store_view,
-	starsView : ratingView,
-	priceLabel : contentad_price_view,
+    //Store Widgets
+    storeLabel : contentad_store_view,
+    starsView : ratingView,
+    priceLabel : contentad_price_view,
 
-	top : 16,
-	left : 16,
-	right : 16,
-	height : Titanium.UI.SIZE,
-	backgroundColor : "#FFFFFF",
+    top : 16,
+    left : 16,
+    right : 16,
+    height : Titanium.UI.SIZE,
+    backgroundColor : "#FFFFFF",
 
-	viewType : Admob.TYPE_ADS,
-	adSizeType: Admob.UNIFIED_NATIVE_ADS,
-	adUnitId : "ca-app-pub-3940256099942544/2247696110",
-	testDeviceId : "E6BB08637D19DA5B1C7BBA4758FC0F95",
+    viewType : Admob.TYPE_ADS,
+    adSizeType: Admob.NATIVE_ADS,
+    adUnitId : "ca-app-pub-3940256099942544/2247696110",
+    testDeviceId : "3F8D8AFD10D0211B8EDB393DD17E1CED",
 });
 window.add(nativeAd);
-
-nativeAd.addEventListener(Admob.AD_RECEIVED, function(e) {
-	Titanium.API.info("Native Ad received");
-});
-
-nativeAd.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-	Titanium.API.info("Native Ad failed");
-});
 ```
 # Events
 
