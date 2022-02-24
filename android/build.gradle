@@ -1,7 +1,18 @@
 println "Running gradle version: $gradle.gradleVersion"
 
+repositories {
+    google()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.jenkins-ci.org/public/' }
+}
+
 dependencies {
-	implementation 'com.google.android.ump:user-messaging-platform:1.0.0'
-	implementation 'com.google.firebase:firebase-ads:19.8.0'
+	implementation 'com.google.android.ump:user-messaging-platform:2.0.0'
+	// implementation 'com.google.android.gms:play-services-ads:20.4.0'
+	implementation 'com.google.firebase:firebase-ads:20.5.0'
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
+	implementation 'androidx.annotation:annotation:1.3.0'
+	//MEDIATION
+   	implementation 'com.google.ads.mediation:adcolony:4.6.5.0'
+   	implementation 'com.google.ads.mediation:facebook:6.8.0.0'
 }

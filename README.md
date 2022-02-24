@@ -20,6 +20,10 @@ For Ti.Android.Admob [5.1.5](https://github.com/deckameron/Ti.Android.Admob/blob
 For Ti.Android.Admob [7.0.1](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-7.0.1.zip)
 - [x] Titanium SDK 9.3.2+
 
+For Ti.Android.Admob [8.0.1](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-8.0.1.zip)
+- [x] Titanium SDK 10.0.0+
+
+
 ## Doubleclick for Publishers Developer Docs
 
 <https://developers.google.com/mobile-ads-sdk/>
@@ -27,7 +31,7 @@ For Ti.Android.Admob [7.0.1](https://github.com/deckameron/Ti.Android.Admob/blob
 All AdViews, except Rewarded, have the parameters **_keyword_** and **_contentUrl_** and can be used with DFP mapping
 
 ## Download
-You can get it [here](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-7.0.1.zip?raw=true)
+You can get it [here](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/)
 
 ## How to use it
 
@@ -203,6 +207,7 @@ interstitialAd.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
 
 interstitialAd.addEventListener(Admob.AD_CLOSED, function(e) {
     Titanium.API.warn("Interstital ad close successfully. RIP!");
+    interstitialAd.requestNewInterstitialAd();
 });
 ```
 # NATIVE ADS
@@ -350,11 +355,12 @@ window.add(nativeAd);
 |_AD_RECEIVED_				|   Ad have been successfully received
 |_AD_NOT_RECEIVED_    				| 	A error occurred and the ads failed
 |_AD_DESTROYED_   | 	Ad had been successfully destroyed and wiped out of memory 
+|_AD_OPENED_                |   **(BANNER)** Called when an ad opens an overlay that covers the screen. (click)
 |_AD_LOADED_ 				| 	**(INTERSTITIAL and REWARDED)** Ad is loaded and ready to be displayed
 |_AD_CLOSED_	|  	**(REWARDED or INTERSTITIAL)** Ad had been successfully closed  
-|_AD_OPENED_    			|	**(REWARDED)** Ad is now on screen and visible
 |_AD_REWARDED_    	|	**(REWARDED)** When the video ended successfully and you can reward you user with his prize
 |_AD_FAILED_TO_SHOW_ | 	**(REWARDED or INTERSTITIAL)** When the ad fails to be displayed
+|_AD_SHOWED_FULLSCREEN_CONTENT_              |   Called when the ad showed the full screen content
 
 
 # Obtaining Consent with the User Messaging Platform

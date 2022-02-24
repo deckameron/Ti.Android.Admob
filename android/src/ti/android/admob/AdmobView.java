@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
@@ -42,10 +41,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
-import com.google.android.gms.ads.admanager.AdManagerAdView;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
@@ -71,7 +68,7 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 
 	private AdView adaptativeAdView;
 	private AdView appOpenAdView;
-	private AdManagerAdView adView;
+	private AdView adView;
 	private InterstitialAd _interstitialAd;
 	private RewardedAd _rewardedAd;
 	private RewardedInterstitialAd rewardedInterstitialAd;
@@ -142,24 +139,21 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 		myInflater = LayoutInflater.from((Context) this.proxy.getActivity());
 
 		// Initialize the Mobile Ads SDK.
-		 MobileAds.initialize((Context) this.proxy.getActivity(), AdmobModule.AD_UNIT_ID);
+		// MobileAds.initialize(this.proxy.getActivity());
 	}
 
 	private void createAppOpenAdView(){
-		Log.d(TAG, "createAdaptativeAdView()");
+		Log.d(TAG, "createAppOpenAdView()");
 		this.appOpenAdView = new AdView((Context) this.proxy.getActivity());
 
-		Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.AD_UNIT_ID));
-		this.appOpenAdView.setAdUnitId(AdmobModule.AD_UNIT_ID);
+		Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.APP_OPEN_AD_UNIT_ID));
+		this.appOpenAdView.setAdUnitId(AdmobModule.APP_OPEN_AD_UNIT_ID);
 
-		AdRequest adRequest = new AdRequest.Builder()
-			.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-			.addTestDevice(AdmobModule.TEST_DEVICE_ID)
-			.build();
+		AdRequest adRequest = new AdRequest.Builder().build();
 
 		AppOpenAd.load(
 			appContext,
-			AdmobModule.AD_UNIT_ID,
+			AdmobModule.APP_OPEN_AD_UNIT_ID,
 			adRequest,
 			AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
 			new AppOpenAd.AppOpenAdLoadCallback() {
@@ -208,13 +202,21 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 		Log.d(TAG, "createAdaptativeAdView()");
 		this.adaptativeAdView = new AdView((Context) this.proxy.getActivity());
 
-		Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.AD_UNIT_ID));
-		this.adaptativeAdView.setAdUnitId(AdmobModule.AD_UNIT_ID);
+		Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.BANNER_AD_UNIT_ID));
+		this.adaptativeAdView.setAdUnitId(AdmobModule.BANNER_AD_UNIT_ID);
 
-		AdRequest adRequest = new AdRequest.Builder()
-				.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-				.addTestDevice(AdmobModule.TEST_DEVICE_ID)
-				.build(); 
+		AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+		Bundle bundle = createAdRequestProperties();
+		if (bundle.size() > 0) {
+			Log.d(TAG, "extras.size() > 0 -- set ad properties");
+			Log.d(TAG, bundle.toString());
+			adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+		} else {
+			Log.d(TAG, "extras.size() = 0 -- no NPA detected");
+		}
+
+		AdRequest adRequest = adRequestBuilder.build();
 
 		// Step 2 - Determine the screen width (less decorations) to use for the ad
 		// width.
@@ -234,7 +236,31 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 		this.adaptativeAdView.setAdSize(adSize);
 		
 		this.adaptativeAdView.setAdListener(new AdListener() {
+			@Override
+			public void onAdClicked() {
+				Log.d(TAG, "onAdClicked()");
+				if (AdmobView.this.proxy != null) {
+					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_CLICKED)) {
+						AdmobView.this.proxy.fireEvent(AdmobModule.AD_CLICKED, (Object) new KrollDict());
+					}
+				} else {
+					Log.d(TAG, "Will not fire AdmobModule.AD_CLICKED event! Proxy is null.");
+				}
+			}
 
+			@Override
+			public void onAdOpened() {
+				Log.d(TAG, "onAdOpened()");
+				if (AdmobView.this.proxy != null) {
+					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_OPENED)) {
+						AdmobView.this.proxy.fireEvent(AdmobModule.AD_OPENED, (Object) new KrollDict());
+					}
+				} else {
+                    Log.d(TAG, "Will not fire AdmobModule.AD_OPENED event! Proxy is null.");
+                }
+			}
+
+			@Override
 			public void onAdLoaded() {
 				Log.d(TAG, "onAdLoaded()");
 				if (AdmobView.this.proxy != null) {
@@ -245,13 +271,15 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 				}
 			}
 
-			public void onAdFailedToLoad(int errorCode) {
-				Log.d(TAG, ("onAdFailedToLoad(): " + getErrorReason(errorCode)));
+			@Override
+			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+				Log.d(TAG, ("onAdFailedToLoad(): " + getErrorReason(loadAdError.getCode())));
 				if (AdmobView.this.proxy != null) {
 					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
 						KrollDict errorCallback = new KrollDict();
-						errorCallback.put("errorCode", errorCode);
-						errorCallback.put("errorReason", getErrorReason(errorCode));
+						errorCallback.put("cause", loadAdError.getCause());
+						errorCallback.put("code", loadAdError.getCode());
+						errorCallback.put("message", loadAdError.getMessage());
 						AdmobView.this.proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, (Object) errorCallback);
 					}
 				}
@@ -267,23 +295,14 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 	private void createAdView(String type, AdSize SIZE) {
 
 		Log.d(TAG, "createAdView() " + type);
-		this.adView = new AdManagerAdView((Context) this.proxy.getActivity());
+		this.adView = new AdView(this.proxy.getActivity());
 
-		if (AdmobModule.AD_SIZES != null) {
-			if (SIZE != null) {
-				AdmobModule.AD_SIZES.add(SIZE);
-			}
-			this.adView.setAdSizes(AdmobModule.AD_SIZES.toArray(new AdSize[0]));
-		} else {
-			this.adView.setAdSizes(SIZE);
-		}
+		this.adView.setAdSize(SIZE);
 
 		Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.AD_UNIT_ID));
 		this.adView.setAdUnitId(AdmobModule.AD_UNIT_ID);
 
 		AdManagerAdRequest.Builder AdRequestBuilder = new AdManagerAdRequest.Builder();
-
-		AdRequestBuilder.addTestDevice(AdManagerAdRequest.DEVICE_ID_EMULATOR).addTestDevice(AdmobModule.TEST_DEVICE_ID);
 
 		Bundle bundle = createAdRequestProperties();
 		if (bundle.size() > 0) {
@@ -303,7 +322,42 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 		AdManagerAdRequest adRequest = AdRequestBuilder.build();
 
 		this.adView.setAdListener(new AdListener() {
+			@Override
+			public void onAdClicked() {
+				Log.d(TAG, "onAdClicked()");
+				if (AdmobView.this.proxy != null) {
+					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_CLICKED)) {
+						AdmobView.this.proxy.fireEvent(AdmobModule.AD_CLICKED, (Object) new KrollDict());
+					}
+				} else {
+					Log.d(TAG, "Will not fire AdmobModule.AD_CLICKED event! Proxy is null.");
+				}
+			}
 
+			@Override
+			public void onAdOpened() {
+				Log.d(TAG, "onAdOpened()");
+				if (AdmobView.this.proxy != null) {
+					//Log.d(TAG, "onAdLoaded() " + adView.getWidth() + ", " + adView.getHeight());
+					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_OPENED)) {
+						AdmobView.this.proxy.fireEvent(AdmobModule.AD_OPENED, (Object) new KrollDict());
+					}
+				}
+			}
+
+			@Override
+			public void onAdClosed() {
+				// Code to be executed when the user is about to return
+				// to the app after tapping on an ad.
+				Log.d(TAG, "onAdClosed()");
+				if (AdmobView.this.proxy != null) {
+					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_CLOSED)) {
+						AdmobView.this.proxy.fireEvent(AdmobModule.AD_CLOSED, (Object) new KrollDict());
+					}
+				}
+			}
+
+			@Override
 			public void onAdLoaded() {
 				Log.d(TAG, "onAdLoaded()");
 				if (AdmobView.this.proxy != null) {
@@ -314,13 +368,15 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 				}
 			}
 
-			public void onAdFailedToLoad(int errorCode) {
-				Log.d(TAG, ("onAdFailedToLoad(): " + getErrorReason(errorCode)));
+			@Override
+			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+				Log.d(TAG, ("onAdFailedToLoad(): " + getErrorReason(loadAdError.getCode())));
 				if (AdmobView.this.proxy != null) {
 					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
 						KrollDict errorCallback = new KrollDict();
-						errorCallback.put("errorCode", errorCode);
-						errorCallback.put("errorReason", getErrorReason(errorCode));
+						errorCallback.put("cause", loadAdError.getCause());
+						errorCallback.put("code", loadAdError.getCode());
+						errorCallback.put("message", loadAdError.getMessage());
 						AdmobView.this.proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, (Object) errorCallback);
 					}
 				}
@@ -335,9 +391,9 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 	// NATIVE ADS
 	private void createNativeAds() {
 
-		AdLoader.Builder builder = new AdLoader.Builder((Context) this.proxy.getActivity(), AdmobModule.AD_UNIT_ID);
+		AdLoader.Builder builder = new AdLoader.Builder(this.proxy.getActivity(), AdmobModule.NATIVE_AD_UNIT_ID);
 
-		frameLayout = new FrameLayout((Context) this.proxy.getActivity());
+		frameLayout = new FrameLayout(this.proxy.getActivity());
 		frameLayout.setLayoutParams(
 				new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -433,6 +489,29 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 		builder.withNativeAdOptions(adOptions);
 
 		AdLoader adLoader = builder.withAdListener(new AdListener() {
+
+			@Override
+			public void onAdOpened() {
+				Log.d(TAG, "onAdOpened()");
+				if (AdmobView.this.proxy != null) {
+					//Log.d(TAG, "onAdLoaded() " + adView.getWidth() + ", " + adView.getHeight());
+					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_OPENED)) {
+						AdmobView.this.proxy.fireEvent(AdmobModule.AD_OPENED, (Object) new KrollDict());
+					}
+				}
+			}
+
+			@Override
+			public void onAdClicked(){
+				Log.d(TAG, "onAdClicked()");
+				if (AdmobView.this.proxy != null) {
+					//Log.d(TAG, "onAdLoaded() " + adView.getWidth() + ", " + adView.getHeight());
+					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_CLICKED)) {
+						AdmobView.this.proxy.fireEvent(AdmobModule.AD_CLICKED, (Object) new KrollDict());
+					}
+				}
+			}
+
 			@Override
 			public void onAdLoaded() {
 				Log.d(TAG, "onAdLoaded()");
@@ -444,13 +523,14 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 			}
 
 			@Override
-			public void onAdFailedToLoad(int errorCode) {
-				Log.d(TAG, ("onAdFailedToLoad(): " + getErrorReason(errorCode)));
+			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+				Log.d(TAG, ("onAdFailedToLoad(): " + getErrorReason(loadAdError.getCode())));
 				if (AdmobView.this.proxy != null) {
 					if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
 						KrollDict errorCallback = new KrollDict();
-						errorCallback.put("errorCode", errorCode);
-						errorCallback.put("errorReason", getErrorReason(errorCode));
+						errorCallback.put("cause", loadAdError.getCause());
+						errorCallback.put("code", loadAdError.getCode());
+						errorCallback.put("message", loadAdError.getMessage());
 						AdmobView.this.proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, (Object) errorCallback);
 					}
 				}
@@ -458,8 +538,6 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 		}).build();
 
 		AdManagerAdRequest.Builder AdRequestBuilder = new AdManagerAdRequest.Builder();
-
-		AdRequestBuilder.addTestDevice(AdManagerAdRequest.DEVICE_ID_EMULATOR).addTestDevice(AdmobModule.TEST_DEVICE_ID);
 
 		Bundle bundle = createAdRequestProperties();
 		if (bundle.size() > 0) {
@@ -487,7 +565,7 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 
 		adLoader.loadAd(AR);
 
-		AdmobView.this.setNativeView((View) frameLayout);
+		AdmobView.this.setNativeView(frameLayout);
 	}
 
 	/**
@@ -623,7 +701,7 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 	}
 
 	public void requestRewardedInterstitialAd(){
-		RewardedInterstitialAd.load(appContext, AdmobModule.AD_UNIT_ID,
+		RewardedInterstitialAd.load(appContext, AdmobModule.REWARDED_INTERSTITIAL_AD_UNIT_ID,
 				new AdRequest.Builder().build(),  new RewardedInterstitialAdLoadCallback() {
 					@Override
 					public void onAdLoaded(RewardedInterstitialAd ad) {
@@ -669,8 +747,8 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 			public void onAdShowedFullScreenContent() {
 				Log.i(TAG, "onAdShowedFullScreenContent");
 				rewardedInterstitialAd = null;
-				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_OPENED)) {
-					AdmobView.this.proxy.fireEvent(AdmobModule.AD_OPENED, (Object) new KrollDict());
+				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_SHOWED_FULLSCREEN_CONTENT)) {
+					AdmobView.this.proxy.fireEvent(AdmobModule.AD_SHOWED_FULLSCREEN_CONTENT, (Object) new KrollDict());
 				}
 			}
 
@@ -709,12 +787,19 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 	}
 
 	public void requestNewRewardedAd(){
-		AdRequest adRequest = new AdRequest.Builder()
-				.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-				.addTestDevice(AdmobModule.TEST_DEVICE_ID)
-				.build();
 
-		RewardedAd.load(appContext, AdmobModule.AD_UNIT_ID,
+		AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+		Bundle bundle = createAdRequestProperties();
+		if (bundle.size() > 0) {
+			Log.d(TAG, "extras.size() > 0 -- set ad properties");
+			Log.d(TAG, bundle.toString());
+			adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+		}
+
+		AdRequest adRequest = adRequestBuilder.build();
+
+		RewardedAd.load(appContext, AdmobModule.REWARDED_AD_UNIT_ID,
 				adRequest, new RewardedAdLoadCallback(){
 					@Override
 					public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
@@ -749,8 +834,8 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 				// Called when ad is shown.
 				Log.d(TAG, "Ad was shown.");
 				_rewardedAd = null;
-				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_OPENED)) {
-					AdmobView.this.proxy.fireEvent(AdmobModule.AD_OPENED, (Object) new KrollDict());
+				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_SHOWED_FULLSCREEN_CONTENT)) {
+					AdmobView.this.proxy.fireEvent(AdmobModule.AD_SHOWED_FULLSCREEN_CONTENT, (Object) new KrollDict());
 				}
 			}
 
@@ -808,12 +893,21 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 	}
 
 	public void requestNewInterstitialAd(){
-		AdRequest adRequest = new AdRequest.Builder()
-				.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-				.addTestDevice(AdmobModule.TEST_DEVICE_ID)
-				.build();
 
-		InterstitialAd.load(appContext, AdmobModule.AD_UNIT_ID, adRequest, new InterstitialAdLoadCallback() {
+		AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+		Bundle bundle = createAdRequestProperties();
+		if (bundle.size() > 0) {
+			Log.d(TAG, "extras.size() > 0 -- set ad properties");
+			Log.d(TAG, bundle.toString());
+			adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+		}
+
+		AdRequest adRequest = adRequestBuilder.build();
+
+		Log.d(TAG, AdmobModule.INTERSTITIAL_AD_UNIT_ID);
+
+		InterstitialAd.load(appContext, AdmobModule.INTERSTITIAL_AD_UNIT_ID, adRequest, new InterstitialAdLoadCallback() {
 			@Override
 			public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
 				// The mInterstitialAd reference will be null until
@@ -849,8 +943,8 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 				// Called when ad is shown.
 				Log.d(TAG, "Ad was shown.");
 				_interstitialAd = null;
-				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_OPENED)) {
-					AdmobView.this.proxy.fireEvent(AdmobModule.AD_OPENED, (Object) new KrollDict());
+				if (AdmobView.this.proxy.hasListeners(AdmobModule.AD_SHOWED_FULLSCREEN_CONTENT)) {
+					AdmobView.this.proxy.fireEvent(AdmobModule.AD_SHOWED_FULLSCREEN_CONTENT, (Object) new KrollDict());
 				}
 			}
 
@@ -1171,14 +1265,19 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 
 					if (adType.equals(AdmobModule.BANNER)) {
 						Log.w(TAG, ("BANNER ADS are deprecated! You show use ADAPTATIVE_BANNER instead"));
+						AdmobModule.BANNER_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
 						this.createAdView(adType, AdSize.BANNER);
 					} else if(adType.equals(AdmobModule.ADAPTATIVE_BANNER)) {
+						AdmobModule.BANNER_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
 						createAdaptativeAdView();
 					} else if(adType.equals(AdmobModule.OPEN_APP)) {
+						AdmobModule.APP_OPEN_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
 						createAppOpenAdView();
 					} else if (adType.equals(AdmobModule.REWARDED)) {
+						AdmobModule.REWARDED_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
 						this.createRewardedAdView();
 					} else if (adType.equals(AdmobModule.REWARDED_INTERSTITIAL)) {
+						AdmobModule.REWARDED_INTERSTITIAL_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
 						this.createRewardedInterstitialView();
 					} else if (adType.equals(AdmobModule.MEDIUM_RECTANGLE)) {
 						this.createAdView(adType, AdSize.MEDIUM_RECTANGLE);
@@ -1189,8 +1288,10 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 					} else if (adType.equals(AdmobModule.SMART_BANNER)) {
 						this.createAdView(adType, AdSize.SMART_BANNER);
 					} else if (adType.equals(AdmobModule.INTERSTITIAL)) {
+						AdmobModule.INTERSTITIAL_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
 						this.createInterstitialAdView();
 					} else if (adType.equals(AdmobModule.NATIVE_ADS)) {
+						AdmobModule.NATIVE_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
 						this.createNativeAds();
 					} else if (adType.equals(AdmobModule.FLUID)) {
 						this.createAdView(adType, AdSize.FLUID);
@@ -1239,21 +1340,21 @@ public class AdmobView extends TiUIView implements OnUserEarnedRewardListener {
 	private String getErrorReason(int errorCode) {
 		String errorReason = "";
 		switch (errorCode) {
-		case 0: {
-			errorReason = "Internal error";
-			break;
-		}
-		case 1: {
-			errorReason = "Invalid request";
-			break;
-		}
-		case 2: {
-			errorReason = "Network Error";
-			break;
-		}
-		case 3: {
-			errorReason = "No fill";
-		}
+            case 0: {
+                errorReason = "Internal error";
+                break;
+            }
+            case 1: {
+                errorReason = "Invalid request";
+                break;
+            }
+            case 2: {
+                errorReason = "Network Error";
+                break;
+            }
+            case 3: {
+                errorReason = "No fill";
+            }
 		}
 		return errorReason;
 	}

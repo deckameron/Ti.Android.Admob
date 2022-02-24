@@ -60,38 +60,38 @@ public class ViewProxy extends TiViewProxy {
 	// DESTROY ADS
 	@Kroll.method
 	public void destoyAdViewAndCancelRequest() {
-		this.adMob.destroy();
+		adMob.destroy();
 	}
 
 	// REWARDED INTERSTITIAL
 	@Kroll.method
-	public void requestRewardedInterstitialAd() { this.adMob.requestRewardedInterstitialAd(); }
+	public void requestRewardedInterstitialAd() { adMob.requestRewardedInterstitialAd(); }
 
 	@Kroll.method
 	public void showRewardedInterstitialAd() {
-		this.adMob.showRewardedInterstitialAd();
+		adMob.showRewardedInterstitialAd();
 	}
 
 	// REWARDED
 	@Kroll.method
 	public void requestNewRewardedAd() {
-		this.adMob.requestNewRewardedAd();
+		adMob.requestNewRewardedAd();
 	}
 
 	@Kroll.method
 	public void showRewardedAd() {
-		this.adMob.showRewardedAd();
+		adMob.showRewardedAd();
 	}
 
 	// INTERSTITIAL
 	@Kroll.method
 	public void requestNewInterstitialAd() {
-		this.adMob.requestNewInterstitialAd();
+		adMob.requestNewInterstitialAd();
 	}
 
 	@Kroll.method
 	public void showInterstitialAd() {
-		this.adMob.showInterstitialAd();
+		adMob.showInterstitialAd();
 	}
 
 	// EVENTS

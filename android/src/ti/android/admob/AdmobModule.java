@@ -21,6 +21,7 @@ import org.appcelerator.titanium.TiApplication;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm;
@@ -57,7 +58,11 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String AD_REWARDED = "ad_rewarded";
     @Kroll.constant
-    public static final String CONSENT_READY = "consent_ready";
+    public static final String AD_CLICKED = "ad_clicked";
+    @Kroll.constant
+    public static final String AD_SHOWED_FULLSCREEN_CONTENT = "ad_clicked";
+    @Kroll.constant
+    public static final String CONSENT_FORM_READY = "consent_ready";
     @Kroll.constant
     public static final String CONSENT_ERROR = "consent_error";
     @Kroll.constant
@@ -66,7 +71,13 @@ public class AdmobModule extends KrollModule
     public static final String CONSENT_FORM_DISMISSED = "consent_form_dismissed";
     @Kroll.constant
     public static final String CONSENT_FORM_LOADED = "consent_form_loaded";
-    
+    @Kroll.constant
+    public static final String CONSENT_NOT_REQUIRED = "consent_not_required";
+    @Kroll.constant
+    public static final String CONSENT_REQUIRED = "consent_required";
+    @Kroll.constant
+    public static final String CONSENT_FORM_NOT_AVAILABLE = "consent_not_available";
+
     //AD SIZES
     @Kroll.constant
     public static final String OPEN_APP = "OPEN_APP";
@@ -98,11 +109,20 @@ public class AdmobModule extends KrollModule
     public static final String SEARCH = "SEARCH";
     @Kroll.constant
     public static final String WIDE_SKYSCRAPER = "WIDE_SKYSCRAPER";
-    
+
+
+    // AD UNIT IDS
+    public static String AD_UNIT_ID;
+    public static String BANNER_AD_UNIT_ID;
+    public static String INTERSTITIAL_AD_UNIT_ID;
+    public static String REWARDED_AD_UNIT_ID;
+    public static String REWARDED_INTERSTITIAL_AD_UNIT_ID;
+    public static String NATIVE_AD_UNIT_ID;
+    public static String APP_OPEN_AD_UNIT_ID;
+
     public static String TEST_DEVICE_ID;
     public static Boolean TESTING = false;
     public static String PUBLISHER_ID;
-    public static String AD_UNIT_ID;
     public static String PROPERTY_COLOR_BG;
     public static String NATIVE_ADS_BACKGROUND_COLOR;
     public static int AD_HEIGHT = 132;
@@ -203,6 +223,13 @@ public class AdmobModule extends KrollModule
     
 	// Response from "isGooglePlayServicesAvailable()""
 
+    @Kroll.onAppCreate
+    public static void onAppCreate(TiApplication app)
+    {
+        MobileAds.initialize(app);
+        Log.d(TAG, "-- onAppCreate --");
+    }
+
 	// clang-format off
 	@Kroll.setProperty
 	@Kroll.method
@@ -242,8 +269,13 @@ public class AdmobModule extends KrollModule
                         // You are now ready to check if a form is available.
                         if (consentInformation.isConsentFormAvailable()) {
                             loadForm();
-                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_READY)) {
-                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_READY, (Object) new KrollDict());
+                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_READY)) {
+                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_READY, (Object) new KrollDict());
+                            }
+                        } else {
+                            Log.d(TAG, ("Consent form is NOT AVAILABLE!"));
+                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_NOT_AVAILABLE)) {
+                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_NOT_AVAILABLE, (Object) new KrollDict());
                             }
                         }
                     }
@@ -280,20 +312,15 @@ public class AdmobModule extends KrollModule
 
                         _consentForm = consentForm;
                         if(consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
-                            consentForm.show((Activity) currentActivity,
-                                    new ConsentForm.OnConsentFormDismissedListener() {
-                                        @Override
-                                        public void onConsentFormDismissed(@Nullable FormError formError) {
-                                            // Handle dismissal by reloading form.
-                                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_DISMISSED)) {
-                                                KrollDict errorCallback = new KrollDict();
-                                                errorCallback.put("message", formError.getMessage());
-                                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_DISMISSED, (Object) errorCallback);
-                                            }
-                                            loadForm();
-                                        }
-                                    }
-                            );
+                            Log.d(TAG, ("Consent information is REQUIRED! You should call showConsentForm()"));
+                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_REQUIRED)) {
+                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_REQUIRED, (Object) new KrollDict());
+                            }
+                        } else {
+                            Log.d(TAG, ("Consent information is NOT REQUIRED!"));
+                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_NOT_REQUIRED)) {
+                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_NOT_REQUIRED, (Object) new KrollDict());
+                            }
                         }
                     }
                 },
@@ -311,8 +338,64 @@ public class AdmobModule extends KrollModule
         );
     }
 
+    // CONSENT STATUS
+    @Kroll.constant
+    public static final int CONSENT_STATUS_NOT_REQUIRED = ConsentInformation.ConsentStatus.NOT_REQUIRED;
+    @Kroll.constant
+    public static final int CONSENT_STATUS_OBTAINED = ConsentInformation.ConsentStatus.OBTAINED;
+    @Kroll.constant
+    public static final int CONSENT_STATUS_REQUIRED = ConsentInformation.ConsentStatus.REQUIRED;
+    @Kroll.constant
+    public static final int CONSENT_STATUS_UNKNOWN = ConsentInformation.ConsentStatus.UNKNOWN;
+
+    @Kroll.constant
+    public static final int CONSENT_INFO_NOT_READY = 99;
+
+
+    @Kroll.method
+    public void setTestDeviceId(String deviceId){
+        TEST_DEVICE_ID = deviceId;
+    }
+
+    @Kroll.method
+    public int getConsentStatus(){
+        if (consentInformation != null) {
+            return consentInformation.getConsentStatus();
+        }
+        Log.e(TAG, ("ConsentStatus error : CONSENT_INFO_NOT_READY. Did you call requestConsentForm()"));
+        return CONSENT_INFO_NOT_READY;
+    }
+
+    @Kroll.method
+    public void showConsentForm(){
+
+        Context currentActivity = TiApplication.getInstance().getCurrentActivity();
+
+        _consentForm.show((Activity) currentActivity,
+                new ConsentForm.OnConsentFormDismissedListener() {
+                    @Override
+                    public void onConsentFormDismissed(@Nullable FormError formError) {
+                        Log.d(TAG, ("onConsentFormDismissed : CONSENT_FORM_DISMISSED"));
+                        // Handle dismissal by reloading form.
+                        if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_DISMISSED)) {
+                            KrollDict errorCallback = new KrollDict();
+                            if (formError != null){
+                                errorCallback.put("message", formError.getMessage());
+                            }
+                            AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_DISMISSED, (Object) errorCallback);
+                        }
+                        loadForm();
+                    }
+                }
+        );
+    }
+
     @Kroll.method
     public void resetConsentForm(){
-        consentInformation.reset();
+        if (consentInformation != null) {
+            consentInformation.reset();
+        } else {
+            Log.e(TAG, ("ConsentStatus error : CONSENT_INFO_NOT_READY. Did you call requestConsentForm()"));
+        }
     }
 }
