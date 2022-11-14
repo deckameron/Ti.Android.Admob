@@ -13,14 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [5.1.5](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-5.1.5.zip) 
-- [x] Titanium SDK 7.0.0+
-- [x] [Ti.PlayServices](https://github.com/appcelerator-modules/ti.playservices) 16.1.3 module
-
-For Ti.Android.Admob [7.0.1](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-7.0.1.zip)
-- [x] Titanium SDK 9.3.2+
-
-For Ti.Android.Admob [8.0.1](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-8.0.1.zip)
+For Ti.Android.Admob [9.0.0](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.0.0.zip)
 - [x] Titanium SDK 10.0.0+
 
 
@@ -28,7 +21,7 @@ For Ti.Android.Admob [8.0.1](https://github.com/deckameron/Ti.Android.Admob/blob
 
 <https://developers.google.com/mobile-ads-sdk/>
 
-All AdViews, except Rewarded, have the parameters **_keyword_** and **_contentUrl_** and can be used with DFP mapping
+All AdViews, except Rewarded and RewardedInterstitial, have the parameters **_keyword_** and **_contentUrl_** and can be used with DFP mapping
 
 ## Download
 You can get it [here](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/)
@@ -68,54 +61,33 @@ First you need add this meta-data to your tiapp.xml
 
 You need to require the module
 ```javascript
-var admob = require("ti.android.admob");
+var Admob = require("ti.android.admob");
 ```
 
-It is recommended to get users locations before loading any ads in order the show a personalized Ads
+# SETTING A TEST DEVICE (VERY IMPORTANT)
 ```javascript
-if (!Titanium.Geolocation.hasLocationPermissions(Titanium.Geolocation.AUTHORIZATION_ALWAYS)) {
-	Titanium.API.warn('Location permissions not granted! Asking now...');
-	Titanium.Geolocation.requestLocationPermissions(Titanium.Geolocation.AUTHORIZATION_ALWAYS, function(e){
-		if (!e.success) {
-			Titanium.API.error('Location permissions declined!');
-		} else {
-			Titanium.API.info('Location permissions ready');
-			LoadAds();
-		}
-	});
-} else {
-	Titanium.API.warn('Location permissions already granted!');
-	LoadAds();
-}
+// Get your device id from the logs after you compile the project with the module for the fisrt time.
+AdMob.setTestDeviceId("AC65D99D31C5DA727B986DC35D45C091");
 ```
 
-# STANDARD ADVIEWS
+# STANDARD BANNER VIEWS
 ### Supported AdView Sizes
 
 |Types                |Description                          |
 |----------------|-------------------------------|
-|_ADAPTATIVE_BANNER_			|Drop-in replacement for the industry standard 320x50 banner size, as well as the smart banner format they supersede.
 |_BANNER_			|Mobile Marketing Association (MMA) banner ad size (320x50 density-independent pixels).                      
 |_LARGE_BANNER_    	|Large banner ad size (320x100 density-independent pixels).              
-|_SMART_BANNER_    |A dynamically sized banner that is full-width and auto-height.
+|_~~SMART_BANNER~~_    | DEPRECATED - A dynamically sized banner that is full-width and auto-height.
 |_MEDIUM_RECTANGLE_         |Interactive Advertising Bureau (IAB) medium rectangle ad size (300x250 density-independent pixels).
 |_FULLBANNER_         |Interactive Advertising Bureau (IAB) full banner ad size (468x60 density-independent pixels).
 |_LEADERBOARD_         |Interactive Advertising Bureau (IAB) leaderboard ad size (728x90 density-independent pixels).
-|_FLUID_         |A dynamically sized banner that matches its parent's width and expands/contracts its height to match the ad's content after loading completes.
-|_WIDE_SKYSCRAPER_         |IAB wide skyscraper ad size (160x600 density-independent pixels).
-|_SEARCH_         |A special variant of FLUID to be set on [SearchAdView](https://developers.google.com/android/reference/com/google/android/gms/ads/search/SearchAdView.html) when loading a [DynamicHeightSearchAdRequest](https://developers.google.com/android/reference/com/google/android/gms/ads/search/DynamicHeightSearchAdRequest.html)`.
 
 ```javascript
-var adView = Admob.createView({
+var adView = Admob.createBanner({
     bottom : 0,
     //keyword : "titanium",
     //contentUrl : "www.myur.com",
-    extras : {
-        'npa': '1' //Disable personalized ads
-    },
-    viewType : Admob.TYPE_ADS,
-    adSizeType: Admob.ADAPTATIVE_BANNER,
-    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
+    adSize: Admob.BANNER,
     adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(adView);	
@@ -128,49 +100,76 @@ adView.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
 	Titanium.API.info("Ad failed");
 });
 ```
-# MULTIPLE AD SIZES
-```javascript
-var multipleAds = Admob.createView({
-    top: 0,
-    viewType : Admob.TYPE_ADS,
-    adSizes: [
-        {width: 320, height: 100},
-        {width: 320, height: 50},
-        {width: 320, height: 240}
-    ],
-    testDeviceId : "G9CCEHKYF95FFR8152FX50D059DC8336", //USE YOUR DEVICE ID HERE
-    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
-});	
-window.add(multipleAds);	
 
-multipleAds.addEventListener(Admob.AD_RECEIVED, function(e) {
-   Titanium.API.info("Ad received");
+# INTERSTITIAL AD
+```javascript
+var interstitialAd = Admob.createInterstitial({
+    adUnitId : 'ca-app-pub-3940256099942544/1033173712', //USE YOUR AD_UNIT ID HERE
 });
 
-multipleAds.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-   Titanium.API.info("Ad failed");
+interstitialAd.addEventListener(Admob.AD_LOADED, function(e) {
+    Titanium.API.warn("Interstital Ad Received");
+    interstitialAd.show();
+});
+
+interstitialAd.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
+    Titanium.API.error("Interstital Ad failed");
+    console.log(JSON.stringify(e));
+});
+
+interstitialAd.addEventListener(Admob.AD_CLOSED, function(e) {
+    Titanium.API.warn("Interstital ad close successfully. RIP!");
+    interstitialAd.load();
 });
 ```
-# REWARDED VIDEOS or REWARDED INTERSTITIAL (Open Beta)
+
+# REWARDED INTERSTITIAL
 ```javascript
-var rewarded = Admob.createView({
-    viewType : Admob.TYPE_ADS,
-    adSizeType: Admob.REWARDED, // or Admob.REWARDED_INTERSTITIAL
-    testDeviceId : "3F8D8AFD10D0211B8EDB393DD17E1CED", //USE YOUR DEVICE ID HERE
+var rewardedInterstitial = Admob.createRewardedInterstitial({
     adUnitId: 'ca-app-pub-3940256099942544/5224354917', //USE YOUR AD_UNIT ID HERE
 });
-window.add(rewarded);
+
+rewardedInterstitial.addEventListener(Admob.AD_LOADED, function(e) {
+    Titanium.API.info("Rewarded Ad AD_LOADED");
+    rewardedInterstitial.show();
+});
+
+rewardedInterstitial.addEventListener(Admob.AD_REWARDED, function(e) {
+    Titanium.API.info("Rewarded Ad AD_REWARDED");
+    Titanium.API.info("Yay! You can give the user his reward now!");
+    Titanium.API.info(JSON.stringify(e));
+    rewardedInterstitial.load();
+});
+
+rewardedInterstitial.addEventListener(Admob.AD_OPENED, function(e) {
+    Titanium.API.info("Rewarded Ad AD_OPENED");
+});
+
+rewardedInterstitial.addEventListener(Admob.AD_FAILED_TO_SHOW, function(e) {
+    Titanium.API.info("Rewarded Ad AD_FAILED_TO_SHOW");
+});
+
+rewardedInterstitial.addEventListener(Admob.AD_CLOSED, function(e) {
+    Titanium.API.info("Rewarded Ad AD_CLOSED");
+});
+```
+
+# REWARDED
+```javascript
+var rewarded = Admob.createRewarded({
+    adUnitId: 'ca-app-pub-3940256099942544/5224354917', //USE YOUR AD_UNIT ID HERE
+});
 
 rewarded.addEventListener(Admob.AD_LOADED, function(e) {
     Titanium.API.info("Rewarded Ad AD_LOADED");
-    rewarded.showRewardedAd();
+    rewarded.show();
 });
 
 rewarded.addEventListener(Admob.AD_REWARDED, function(e) {
     Titanium.API.info("Rewarded Ad AD_REWARDED");
     Titanium.API.info("Yay! You can give the user his reward now!");
     Titanium.API.info(JSON.stringify(e));
-    rewarded.requestNewRewardedAd();
+    rewarded.load();
 });
 
 rewarded.addEventListener(Admob.AD_OPENED, function(e) {
@@ -185,31 +184,7 @@ rewarded.addEventListener(Admob.AD_CLOSED, function(e) {
     Titanium.API.info("Rewarded Ad AD_CLOSED");
 });
 ```
-# INTERSTITIAL AD
-```javascript
-var interstitialAd = Admob.createView({
-    viewType : Admob.TYPE_ADS,
-    adSizeType : Admob.INTERSTITIAL,
-    testDeviceId : "3F8D8AFD10D0211B8EDB393DD17E1CED", //USE YOUR DEVICE ID HERE
-    adUnitId : 'ca-app-pub-3940256099942544/1033173712', //USE YOUR AD_UNIT ID HERE
-});
-window.add(interstitialAd);
 
-interstitialAd.addEventListener(Admob.AD_LOADED, function(e) {
-    Titanium.API.warn("Interstital Ad Received");
-    interstitialAd.showInterstitialAd();
-});
-
-interstitialAd.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-    Titanium.API.error("Interstital Ad failed");
-    console.log(JSON.stringify(e));
-});
-
-interstitialAd.addEventListener(Admob.AD_CLOSED, function(e) {
-    Titanium.API.warn("Interstital ad close successfully. RIP!");
-    interstitialAd.requestNewInterstitialAd();
-});
-```
 # NATIVE ADS
 ```javascript
 var masterView = Titanium.UI.createView({
@@ -344,7 +319,6 @@ var nativeAd = Admob.createView({
     viewType : Admob.TYPE_ADS,
     adSizeType: Admob.NATIVE_ADS,
     adUnitId : "ca-app-pub-3940256099942544/2247696110",
-    testDeviceId : "3F8D8AFD10D0211B8EDB393DD17E1CED",
 });
 window.add(nativeAd);
 ```
@@ -356,6 +330,7 @@ window.add(nativeAd);
 |_AD_NOT_RECEIVED_    				| 	A error occurred and the ads failed
 |_AD_DESTROYED_   | 	Ad had been successfully destroyed and wiped out of memory 
 |_AD_OPENED_                |   **(BANNER)** Called when an ad opens an overlay that covers the screen. (click)
+|_AD_CLICKED_                |   **(BANNER)** Called when an ad click is validated.
 |_AD_LOADED_ 				| 	**(INTERSTITIAL and REWARDED)** Ad is loaded and ready to be displayed
 |_AD_CLOSED_	|  	**(REWARDED or INTERSTITIAL)** Ad had been successfully closed  
 |_AD_REWARDED_    	|	**(REWARDED)** When the video ended successfully and you can reward you user with his prize

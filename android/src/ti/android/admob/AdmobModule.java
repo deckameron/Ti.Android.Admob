@@ -10,37 +10,52 @@ package ti.android.admob;
 
 import android.app.Activity;
 import android.content.Context;
-
-import java.util.ArrayList;
-
-import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollModule;
-import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.kroll.common.Log;
-import org.appcelerator.titanium.TiApplication;
+import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
+import com.google.ads.mediation.inmobi.InMobiConsent;
+import com.google.android.ads.mediationtestsuite.MediationTestSuite;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.initialization.AdapterStatus;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.FormError;
 import com.google.android.ump.UserMessagingPlatform;
+import com.inmobi.sdk.InMobiSdk;
+
+import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollModule;
+import org.appcelerator.kroll.annotations.Kroll;
+import org.appcelerator.kroll.common.Log;
+import org.appcelerator.titanium.TiApplication;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Kroll.module(name="Admob", id="ti.android.admob")
 public class AdmobModule extends KrollModule
 {
 	private static final String TAG = "Admob Module";
-    public static String MODULE_NAME = "Android Admob Module";
+    public static String MODULE_NAME = "Admob";
 
     //CONSENT
     private ConsentInformation consentInformation;
     private ConsentForm _consentForm;
 
     //EVENTS
+    @Kroll.constant
+    public static final String ADMOB_READY = "ready";
+    @Kroll.constant
+    public static final String ADMOB_NOT_READY_YET = "not_ready_yet";
     @Kroll.constant
     public static final String AD_RECEIVED = "ad_received";
     @Kroll.constant
@@ -49,8 +64,6 @@ public class AdmobModule extends KrollModule
     public static final String AD_NOT_RECEIVED = "ad_not_received";
     @Kroll.constant
     public static final String AD_LOADED = "ad_loaded";
-    @Kroll.constant
-    public static final String AD_DESTROYED = "ad_destroyed";
     @Kroll.constant
     public static final String AD_OPENED = "ad_opened";
     @Kroll.constant
@@ -80,36 +93,20 @@ public class AdmobModule extends KrollModule
 
     //AD SIZES
     @Kroll.constant
-    public static final String OPEN_APP = "OPEN_APP";
+    public static final String BANNER = "BANNER";                       // 320x50
     @Kroll.constant
-    public static final String BANNER = "BANNER";
+    public static final String LARGE_BANNER = "LARGE_BANNER";           // 320x100
     @Kroll.constant
-    public static final String ADAPTATIVE_BANNER = "ADAPTATIVE_BANNER";
+    public static final String MEDIUM_RECTANGLE = "MEDIUM_RECTANGLE";   // 300x250
     @Kroll.constant
-    public static final String REWARDED = "REWARDED";
+    public static final String FULL_BANNER = "FULL_BANNER";             // 468x60
     @Kroll.constant
-    public static final String REWARDED_INTERSTITIAL = "REWARDED_INTERSTITIAL";
+    public static final String LEADERBOARD = "LEADERBOARD";             // 728x90
     @Kroll.constant
-    public static final String MEDIUM_RECTANGLE = "MEDIUM_RECTANGLE";
-    @Kroll.constant
-    public static final String FULL_BANNER = "FULL_BANNER";
-    @Kroll.constant
-    public static final String LEADERBOARD = "LEADERBOARD";
-    @Kroll.constant
-    public static final String SMART_BANNER = "SMART_BANNER";
-    @Kroll.constant
-    public static final String INTERSTITIAL = "INTERSTITIAL";
+    public static final String SMART_BANNER = "SMART_BANNER";           // Screen width x 32|50|90
+
     @Kroll.constant
     public static final String NATIVE_ADS = "NATIVE_ADS";
-    @Kroll.constant
-    public static final String FLUID = "FLUID";
-    @Kroll.constant
-    public static final String LARGE_BANNER = "LARGE_BANNER";
-    @Kroll.constant
-    public static final String SEARCH = "SEARCH";
-    @Kroll.constant
-    public static final String WIDE_SKYSCRAPER = "WIDE_SKYSCRAPER";
-
 
     // AD UNIT IDS
     public static String AD_UNIT_ID;
@@ -118,15 +115,10 @@ public class AdmobModule extends KrollModule
     public static String REWARDED_AD_UNIT_ID;
     public static String REWARDED_INTERSTITIAL_AD_UNIT_ID;
     public static String NATIVE_AD_UNIT_ID;
-    public static String APP_OPEN_AD_UNIT_ID;
 
     public static String TEST_DEVICE_ID;
-    public static Boolean TESTING = false;
-    public static String PUBLISHER_ID;
     public static String PROPERTY_COLOR_BG;
     public static String NATIVE_ADS_BACKGROUND_COLOR;
-    public static int AD_HEIGHT = 132;
-    public static int AD_WIDTH = 360;
     public static String PROPERTY_COLOR_BG_TOP;
     public static String PROPERTY_COLOR_BORDER;
     public static String PROPERTY_COLOR_TEXT;
@@ -135,13 +127,14 @@ public class AdmobModule extends KrollModule
     public static String PROPERTY_COLOR_TEXT_DEPRECATED;
     public static String PROPERTY_COLOR_LINK_DEPRECATED;
     public static String AD_SIZE_TYPE;
-    public static ArrayList<AdSize> AD_SIZES;
     public static String AD_SIZES_LABEL;
     public static String KEYWORD;
     public static String CONTENT_URL;
     public static String CUSTOM_NATIVE_TEMPLATE_ID;
     
     public static String VIEW_TYPE;
+
+    public static Boolean INIT_READY = false;
     
     @Kroll.constant
     public static final String TYPE_ADS = "ads";
@@ -165,23 +158,18 @@ public class AdmobModule extends KrollModule
     public static String PRICE_LABEL;
     public static String EXTRA_BUNDLE;
 
-    public AdmobModule() {
-        Log.d(TAG, "Admob Module Instantiated");
-    }
+    // Colors
+    static Bundle extras;
+    public static String prop_color_bg;
+    public static String prop_color_bg_top;
+    public static String prop_color_border;
+    public static String prop_color_text;
+    public static String prop_color_link;
+    public static String prop_color_url;
 
-    public void setTesting(Boolean testing) {
-        Log.d(TAG, "setTesting(): " + testing);
-        TESTING = testing;
-    }
-    
-    public void setHeight(int height) {
-        Log.d(TAG, "setHeight(): " + height);
-        AD_HEIGHT = height;
-    }
-    
-    public void setWidth(int width) {
-        Log.d(TAG, "setHeight(): " + width);
-        AD_WIDTH = width;
+    public AdmobModule() {
+        super(MODULE_NAME);
+        Log.d(TAG, "Admob Module Instantiated");
     }
 
     static {
@@ -217,28 +205,81 @@ public class AdmobModule extends KrollModule
         
         EXTRA_BUNDLE = "extras";
     }
-    
-    private final String ANDROID_ADVERTISING_ID = "androidAdId";
-	private final String IS_LIMIT_AD_TRACKING_ENABLED = "isLimitAdTrackingEnabled";
-    
-	// Response from "isGooglePlayServicesAvailable()""
 
-    @Kroll.onAppCreate
-    public static void onAppCreate(TiApplication app)
-    {
-        MobileAds.initialize(app);
-        Log.d(TAG, "-- onAppCreate --");
+    // Handle creation options
+    @Override
+    public void handleCreationDict(KrollDict options) {
+        Log.d(TAG, "handleCreationDict...");
+        super.handleCreationDict(options);
     }
 
-	// clang-format off
-	@Kroll.setProperty
-	@Kroll.method
-	public void setPublisherId(String pubId)
-	// clang-format on
-	{
-		Log.d(TAG, "setPublisherId(): " + pubId);
-		PUBLISHER_ID = pubId;
-	}
+    public static AdmobModule getModuleInstance() {
+        TiApplication appContext = TiApplication.getInstance();
+        AdmobModule module = (AdmobModule) appContext.getModuleByName(MODULE_NAME);
+        return module;
+    }
+
+    @Kroll.onAppCreate
+    public static void onAppCreate(TiApplication app) {
+        Log.d(TAG, "-- Ti.Android.Admob -> onAppCreate --");
+        MobileAds.initialize(app, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Map<String, AdapterStatus> statusMap = initializationStatus.getAdapterStatusMap();
+                for (String adapterClass : statusMap.keySet()) {
+                    AdapterStatus status = statusMap.get(adapterClass);
+                    Log.d("Admob Adapters", String.format(
+                            "Adapter name: %s, Description: %s, Latency: %d",
+                            adapterClass, status.getDescription(), status.getLatency()));
+                }
+
+                // Start loading ads here...
+                Log.d(TAG, "-- All Adapters are ready to request ads --");
+
+                AdmobModule module = getModuleInstance();
+                if (module != null && module.hasListeners(ADMOB_READY)) {
+                    module.fireEvent(ADMOB_READY, new KrollDict());
+                }
+
+                Log.d(TAG, "ADMOB_READY");
+                Log.d(TAG, "-- INIT_READY is now TRUE --");
+
+                INIT_READY = true;
+            }
+        });
+    }
+
+    @Kroll.method
+    public void showMediationTestSuite() {
+        MediationTestSuite.launch(TiApplication.getInstance().getCurrentActivity());
+    }
+
+    @Kroll.method
+    public boolean isAdmobReady(){
+        return INIT_READY;
+    }
+
+    @Kroll.method
+    public void setInMobi_updateGDPRConsent(boolean isEnable) {
+        JSONObject consentObject = new JSONObject();
+        try {
+            if (isEnable){
+                consentObject.put(InMobiSdk.IM_GDPR_CONSENT_AVAILABLE, true);
+                consentObject.put("gdpr", "1");
+                Log.d(TAG, "inMobi GDPR enabled");
+            } else {
+                consentObject.put(InMobiSdk.IM_GDPR_CONSENT_AVAILABLE, true);
+                consentObject.put("gdpr", "0");
+                Log.d(TAG, "inMobi GDPR disabled");
+            }
+        } catch (JSONException exception) {
+            Log.e(TAG, "inMobi GDPR error");
+            exception.printStackTrace();
+            return;
+        }
+
+        InMobiConsent.updateGDPRConsent(consentObject);
+    }
 
     @Kroll.method
     private void requestConsentForm(){
@@ -250,7 +291,7 @@ public class AdmobModule extends KrollModule
                 .setDebugGeography(ConsentDebugSettings
                         .DebugGeography
                         .DEBUG_GEOGRAPHY_EEA)
-                .addTestDeviceHashedId(AdmobModule.TEST_DEVICE_ID)
+                .addTestDeviceHashedId(TEST_DEVICE_ID)
                 .build();
 
         // Set tag for underage of consent. false means users are not underage.
@@ -269,13 +310,13 @@ public class AdmobModule extends KrollModule
                         // You are now ready to check if a form is available.
                         if (consentInformation.isConsentFormAvailable()) {
                             loadForm();
-                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_READY)) {
-                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_READY, (Object) new KrollDict());
+                            if (hasListeners(CONSENT_FORM_READY)) {
+                                fireEvent(CONSENT_FORM_READY, new KrollDict());
                             }
                         } else {
                             Log.d(TAG, ("Consent form is NOT AVAILABLE!"));
-                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_NOT_AVAILABLE)) {
-                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_NOT_AVAILABLE, (Object) new KrollDict());
+                            if (hasListeners(CONSENT_FORM_NOT_AVAILABLE)) {
+                                fireEvent(CONSENT_FORM_NOT_AVAILABLE, new KrollDict());
                             }
                         }
                     }
@@ -285,10 +326,10 @@ public class AdmobModule extends KrollModule
                     public void onConsentInfoUpdateFailure(FormError formError) {
                         // Handle the error.
                         Log.e(TAG, ("ConsentForm Update Failure : " + formError.getMessage()));
-                        if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_INFO_UPDATE_FAILURE)) {
+                        if (hasListeners(CONSENT_INFO_UPDATE_FAILURE)) {
                             KrollDict errorCallback = new KrollDict();
                             errorCallback.put("message", formError.getMessage());
-                            AdmobModule.this.fireEvent(AdmobModule.CONSENT_INFO_UPDATE_FAILURE, (Object) errorCallback);
+                            fireEvent(CONSENT_INFO_UPDATE_FAILURE, errorCallback);
                         }
                     }
                 }
@@ -306,20 +347,20 @@ public class AdmobModule extends KrollModule
                     @Override
                     public void onConsentFormLoadSuccess(ConsentForm consentForm) {
 
-                        if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_LOADED)) {
-                            AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_LOADED, (Object) new KrollDict());
+                        if (hasListeners(CONSENT_FORM_LOADED)) {
+                            fireEvent(CONSENT_FORM_LOADED, new KrollDict());
                         }
 
                         _consentForm = consentForm;
                         if(consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
                             Log.d(TAG, ("Consent information is REQUIRED! You should call showConsentForm()"));
-                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_REQUIRED)) {
-                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_REQUIRED, (Object) new KrollDict());
+                            if (hasListeners(CONSENT_REQUIRED)) {
+                                fireEvent(CONSENT_REQUIRED, new KrollDict());
                             }
                         } else {
                             Log.d(TAG, ("Consent information is NOT REQUIRED!"));
-                            if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_NOT_REQUIRED)) {
-                                AdmobModule.this.fireEvent(AdmobModule.CONSENT_NOT_REQUIRED, (Object) new KrollDict());
+                            if (hasListeners(CONSENT_NOT_REQUIRED)) {
+                                fireEvent(CONSENT_NOT_REQUIRED, new KrollDict());
                             }
                         }
                     }
@@ -328,10 +369,10 @@ public class AdmobModule extends KrollModule
                     @Override
                     public void onConsentFormLoadFailure(FormError formError) {
                         Log.e(TAG, ("ConsentForm error : " + formError.getMessage()));
-                        if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_ERROR)) {
+                        if (hasListeners(CONSENT_ERROR)) {
                             KrollDict errorCallback = new KrollDict();
                             errorCallback.put("message", formError.getMessage());
-                            AdmobModule.this.fireEvent(AdmobModule.CONSENT_ERROR, (Object) errorCallback);
+                            fireEvent(CONSENT_ERROR, errorCallback);
                         }
                     }
                 }
@@ -354,7 +395,13 @@ public class AdmobModule extends KrollModule
 
     @Kroll.method
     public void setTestDeviceId(String deviceId){
+
         TEST_DEVICE_ID = deviceId;
+
+        List<String> testDeviceIds = Arrays.asList(deviceId);
+        RequestConfiguration configuration =
+                new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
     }
 
     @Kroll.method
@@ -377,12 +424,12 @@ public class AdmobModule extends KrollModule
                     public void onConsentFormDismissed(@Nullable FormError formError) {
                         Log.d(TAG, ("onConsentFormDismissed : CONSENT_FORM_DISMISSED"));
                         // Handle dismissal by reloading form.
-                        if (AdmobModule.this.hasListeners(AdmobModule.CONSENT_FORM_DISMISSED)) {
+                        if (hasListeners(CONSENT_FORM_DISMISSED)) {
                             KrollDict errorCallback = new KrollDict();
                             if (formError != null){
                                 errorCallback.put("message", formError.getMessage());
                             }
-                            AdmobModule.this.fireEvent(AdmobModule.CONSENT_FORM_DISMISSED, (Object) errorCallback);
+                            fireEvent(CONSENT_FORM_DISMISSED, errorCallback);
                         }
                         loadForm();
                     }
@@ -398,4 +445,58 @@ public class AdmobModule extends KrollModule
             Log.e(TAG, ("ConsentStatus error : CONSENT_INFO_NOT_READY. Did you call requestConsentForm()"));
         }
     }
+
+    public static Bundle createAdRequestProperties() {
+        Bundle bundle = new Bundle();
+        if (prop_color_bg != null) {
+            Log.d(TAG, "color_bg: " + prop_color_bg);
+            bundle.putString("color_bg", prop_color_bg);
+        }
+        if (prop_color_bg_top != null)
+            bundle.putString("color_bg_top", prop_color_bg_top);
+        if (prop_color_border != null)
+            bundle.putString("color_border", prop_color_border);
+        if (prop_color_text != null)
+            bundle.putString("color_text", prop_color_text);
+        if (prop_color_link != null)
+            bundle.putString("color_link", prop_color_link);
+        if (prop_color_url != null)
+            bundle.putString("color_url", prop_color_url);
+        if (extras != null)
+            bundle.putAll(extras);
+
+        return bundle;
+    }
+
+    public static String getErrorReason(int errorCode) {
+        String errorReason = "";
+        switch (errorCode) {
+            case 0: {
+                errorReason = "Internal error";
+                break;
+            }
+            case 1: {
+                errorReason = "Invalid request";
+                break;
+            }
+            case 2: {
+                errorReason = "Network Error";
+                break;
+            }
+            case 3: {
+                errorReason = "No fill";
+            }
+        }
+        return errorReason;
+    }
+
+    /*
+     * ca-app-pub-3940256099942544/6300978111 Interstitial
+     * ca-app-pub-3940256099942544/1033173712 Interstitial Video
+     * ca-app-pub-3940256099942544/8691691433 Rewarded Video
+     * ca-app-pub-3940256099942544/5224354917 Native Advanced
+     * ca-app-pub-3940256099942544/2247696110 Native Advanced Video
+     * ca-app-pub-3940256099942544/1044960115 Banner
+     * ca-app-pub-3940256099942544/3419835294 Open App
+     */
 }
