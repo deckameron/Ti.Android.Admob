@@ -13,7 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.0.0](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.1.0.zip)
+For Ti.Android.Admob [9.1.0](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.1.0.zip)
 - [x] Titanium SDK 10.0.0+
 
 
@@ -67,7 +67,7 @@ var Admob = require("ti.android.admob");
 # SETTING A TEST DEVICE (VERY IMPORTANT)
 ```javascript
 // Get your device id from the logs after you compile the project with the module for the fisrt time.
-AdMob.setTestDeviceId("AC65D99D31C5DA727B986DC35D45C091");
+Admob.setTestDeviceId("AC65D99D31C5DA727B986DC35D45C091");
 ```
 
 # STANDARD BANNER VIEWS
