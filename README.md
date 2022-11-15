@@ -88,7 +88,7 @@ var adView = Admob.createBanner({
 
     // You can usethe supported adView sizes:
     adSize: Admob.BANNER,
-    // OR a custom size, like these:
+    // OR a custom size, like this:
     // customAdSize: {
     //     height: 50,
     //     width: 300
