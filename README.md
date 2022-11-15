@@ -85,10 +85,20 @@ AdMob.setTestDeviceId("AC65D99D31C5DA727B986DC35D45C091");
 ```javascript
 var adView = Admob.createBanner({
     bottom : 0,
+
+    // You can usethe supported adView sizes:
+    adSize: Admob.BANNER,
+    // OR a custom size, like these:
+    // customAdSize: {
+    //     height: 50,
+    //     width: 300
+    // },
+    
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
+
+    // DFP mapping
     //keyword : "titanium",
     //contentUrl : "www.myur.com",
-    adSize: Admob.BANNER,
-    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 });	
 window.add(adView);	
 
