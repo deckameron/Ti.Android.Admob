@@ -13,7 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.0.0](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.0.0.zip)
+For Ti.Android.Admob [9.0.0](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.1.0.zip)
 - [x] Titanium SDK 10.0.0+
 
 
