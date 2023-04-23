@@ -95,7 +95,6 @@ public class NativeAdView extends TiUIView {
 
 	// NATIVE ADS
 	private void createNativeAds() {
-
 		AdLoader.Builder builder = new AdLoader.Builder(proxy.getActivity(),
 				AdmobModule.NATIVE_AD_UNIT_ID);
 
@@ -608,7 +607,9 @@ public class NativeAdView extends TiUIView {
 						Log.w(TAG, ("Admob is not ready yet!"));
 						proxy.fireEvent(AdmobModule.ADMOB_NOT_READY_YET, new KrollDict());
 					} else if (adType.equals(AdmobModule.NATIVE_ADS)) {
-						AdmobModule.NATIVE_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
+						if (AdmobModule.AD_UNIT_ID != null) {
+							AdmobModule.NATIVE_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
+						}
 						createNativeAds();
 					}
 				} else {
