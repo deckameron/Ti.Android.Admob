@@ -197,6 +197,8 @@ public class NativeAdView extends TiUIView {
 					populateUnifiedNativeAdView(unifiedNativeAd, nativeAd);
 					frameLayout.removeAllViews();
 					frameLayout.addView(nativeAd);
+
+					fireEvent(AdmobModule.AD_LOADED, new KrollDict());
 				} else {
 					Log.e(TAG, "No master_view defined!");
 				}
