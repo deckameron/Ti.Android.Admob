@@ -44,7 +44,7 @@ import java.util.Map;
 @Kroll.module(name="Admob", id="ti.android.admob")
 public class AdmobModule extends KrollModule
 {
-	private static final String TAG = "Admob Module";
+    private static final String TAG = "Admob Module";
     public static String MODULE_NAME = "Admob";
 
     //CONSENT
@@ -149,6 +149,7 @@ public class AdmobModule extends KrollModule
     public static String MEDIA_VIEW;
     public static String HEADLINE_LABEL;
     public static String IMAGE_VIEW;
+    public static String IMAGE_LOGO;
     public static String BODY_LABEL;
     public static String CALL_TO_ACTION_BUTTON;
     public static String LOGO_OR_ICON_IMAGE_VIEW;
@@ -192,6 +193,7 @@ public class AdmobModule extends KrollModule
         IMAGE_VIEW = "imageView";
         BODY_LABEL = "bodyLabel";
         CALL_TO_ACTION_BUTTON = "callToActionButton";
+        IMAGE_LOGO = "imageLogo";
         LOGO_OR_ICON_IMAGE_VIEW = "logoOrIconImageView";
         ADVERTISER_LABEL = "advertiserLabel";
         STORE_LABEL = "storeLabel";

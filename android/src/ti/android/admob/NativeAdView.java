@@ -9,6 +9,7 @@ import org.appcelerator.titanium.TiBlob;
 import org.appcelerator.titanium.io.TiBaseFile;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.proxy.TiWindowProxy;
+import org.appcelerator.titanium.view.TiBorderWrapperView;
 import org.appcelerator.titanium.view.TiUIView;
 import org.appcelerator.titanium.util.TiColorHelper;
 import org.appcelerator.titanium.util.TiConvert;
@@ -59,7 +60,9 @@ public class NativeAdView extends TiUIView {
 	private RatingBar contentad_stars_view;
 
 	private ViewGroup contentad_logo;
+	private ViewGroup image_logo;
 	private ImageView contentad_logo_view;
+	private ImageView image_logo_view;
 
 	private TextView contentad_headline;
 	private TextView contentad_store;
@@ -79,6 +82,7 @@ public class NativeAdView extends TiUIView {
 	private LabelProxy contentad_body_proxy;
 	private ButtonProxy contentad_call_to_action_proxy;
 	private ImageViewProxy contentad_logo_proxy;
+	private ImageViewProxy content_ad_image_logo;
 	private LabelProxy contentad_advertiser_proxy;
 
 	private RatingBar ratingBar;
@@ -95,7 +99,6 @@ public class NativeAdView extends TiUIView {
 
 	// NATIVE ADS
 	private void createNativeAds() {
-
 		AdLoader.Builder builder = new AdLoader.Builder(proxy.getActivity(),
 				AdmobModule.NATIVE_AD_UNIT_ID);
 
@@ -129,8 +132,11 @@ public class NativeAdView extends TiUIView {
 					nativeAd.setBackgroundColor(native_ads_background_color);
 
 					if (contentad_call_to_action_proxy != null) {
-						contentad_call_to_action = (Button) contentad_call_to_action_proxy.getOrCreateView()
-								.getOuterView();
+						if (contentad_call_to_action_proxy.getOrCreateView().getOuterView() instanceof TiBorderWrapperView){
+							contentad_call_to_action = (Button) contentad_call_to_action_proxy.getOrCreateView().getNativeView();
+						} else {
+							contentad_call_to_action = (Button) contentad_call_to_action_proxy.getOrCreateView().getOuterView();
+						}
 					}
 
 					if (contentad_headline_proxy != null) {
@@ -162,6 +168,15 @@ public class NativeAdView extends TiUIView {
 						}
 					}
 
+					if (content_ad_image_logo != null) {
+						image_logo = (ViewGroup) content_ad_image_logo.getOrCreateView().getOuterView();
+						try {
+							image_logo_view = (ImageView) image_logo.getChildAt(0);
+						} catch (ClassCastException exc) {
+							image_logo_view = (ImageView) ((ViewGroup) image_logo.getChildAt(0)).getChildAt(0);
+						}
+					}
+
 					if (contentad_stars_proxy != null) {
 						contentad_stars = (ViewGroup) contentad_stars_proxy.getOrCreateView().getOuterView();
 						contentad_stars_view = (RatingBar) contentad_stars.getChildAt(0);
@@ -182,6 +197,8 @@ public class NativeAdView extends TiUIView {
 					populateUnifiedNativeAdView(unifiedNativeAd, nativeAd);
 					frameLayout.removeAllViews();
 					frameLayout.addView(nativeAd);
+
+					fireEvent(AdmobModule.AD_LOADED, new KrollDict());
 				} else {
 					Log.e(TAG, "No master_view defined!");
 				}
@@ -296,6 +313,9 @@ public class NativeAdView extends TiUIView {
 		if (contentad_logo_view != null) {
 			adView.setIconView(contentad_logo_view);
 		}
+		if (image_logo_view != null) {
+			adView.setImageView(image_logo_view);
+		}
 		if (contentad_price != null) {
 			adView.setPriceView(contentad_price);
 		}
@@ -322,46 +342,62 @@ public class NativeAdView extends TiUIView {
 			((TextView) adView.getBodyView()).setText(nativeAd.getBody());
 		}
 
-		if (nativeAd.getCallToAction() == null) {
-			adView.getCallToActionView().setVisibility(View.GONE);
-		} else {
-			adView.getCallToActionView().setVisibility(View.VISIBLE);
-			((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());
+		if (contentad_call_to_action != null) {
+			if (nativeAd.getCallToAction() == null) {
+				adView.getCallToActionView().setVisibility(View.GONE);
+			} else {
+				adView.getCallToActionView().setVisibility(View.VISIBLE);
+				((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());
+			}
 		}
 
-		if (nativeAd.getIcon() == null) {
-			adView.getIconView().setVisibility(View.GONE);
-		} else {
-			((ImageView) adView.getIconView()).setImageDrawable(nativeAd.getIcon().getDrawable());
-			adView.getIconView().setVisibility(View.VISIBLE);
+		if (contentad_logo_view != null) {
+			if (nativeAd.getIcon() == null) {
+				adView.getIconView().setVisibility(View.GONE);
+			} else {
+				((ImageView) adView.getIconView()).setImageDrawable(nativeAd.getIcon().getDrawable());
+				adView.getIconView().setVisibility(View.VISIBLE);
+			}
 		}
 
-		if (nativeAd.getPrice() == null) {
-			adView.getPriceView().setVisibility(View.GONE);
-		} else {
-			adView.getPriceView().setVisibility(View.VISIBLE);
-			((TextView) adView.getPriceView()).setText(nativeAd.getPrice());
+		if (image_logo_view != null) {
+			image_logo_view.setImageDrawable(nativeAd.getIcon().getDrawable());
 		}
 
-		if (nativeAd.getStore() == null) {
-			adView.getStoreView().setVisibility(View.GONE);
-		} else {
-			adView.getStoreView().setVisibility(View.VISIBLE);
-			((TextView) adView.getStoreView()).setText(nativeAd.getStore());
+		if (contentad_price_proxy != null) {
+			if (nativeAd.getPrice() == null) {
+				adView.getPriceView().setVisibility(View.GONE);
+			} else {
+				adView.getPriceView().setVisibility(View.VISIBLE);
+				((TextView) adView.getPriceView()).setText(nativeAd.getPrice());
+			}
 		}
 
-		if (nativeAd.getStarRating() == null) {
-			adView.getStarRatingView().setVisibility(View.GONE);
-		} else {
-			((RatingBar) adView.getStarRatingView()).setRating(nativeAd.getStarRating().floatValue());
-			adView.getStarRatingView().setVisibility(View.VISIBLE);
+		if (contentad_store_proxy != null) {
+			if (nativeAd.getStore() == null) {
+				adView.getStoreView().setVisibility(View.GONE);
+			} else {
+				adView.getStoreView().setVisibility(View.VISIBLE);
+				((TextView) adView.getStoreView()).setText(nativeAd.getStore());
+			}
 		}
 
-		if (nativeAd.getAdvertiser() == null) {
-			adView.getAdvertiserView().setVisibility(View.GONE);
-		} else {
-			((TextView) adView.getAdvertiserView()).setText(nativeAd.getAdvertiser());
-			adView.getAdvertiserView().setVisibility(View.VISIBLE);
+		if (contentad_stars_proxy != null) {
+			if (nativeAd.getStarRating() == null) {
+				adView.getStarRatingView().setVisibility(View.GONE);
+			} else {
+				((RatingBar) adView.getStarRatingView()).setRating(nativeAd.getStarRating().floatValue());
+				adView.getStarRatingView().setVisibility(View.VISIBLE);
+			}
+		}
+
+		if (contentad_advertiser_proxy != null) {
+			if (nativeAd.getAdvertiser() == null) {
+				adView.getAdvertiserView().setVisibility(View.GONE);
+			} else {
+				((TextView) adView.getAdvertiserView()).setText(nativeAd.getAdvertiser());
+				adView.getAdvertiserView().setVisibility(View.VISIBLE);
+			}
 		}
 
 		// This method tells the Google Mobile Ads SDK that you have finished populating
@@ -531,6 +567,15 @@ public class NativeAdView extends TiUIView {
 						Log.d(TAG, "[ERROR] Invalid type for contentad_price_view");
 					}
 				}
+				if (d.containsKey(AdmobModule.IMAGE_LOGO)) {
+					Object view = d.get(AdmobModule.IMAGE_LOGO);
+					if (view != null && view instanceof ImageViewProxy) {
+						Log.d(TAG, "[SUCESS] type for content_ad_image_logo is ImageViewProxy");
+						content_ad_image_logo = (ImageViewProxy) view;
+					} else {
+						Log.d(TAG, "[ERROR] Invalid type for content_ad_image_logo");
+					}
+				}
 
 				if (d.containsKey(AdmobModule.STORE_LABEL)) {
 					Object view = d.get(AdmobModule.STORE_LABEL);
@@ -608,7 +653,9 @@ public class NativeAdView extends TiUIView {
 						Log.w(TAG, ("Admob is not ready yet!"));
 						proxy.fireEvent(AdmobModule.ADMOB_NOT_READY_YET, new KrollDict());
 					} else if (adType.equals(AdmobModule.NATIVE_ADS)) {
-						AdmobModule.NATIVE_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
+						if (AdmobModule.AD_UNIT_ID != null) {
+							AdmobModule.NATIVE_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;
+						}
 						createNativeAds();
 					}
 				} else {
