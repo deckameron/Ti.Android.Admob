@@ -124,6 +124,9 @@ public class NativeAdView extends TiUIView {
 
 					tempNativeAd = unifiedNativeAd;
 
+					if (proxy == null) {
+						return;
+					}
 					com.google.android.gms.ads.nativead.NativeAdView nativeAd = new com.google.android.gms.ads.nativead.NativeAdView(proxy.getActivity());
 
 					nativeAd.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
