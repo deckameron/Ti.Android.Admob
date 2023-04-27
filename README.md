@@ -340,7 +340,7 @@ window.add(nativeAd);
 |_AD_NOT_RECEIVED_    				| 	A error occurred and the ads failed
 |_AD_DESTROYED_   | 	Ad had been successfully destroyed and wiped out of memory
 |_AD_OPENED_                |   **(BANNER)** Called when an ad opens an overlay that covers the screen. (click)
-|_AD_CLICKED_                |   **(BANNER)** Called when an ad click is validated.
+|_AD_CLICKED_                |   **(BANNER or INTERSTITIAL)** Called when an ad click is validated.
 |_AD_LOADED_ 				| 	**(INTERSTITIAL and REWARDED)** Ad is loaded and ready to be displayed
 |_AD_CLOSED_	|  	**(REWARDED or INTERSTITIAL)** Ad had been successfully closed  
 |_AD_REWARDED_    	|	**(REWARDED)** When the video ended successfully and you can reward you user with his prize
@@ -424,7 +424,6 @@ repositories {
 
 dependencies {
 	implementation 'com.google.ads.mediation:facebook:6.13.7.1'
-	implementation 'com.google.ads.mediation:inmobi:10.1.2.1'
 	implementation 'com.google.ads.mediation:pangle:5.1.0.6.0'
 }
 ```

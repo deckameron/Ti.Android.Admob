@@ -6,5 +6,5 @@ dependencies {
 
 	//MEDIATION
 	/* inMobi */
-	implementation 'com.google.ads.mediation:inmobi:10.1.2.1'
+	implementation 'com.google.ads.mediation:inmobi:10.5.4.1'
 }
