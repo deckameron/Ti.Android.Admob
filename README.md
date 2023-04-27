@@ -410,6 +410,24 @@ Admob.addEventListener(Admob.CONSENT_ERROR, function (e){
 Admob.requestConsentForm();
 ```
 
+# Mediation Networks
+
+If you want to use different mediation networks (https://developers.google.com/admob/android/choose-networks) you have to add the dependencies to your app build.gradle file. For example:
+```
+repositories {
+    google()
+    mavenCentral()
+    maven {
+        url 'https://artifact.bytedance.com/repository/pangle/'
+    }
+}
+
+dependencies {
+	implementation 'com.google.ads.mediation:facebook:6.13.7.1'
+	implementation 'com.google.ads.mediation:inmobi:10.1.2.1'
+	implementation 'com.google.ads.mediation:pangle:5.1.0.6.0'
+}
+```
 
 # Google Test Ads Ids
 |Events                |Description                          |
