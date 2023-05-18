@@ -1,14 +1,14 @@
 # Ti.Android.Admob ![](http://gitt.io/badge.svg)
 Allows for the display of AdMob in Titanium Android applications.
 
-Please note that if your androidManifest has screen support set to: **android:anyDensity="false"**, any banner ads will 
+Please note that if your androidManifest has screen support set to: **android:anyDensity="false"**, any banner ads will
 display too small on high density devices.
 It is not clear at this point if this is a bug with AdMob or Titanium.
 In any event, you will either need to NOT set your screen support -- or set android:anyDensity="true" and adjust your app layout accordingly
 
 ## Getting Started
 
-View the [Using Titanium Modules](http://docs.appcelerator.com/titanium/latest/#!/guide/Using_Titanium_Modules) document 
+View the [Using Titanium Modules](http://docs.appcelerator.com/titanium/latest/#!/guide/Using_Titanium_Modules) document
 for instructions on getting started with using this module in your application.
 
 ## Requirements
@@ -39,7 +39,7 @@ First you need add this meta-data to your tiapp.xml
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        
+
             <!-- ========================== -->
             <!-- THIS IS THE IMPORTANT PART -->
             <meta-data
@@ -47,7 +47,7 @@ First you need add this meta-data to your tiapp.xml
                 android:value="YOUR-APP-ID"/>
             <!-- THIS IS THE IMPORTANT PART -->
             <!-- ========================== -->
-        
+
             <activity android:name=".MainActivity">
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
@@ -93,14 +93,14 @@ var adView = Admob.createBanner({
     //     height: 50,
     //     width: 300
     // },
-    
+
     adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT ID HERE
 
     // DFP mapping
     //keyword : "titanium",
     //contentUrl : "www.myur.com",
-});	
-window.add(adView);	
+});
+window.add(adView);
 
 adView.addEventListener(Admob.AD_RECEIVED, function(e) {
 	Titanium.API.info("Ad received");
@@ -231,7 +231,7 @@ var contentad_advertiser = Titanium.UI.createLabel({
 });
 topView.add(contentad_advertiser);
 
-var mediaView = Admob.createView({
+var mediaView = Admob.createNativeAd({
     viewType : Admob.TYPE_MEDIA,
     top : 0,
     left : 0,
@@ -279,7 +279,7 @@ var contentad_call_to_action = Titanium.UI.createButton({
 });
 masterView.add(contentad_call_to_action);
 
-var ratingView = Admob.createView({
+var ratingView = Admob.createNativeAd({
     viewType : Admob.TYPE_STARS,
     left : 0,
     right : 0
@@ -305,7 +305,7 @@ var contentad_price_view = Titanium.UI.createLabel({
 });
 masterView.add(contentad_advertiser);
 
-var nativeAd = Admob.createView({
+var nativeAd = Admob.createNativeAd({
     //Standard Widgets
     masterView : masterView,
     headlineLabel : contentad_headline,
@@ -338,7 +338,7 @@ window.add(nativeAd);
 |----------------|-------------------------------|
 |_AD_RECEIVED_				|   Ad have been successfully received
 |_AD_NOT_RECEIVED_    				| 	A error occurred and the ads failed
-|_AD_DESTROYED_   | 	Ad had been successfully destroyed and wiped out of memory 
+|_AD_DESTROYED_   | 	Ad had been successfully destroyed and wiped out of memory
 |_AD_OPENED_                |   **(BANNER)** Called when an ad opens an overlay that covers the screen. (click)
 |_AD_CLICKED_                |   **(BANNER)** Called when an ad click is validated.
 |_AD_LOADED_ 				| 	**(INTERSTITIAL and REWARDED)** Ad is loaded and ready to be displayed
@@ -397,7 +397,7 @@ Admob.addEventListener(Admob.CONSENT_INFO_UPDATE_FAILURE, function (){
 Admob.addEventListener(Admob.CONSENT_FORM_DISMISSED, function (){
     console.log("Admod.CONSENT_FORM_DISMISSED");
 });
-           
+
 Admob.addEventListener(Admob.CONSENT_FORM_LOADED, function (){
     console.log("Admod.CONSENT_FORM_LOADED");
 });
@@ -410,6 +410,24 @@ Admob.addEventListener(Admob.CONSENT_ERROR, function (e){
 Admob.requestConsentForm();
 ```
 
+# Mediation Networks
+
+If you want to use different mediation networks (https://developers.google.com/admob/android/choose-networks) you have to add the dependencies to your app build.gradle file. For example:
+```
+repositories {
+    google()
+    mavenCentral()
+    maven {
+        url 'https://artifact.bytedance.com/repository/pangle/'
+    }
+}
+
+dependencies {
+	implementation 'com.google.ads.mediation:facebook:6.13.7.1'
+	implementation 'com.google.ads.mediation:inmobi:10.1.2.1'
+	implementation 'com.google.ads.mediation:pangle:5.1.0.6.0'
+}
+```
 
 # Google Test Ads Ids
 |Events                |Description                          |
