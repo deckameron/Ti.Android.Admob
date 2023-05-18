@@ -20,7 +20,6 @@ import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
 
-
 public class AdaptativeBannerView extends TiUIView {
 
     private static final String TAG = "AdaptativeBannerAd";
@@ -122,14 +121,14 @@ public class AdaptativeBannerView extends TiUIView {
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode())));
                 if (proxy != null) {
-                    if (proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                    if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
                         KrollDict errorCallback = new KrollDict();
                         errorCallback.put("cause", loadAdError.getCause());
                         errorCallback.put("code", loadAdError.getCode());
                         errorCallback.put("message", loadAdError.getMessage());
                         errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
                         errorCallback.put("responseInfo", loadAdError.getResponseInfo().toString());
-                        proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
+                        proxy.fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
                     }
                 }
             }

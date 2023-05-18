@@ -66,13 +66,13 @@ public class InterstitialProxy extends KrollProxy {
                 _interstitialAd = null;
                 Log.d(TAG, "onAdFailedToLoad");
                 Log.i(TAG, loadAdError.getMessage());
-                if (hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
                     KrollDict errorCallback = new KrollDict();
                     errorCallback.put("cause", loadAdError.getCause());
                     errorCallback.put("code", loadAdError.getCode());
                     errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
                     errorCallback.put("message", loadAdError.getMessage());
-                    fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
+                    fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
                 }
             }
         });

@@ -63,8 +63,8 @@ public class RewardedInterstitialProxy extends KrollProxy implements OnUserEarne
                         rewardedError.put("code", loadAdError.getCode());
                         rewardedError.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
                         rewardedError.put("message", loadAdError.getMessage());
-                        if (hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
-                            fireEvent(AdmobModule.AD_NOT_RECEIVED, rewardedError);
+                        if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
+                            fireEvent(AdmobModule.AD_FAILED_TO_LOAD, rewardedError);
                         }
                     }
                 });

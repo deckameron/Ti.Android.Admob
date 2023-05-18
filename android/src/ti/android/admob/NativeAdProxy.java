@@ -17,7 +17,7 @@ import android.app.Activity;
 
 @Kroll.proxy(creatableInModule = AdmobModule.class)
 public class NativeAdProxy extends TiViewProxy {
-	
+
 	private NativeAdView nativeAdView;
 
 	public NativeAdProxy() {

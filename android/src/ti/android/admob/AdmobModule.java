@@ -44,7 +44,7 @@ import java.util.Map;
 @Kroll.module(name="Admob", id="ti.android.admob")
 public class AdmobModule extends KrollModule
 {
-	private static final String TAG = "Admob Module";
+    private static final String TAG = "Admob Module";
     public static String MODULE_NAME = "Admob";
 
     //CONSENT
@@ -61,11 +61,14 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String AD_CLOSED = "ad_closed";
     @Kroll.constant
-    public static final String AD_NOT_RECEIVED = "ad_not_received";
+    public static final String AD_FAILED_TO_LOAD = "ad_failed_to_load";
     @Kroll.constant
     public static final String AD_LOADED = "ad_loaded";
     @Kroll.constant
     public static final String AD_OPENED = "ad_opened";
+
+    @Kroll.constant
+    public static final String AD_NOT_READY= "ad_not_ready";
     @Kroll.constant
     public static final String AD_FAILED_TO_SHOW = "ad_failed_to_show";
     @Kroll.constant
@@ -112,6 +115,7 @@ public class AdmobModule extends KrollModule
     public static String AD_UNIT_ID;
     public static String BANNER_AD_UNIT_ID;
     public static String INTERSTITIAL_AD_UNIT_ID;
+    public static String APP_OPEN_AD_UNIT_ID;
     public static String REWARDED_AD_UNIT_ID;
     public static String REWARDED_INTERSTITIAL_AD_UNIT_ID;
     public static String NATIVE_AD_UNIT_ID;
@@ -149,6 +153,7 @@ public class AdmobModule extends KrollModule
     public static String MEDIA_VIEW;
     public static String HEADLINE_LABEL;
     public static String IMAGE_VIEW;
+    public static String IMAGE_LOGO;
     public static String BODY_LABEL;
     public static String CALL_TO_ACTION_BUTTON;
     public static String LOGO_OR_ICON_IMAGE_VIEW;
@@ -192,6 +197,7 @@ public class AdmobModule extends KrollModule
         IMAGE_VIEW = "imageView";
         BODY_LABEL = "bodyLabel";
         CALL_TO_ACTION_BUTTON = "callToActionButton";
+        IMAGE_LOGO = "imageLogo";
         LOGO_OR_ICON_IMAGE_VIEW = "logoOrIconImageView";
         ADVERTISER_LABEL = "advertiserLabel";
         STORE_LABEL = "storeLabel";
@@ -222,6 +228,7 @@ public class AdmobModule extends KrollModule
     @Kroll.onAppCreate
     public static void onAppCreate(TiApplication app) {
         Log.d(TAG, "-- Ti.Android.Admob -> onAppCreate --");
+
         MobileAds.initialize(app, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -329,6 +336,7 @@ public class AdmobModule extends KrollModule
                         if (hasListeners(CONSENT_INFO_UPDATE_FAILURE)) {
                             KrollDict errorCallback = new KrollDict();
                             errorCallback.put("message", formError.getMessage());
+                            errorCallback.put("code", formError.getErrorCode());
                             fireEvent(CONSENT_INFO_UPDATE_FAILURE, errorCallback);
                         }
                     }

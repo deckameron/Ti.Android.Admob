@@ -115,13 +115,13 @@ public class BannerView extends TiUIView {
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode())));
                 if (proxy != null) {
-                    if (proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                    if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
                         KrollDict errorCallback = new KrollDict();
                         errorCallback.put("cause", loadAdError.getCause());
                         errorCallback.put("code", loadAdError.getCode());
                         errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
                         errorCallback.put("message", loadAdError.getMessage());
-                        proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
+                        proxy.fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
                     }
                 }
             }
@@ -196,7 +196,7 @@ public class BannerView extends TiUIView {
                     createSmartBannerView(AdSize.LEADERBOARD);
                     break;
                 case AdmobModule.SMART_BANNER:
-                    createSmartBannerView(AdSize.SMART_BANNER);
+                    createSmartBannerView(AdSize.BANNER);
                     Log.w(TAG, ("SMART_BANNER has been deprecated and should be replaced by " +
                             "Adaptative Ads now. Create Adaptative Ads using the method " +
                             ".createAdaptiveBanner()."));
