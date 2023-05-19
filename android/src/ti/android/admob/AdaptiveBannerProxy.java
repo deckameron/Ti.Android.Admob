@@ -9,17 +9,17 @@ import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
 
 @Kroll.proxy(creatableInModule = AdmobModule.class)
-public class AdaptativeBannerProxy extends TiViewProxy implements TiLifecycle.OnLifecycleEvent {
+public class AdaptiveBannerProxy extends TiViewProxy implements TiLifecycle.OnLifecycleEvent {
 
-    private AdaptativeBannerView banner;
+    private AdaptiveBannerView banner;
 
-    public AdaptativeBannerProxy() {
+    public AdaptiveBannerProxy() {
         super();
     }
 
     @Override
     public TiUIView createView(Activity activity) {
-        banner = new AdaptativeBannerView(this);
+        banner = new AdaptiveBannerView(this);
         return banner;
     }
 

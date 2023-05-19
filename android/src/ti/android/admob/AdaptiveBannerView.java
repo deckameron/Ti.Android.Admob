@@ -20,27 +20,27 @@ import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
 
-public class AdaptativeBannerView extends TiUIView {
+public class AdaptiveBannerView extends TiUIView {
 
-    private static final String TAG = "AdaptativeBannerAd";
+    private static final String TAG = "AdaptiveBannerAd";
 
-    private AdView adaptativeAdView;
+    private AdView adaptiveAdView;
 
     private String keyword;
     private String contentUrl;
 
-    public AdaptativeBannerView(TiViewProxy proxy) {
+    public AdaptiveBannerView(TiViewProxy proxy) {
         super(proxy);
-        Log.d(TAG, "Creating AdaptativeBanner AdView");
+        Log.d(TAG, "Creating AdaptiveBanner AdView");
     }
 
-    private void createAdaptativeAdView() {
+    private void createAdaptiveAdView() {
 
-        Log.d(TAG, "createAdaptativeAdView()");
-        adaptativeAdView = new AdView(proxy.getActivity());
+        Log.d(TAG, "createAdaptiveAdView()");
+        adaptiveAdView = new AdView(proxy.getActivity());
 
         Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.BANNER_AD_UNIT_ID));
-        adaptativeAdView.setAdUnitId(AdmobModule.BANNER_AD_UNIT_ID);
+        adaptiveAdView.setAdUnitId(AdmobModule.BANNER_AD_UNIT_ID);
 
         // Step 2 - Determine the screen width (less decorations) to use for the ad width.
         int adWidth = 0;
@@ -48,7 +48,7 @@ public class AdaptativeBannerView extends TiUIView {
             WindowMetrics windowMetrics = proxy.getActivity().getWindowManager().getCurrentWindowMetrics();
             Rect bounds = windowMetrics.getBounds();
 
-            float adWidthPixels = adaptativeAdView.getWidth();
+            float adWidthPixels = adaptiveAdView.getWidth();
 
             // If the ad hasn't been laid out, default to the full screen width.
             if (adWidthPixels == 0f) {
@@ -58,7 +58,7 @@ public class AdaptativeBannerView extends TiUIView {
             float density = proxy.getActivity().getResources().getDisplayMetrics().density;
             adWidth = (int) (adWidthPixels / density);
             Log.d(TAG, "VERSION_CODES.R");
-            Log.d(TAG, "ADAPTATIVE adWidth = " + adWidth);
+            Log.d(TAG, "ADAPTIVE adWidth = " + adWidth);
 
         } else {
             Display display = proxy.getActivity().getWindowManager().getDefaultDisplay();
@@ -69,7 +69,7 @@ public class AdaptativeBannerView extends TiUIView {
             float density = outMetrics.density;
 
             adWidth = (int) (widthPixels / density);
-            Log.d(TAG, "ADAPTATIVE adWidth = " + adWidth);
+            Log.d(TAG, "ADAPTIVE adWidth = " + adWidth);
         }
 
         // Step 3 - Get adaptive ad size and return for setting on the ad view.
@@ -77,11 +77,11 @@ public class AdaptativeBannerView extends TiUIView {
         Log.d(TAG, "adSize: " + adSize);
 
         // Step 4 - Set the adaptive ad size on the ad view.
-        // adaptativeAdView.setAdSize(new AdSize(adWidth, 65));
-        adaptativeAdView.setAdSize(adSize);
+        // adaptiveAdView.setAdSize(new AdSize(adWidth, 65));
+        adaptiveAdView.setAdSize(adSize);
 
         // Step 5 - Set the adaptive event listeners.
-        adaptativeAdView.setAdListener(new AdListener() {
+        adaptiveAdView.setAdListener(new AdListener() {
             @Override
             public void onAdClicked() {
                 Log.d(TAG, "onAdClicked()");
@@ -111,8 +111,16 @@ public class AdaptativeBannerView extends TiUIView {
                 Log.d(TAG, "onAdLoaded()");
                 if (proxy != null) {
                     // Log.d(TAG, "onAdLoaded() " + adView.getWidth() + ", " + adView.getHeight());
+
+                    KrollDict sCallback = new KrollDict();
+
+                    if (proxy.hasListeners(AdmobModule.AD_LOADED)) {
+                        proxy.fireEvent(AdmobModule.AD_LOADED, sCallback);
+                    }
+                    // DEPRECATED
                     if (proxy.hasListeners(AdmobModule.AD_RECEIVED)) {
-                        proxy.fireEvent(AdmobModule.AD_RECEIVED, new KrollDict());
+                        Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
+                        proxy.fireEvent(AdmobModule.AD_RECEIVED, sCallback);
                     }
                 }
             }
@@ -121,21 +129,29 @@ public class AdaptativeBannerView extends TiUIView {
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode())));
                 if (proxy != null) {
+
+                    KrollDict errorCallback = new KrollDict();
+                    errorCallback.put("cause", loadAdError.getCause());
+                    errorCallback.put("code", loadAdError.getCode());
+                    errorCallback.put("message", loadAdError.getMessage());
+                    errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
+                    errorCallback.put("responseInfo", loadAdError.getResponseInfo().toString());
+
                     if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
-                        KrollDict errorCallback = new KrollDict();
-                        errorCallback.put("cause", loadAdError.getCause());
-                        errorCallback.put("code", loadAdError.getCode());
-                        errorCallback.put("message", loadAdError.getMessage());
-                        errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
-                        errorCallback.put("responseInfo", loadAdError.getResponseInfo().toString());
                         proxy.fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
+                    }
+
+                    //DEPRECATED
+                    if (proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                        Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
+                        proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
                     }
                 }
             }
         });
 
         // Step 6 - Convert to Titanium Native View.
-        setNativeView(adaptativeAdView);
+        setNativeView(adaptiveAdView);
 
         // Step 7 - Build and request the Ad.
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
@@ -161,7 +177,7 @@ public class AdaptativeBannerView extends TiUIView {
         Log.d(TAG, "Is test device? " + adRequest.isTestDevice(proxy.getActivity()));
 
         // Step 8 - Start loading the ad in the background.
-        adaptativeAdView.loadAd(adRequest);
+        adaptiveAdView.loadAd(adRequest);
     }
 
     @Override
@@ -184,24 +200,24 @@ public class AdaptativeBannerView extends TiUIView {
         }
 
         // Create the Banner
-        createAdaptativeAdView();
+        createAdaptiveAdView();
     };
 
     public void pause()
     {
         Log.d(TAG, "pause");
-        adaptativeAdView.pause();
+        adaptiveAdView.pause();
     }
 
     public void resume()
     {
         Log.d(TAG, "resume");
-        adaptativeAdView.resume();
+        adaptiveAdView.resume();
     }
 
     public void destroy()
     {
         Log.d(TAG, "destroy");
-        adaptativeAdView.destroy();
+        adaptiveAdView.destroy();
     }
 }

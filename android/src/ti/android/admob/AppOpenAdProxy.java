@@ -76,8 +76,17 @@ public class AppOpenAdProxy extends KrollProxy {
                         isLoadingAd = false;
 
                         setAppOpenEvents();
+
+                        KrollDict sCallback = new KrollDict();
+
                         if (hasListeners(AdmobModule.AD_LOADED)) {
-                            fireEvent(AdmobModule.AD_LOADED, new KrollDict());
+                            fireEvent(AdmobModule.AD_LOADED, sCallback);
+                        }
+
+                        // DEPRECATED
+                        if (hasListeners(AdmobModule.AD_RECEIVED)) {
+                            org.appcelerator.kroll.common.Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
+                            fireEvent(AdmobModule.AD_RECEIVED, sCallback);
                         }
                     }
 
@@ -87,13 +96,21 @@ public class AppOpenAdProxy extends KrollProxy {
                         org.appcelerator.kroll.common.Log.d(TAG, "onAdFailedToLoad");
                         Log.d(TAG, loadAdError.getMessage());
                         isLoadingAd = false;
+
+                        KrollDict errorCallback = new KrollDict();
+                        errorCallback.put("cause", loadAdError.getCause());
+                        errorCallback.put("code", loadAdError.getCode());
+                        errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
+                        errorCallback.put("message", loadAdError.getMessage());
+
                         if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
-                            KrollDict errorCallback = new KrollDict();
-                            errorCallback.put("cause", loadAdError.getCause());
-                            errorCallback.put("code", loadAdError.getCode());
-                            errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
-                            errorCallback.put("message", loadAdError.getMessage());
                             fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
+                        }
+
+                        //DEPRECATED
+                        if (hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                            org.appcelerator.kroll.common.Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
+                            fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
                         }
                     }
                 });

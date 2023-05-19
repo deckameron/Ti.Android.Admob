@@ -13,7 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.1.0](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.1.0.zip)
+For Ti.Android.Admob [9.2.1](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.2.1.zip)
 - [x] Titanium SDK 10.0.0+
 
 
@@ -70,20 +70,20 @@ var Admob = require("ti.android.admob");
 Admob.setTestDeviceId("AC65D99D31C5DA727B986DC35D45C091");
 ```
 
-# STANDARD BANNER VIEWS
+# BANNER
 ### Supported AdView Sizes
 
 |Types                |Description                          |
 |----------------|-------------------------------|
-|_BANNER_			|Mobile Marketing Association (MMA) banner ad size (320x50 density-independent pixels).                      
-|_LARGE_BANNER_    	|Large banner ad size (320x100 density-independent pixels).              
+|_BANNER_           |Mobile Marketing Association (MMA) banner ad size (320x50 density-independent pixels).                      
+|_LARGE_BANNER_     |Large banner ad size (320x100 density-independent pixels).              
 |_~~SMART_BANNER~~_    | DEPRECATED - A dynamically sized banner that is full-width and auto-height.
 |_MEDIUM_RECTANGLE_         |Interactive Advertising Bureau (IAB) medium rectangle ad size (300x250 density-independent pixels).
 |_FULLBANNER_         |Interactive Advertising Bureau (IAB) full banner ad size (468x60 density-independent pixels).
 |_LEADERBOARD_         |Interactive Advertising Bureau (IAB) leaderboard ad size (728x90 density-independent pixels).
 
 ```javascript
-var adView = Admob.createBanner({
+let adView = Admob.createBanner({
     bottom : 0,
 
     // You can usethe supported adView sizes:
@@ -102,18 +102,129 @@ var adView = Admob.createBanner({
 });
 window.add(adView);
 
-adView.addEventListener(Admob.AD_RECEIVED, function(e) {
-	Titanium.API.info("Ad received");
+adView.addEventListener(Admob.AD_LOADED, function(e) {
+    Titanium.API.info("Ad loaded");
 });
 
-adView.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
-	Titanium.API.info("Ad failed");
+adView.addEventListener(Admob.AD_FAILED_TO_LOAD, function(e) {
+    Titanium.API.info("Ad failed to load");
 });
 ```
 
-# INTERSTITIAL AD
+# ADAPTIVE BANNER
 ```javascript
-var interstitialAd = Admob.createInterstitial({
+let adView = Admob.createAdaptiveBanner({  
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT
+    // DFP mapping
+    //keyword : "titanium",
+    //contentUrl : "www.myur.com",   
+});  
+window.add(adView);
+
+adView.addEventListener(Admob.AD_LOADED, function(e) {
+    Titanium.API.info("Ad loaded");
+});
+
+adView.addEventListener(Admob.AD_FAILED_TO_LOAD, function(e) {
+    Titanium.API.info("Ad failed to load");
+});
+```
+
+# APP OPEN AD BANNER
+```javascript
+/** Key Points **/  
+  
+// App open ads will time out after four hours. Ads rendered more than four hours after request time will no  
+// longer be valid and may not earn revenue.  
+  
+/** Best Practices **/  
+  
+// Show your first app open ad after your users have used your app a few times.  
+  
+// Show app open ads during times when your users would otherwise be waiting for your app to load.  
+  
+// If you have a loading screen under the app open ad, and your loading screen completes loading before the ad  
+// is dismissed, you may want to dismiss your loading screen in the onAdDismissedFullScreenContent() method.  
+  
+/** Warning **/  
+  
+// Attempting to load a new ad from the Admob.AD_FAILED_TO_LOAD event is strongly discouraged.  
+// If you must load an ad from Admob.AD_FAILED_TO_LOAD, limit ad load retries to avoid continuous failed  
+// ad requests in situations such as limited network connectivity.  
+  
+const reload_max_tries_case_error = 4;  
+let reload_max_tries = 0;  
+  
+let appOpenAd = Admob.createAppOpenAd({  
+    adUnitId: "ca-app-pub-3940256099942544/3419835294", //USE YOUR AD_UNIT
+});  
+  
+appOpenAd.addEventListener(Admob.AD_FAILED_TO_SHOW, function (e) {
+    Titanium.API.error("======================== AppOpenAd - Failed to show ads ========================");  
+    Titanium.API.warn({
+        "message": e.message,
+        "cause": e.cause,
+        "code": e.code
+    });
+});  
+  
+appOpenAd.addEventListener(Admob.AD_SHOWED_FULLSCREEN_CONTENT, function () {
+    Titanium.API.info("======================== AppOpenAd - showed ads successfully ========================");
+});  
+  
+appOpenAd.addEventListener(Admob.AD_FAILED_TO_LOAD, function (e) {
+    Titanium.API.error("======================== AppOpenAd - failed to load ads ========================");
+    Titanium.API.warn({
+        "message": e.message,
+        "reason": e.reason,
+        "cause": e.cause,
+        "code": e.code
+    });
+
+    if (reload_max_tries < reload_max_tries_case_error){
+        appOpenAd.load();
+    }
+
+    reload_max_tries += 1;  
+});  
+  
+appOpenAd.addEventListener(Admob.AD_LOADED, function (e) {
+    Titanium.API.warn("======================== AppOpenAd - Ads Loaded and ready ========================");
+    reload_max_tries = 0;
+    Titanium.App.Properties.setDouble('appOpenAdLoadTime', (new Date().getTime()));
+});  
+  
+appOpenAd.addEventListener(Admob.AD_CLOSED, function (e) {
+    Titanium.API.warn("======================== AppOpenAd ad - CLOSED ========================");
+    Titanium.App.Properties.setDouble('lastTimeAppOpenAdWasShown', (new Date().getTime()));
+    appOpenAd.load();  
+});  
+  
+appOpenAd.addEventListener(Admob.AD_NOT_READY, function (e) {
+    Titanium.API.warn("======================== AppOpenAd ad - AD_NOT_READY ========================");
+    Titanium.API.warn(e.message);  
+});  
+  
+Titanium.App.addEventListener('resume', function () {
+    let currentTime = (new Date().getTime());
+    let loadTime = Titanium.App.Properties.getDouble('appOpenAdLoadTime', currentTime);
+    let lastTimeAppOpenAdWasShown = Titanium.App.Properties.getDouble('lastTimeAppOpenAdWasShown', 1);
+    
+    if ((currentTime - loadTime) < 14400000) { // then less than 4 hours elapsed.
+        if ((currentTime - lastTimeAppOpenAdWasShown) > 600000){ // then more than 10 minutes elapsed after the last Ad showed.
+            appOpenAd.show();
+        } else {
+            Titanium.API.warn("You have showned an AppOpenAd less than 10 minutes ago. You should wait!");
+        }
+    } else {
+        Titanium.API.warn("The AppOpenAd was requested more than 4 hours ago and has expired! You should load another one.");
+    }
+});
+```
+
+# INTERSTITIAL
+```javascript
+let interstitialAd = Admob.createInterstitial({
     adUnitId : 'ca-app-pub-3940256099942544/1033173712', //USE YOUR AD_UNIT ID HERE
 });
 
@@ -122,7 +233,7 @@ interstitialAd.addEventListener(Admob.AD_LOADED, function(e) {
     interstitialAd.show();
 });
 
-interstitialAd.addEventListener(Admob.AD_NOT_RECEIVED, function(e) {
+interstitialAd.addEventListener(Admob.AD_FAILED_TO_LOAD, function(e) {
     Titanium.API.error("Interstital Ad failed");
     console.log(JSON.stringify(e));
 });
@@ -135,7 +246,7 @@ interstitialAd.addEventListener(Admob.AD_CLOSED, function(e) {
 
 # REWARDED INTERSTITIAL
 ```javascript
-var rewardedInterstitial = Admob.createRewardedInterstitial({
+let rewardedInterstitial = Admob.createRewardedInterstitial({
     adUnitId: 'ca-app-pub-3940256099942544/5224354917', //USE YOUR AD_UNIT ID HERE
 });
 
@@ -147,7 +258,10 @@ rewardedInterstitial.addEventListener(Admob.AD_LOADED, function(e) {
 rewardedInterstitial.addEventListener(Admob.AD_REWARDED, function(e) {
     Titanium.API.info("Rewarded Ad AD_REWARDED");
     Titanium.API.info("Yay! You can give the user his reward now!");
-    Titanium.API.info(JSON.stringify(e));
+    Titanium.API.info({
+        "amount": e.amount,
+        "type": e.type
+    });
     rewardedInterstitial.load();
 });
 
@@ -166,7 +280,7 @@ rewardedInterstitial.addEventListener(Admob.AD_CLOSED, function(e) {
 
 # REWARDED
 ```javascript
-var rewarded = Admob.createRewarded({
+let rewarded = Admob.createRewarded({
     adUnitId: 'ca-app-pub-3940256099942544/5224354917', //USE YOUR AD_UNIT ID HERE
 });
 
@@ -178,7 +292,10 @@ rewarded.addEventListener(Admob.AD_LOADED, function(e) {
 rewarded.addEventListener(Admob.AD_REWARDED, function(e) {
     Titanium.API.info("Rewarded Ad AD_REWARDED");
     Titanium.API.info("Yay! You can give the user his reward now!");
-    Titanium.API.info(JSON.stringify(e));
+    Titanium.API.info({
+        "amount": e.amount,
+        "type": e.type
+    });
     rewarded.load();
 });
 
@@ -197,13 +314,13 @@ rewarded.addEventListener(Admob.AD_CLOSED, function(e) {
 
 # NATIVE ADS
 ```javascript
-var masterView = Titanium.UI.createView({
+let masterView = Titanium.UI.createView({
     width : Titanium.UI.FILL,
     height : Titanium.UI.SIZE,
     layout : "vertical"
 });
 
-var topView = Titanium.UI.createView({
+let topView = Titanium.UI.createView({
     top : 0,
     left : 0,
     right : 0,
@@ -212,13 +329,13 @@ var topView = Titanium.UI.createView({
 });
 masterView.add(topView);
 
-var contentad_logo = Titanium.UI.createImageView({
+let contentad_logo = Titanium.UI.createImageView({
     elevation : 12,
     height : 50
 });
 topView.add(contentad_logo);
 
-var contentad_advertiser = Titanium.UI.createLabel({
+let contentad_advertiser = Titanium.UI.createLabel({
     color : "#575757",
     left : 16,
     textAlign : Titanium.UI.TEXT_ALIGNMENT_LEFT,
@@ -231,7 +348,7 @@ var contentad_advertiser = Titanium.UI.createLabel({
 });
 topView.add(contentad_advertiser);
 
-var mediaView = Admob.createNativeAd({
+let mediaView = Admob.createNativeAd({
     viewType : Admob.TYPE_MEDIA,
     top : 0,
     left : 0,
@@ -240,7 +357,7 @@ var mediaView = Admob.createNativeAd({
 });
 masterView.add(mediaView);
 
-var contentad_headline = Titanium.UI.createLabel({
+let contentad_headline = Titanium.UI.createLabel({
     top : 16,
     maxLines : 2,
     color : "#000000",
@@ -254,7 +371,7 @@ var contentad_headline = Titanium.UI.createLabel({
 });
 masterView.add(contentad_headline);
 
-var contentad_body = Titanium.UI.createLabel({
+let contentad_body = Titanium.UI.createLabel({
     color : "#575757",
     left : 16,
     right : 16,
@@ -265,7 +382,7 @@ var contentad_body = Titanium.UI.createLabel({
 });
 masterView.add(contentad_body);
 
-var contentad_call_to_action = Titanium.UI.createButton({
+let contentad_call_to_action = Titanium.UI.createButton({
     top : 16,
     elevation : 8,
     right : 16,
@@ -279,14 +396,14 @@ var contentad_call_to_action = Titanium.UI.createButton({
 });
 masterView.add(contentad_call_to_action);
 
-var ratingView = Admob.createNativeAd({
+let ratingView = Admob.createNativeAd({
     viewType : Admob.TYPE_STARS,
     left : 0,
     right : 0
 });
 masterView.add(ratingView);
 
-var contentad_store_view = Titanium.UI.createLabel({
+let contentad_store_view = Titanium.UI.createLabel({
     color : "#D50000",
     top : 8,
     font : {
@@ -295,7 +412,7 @@ var contentad_store_view = Titanium.UI.createLabel({
 });
 masterView.add(contentad_store_view);
 
-var contentad_price_view = Titanium.UI.createLabel({
+let contentad_price_view = Titanium.UI.createLabel({
     color : "#575757",
     height : Titanium.UI.SIZE,
     width : Titanium.UI.SIZE,
@@ -305,7 +422,7 @@ var contentad_price_view = Titanium.UI.createLabel({
 });
 masterView.add(contentad_advertiser);
 
-var nativeAd = Admob.createNativeAd({
+let nativeAd = Admob.createNativeAd({
     //Standard Widgets
     masterView : masterView,
     headlineLabel : contentad_headline,
@@ -336,15 +453,16 @@ window.add(nativeAd);
 
 |Events                |Description                          |
 |----------------|-------------------------------|
-|_AD_RECEIVED_				|   Ad have been successfully received
-|_AD_NOT_RECEIVED_    				| 	A error occurred and the ads failed
-|_AD_DESTROYED_   | 	Ad had been successfully destroyed and wiped out of memory
+|_~~AD_RECEIVED~~_ (**DEPRECATED**)             |   Replaced by AD_LOADED
+|_AD_LOADED_                |   Ad is successfully loaded and ready to be displayed
+|_~~AD_NOT_RECEIVED~~_ (**DEPRECATED**)         |   Replaced by AD_FAILED_TO_LOAD
+|_AD_FAILED_TO_LOAD_                    |   A error occurred and the ads failed
+|_AD_DESTROYED_   |     Ad had been successfully destroyed and wiped out of memory
 |_AD_OPENED_                |   **(BANNER)** Called when an ad opens an overlay that covers the screen. (click)
 |_AD_CLICKED_                |   **(BANNER)** Called when an ad click is validated.
-|_AD_LOADED_ 				| 	**(INTERSTITIAL and REWARDED)** Ad is loaded and ready to be displayed
-|_AD_CLOSED_	|  	**(REWARDED or INTERSTITIAL)** Ad had been successfully closed  
-|_AD_REWARDED_    	|	**(REWARDED)** When the video ended successfully and you can reward you user with his prize
-|_AD_FAILED_TO_SHOW_ | 	**(REWARDED or INTERSTITIAL)** When the ad fails to be displayed
+|_AD_CLOSED_    |   **(REWARDED or INTERSTITIAL)** Ad had been successfully closed  
+|_AD_REWARDED_      |   **(REWARDED)** When the video ended successfully and you can reward you user with his prize
+|_AD_FAILED_TO_SHOW_ |  **(REWARDED or INTERSTITIAL)** When the ad fails to be displayed
 |_AD_SHOWED_FULLSCREEN_CONTENT_              |   Called when the ad showed the full screen content
 
 
@@ -423,9 +541,9 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.google.ads.mediation:facebook:6.13.7.1'
-	implementation 'com.google.ads.mediation:inmobi:10.1.2.1'
-	implementation 'com.google.ads.mediation:pangle:5.1.0.6.0'
+    implementation 'com.google.ads.mediation:facebook:6.13.7.1'
+    implementation 'com.google.ads.mediation:inmobi:10.1.2.1'
+    implementation 'com.google.ads.mediation:pangle:5.1.0.6.0'
 }
 ```
 

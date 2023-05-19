@@ -59,6 +59,8 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String AD_RECEIVED = "ad_received";
     @Kroll.constant
+    public static final String AD_NOT_RECEIVED = "ad_received";
+    @Kroll.constant
     public static final String AD_CLOSED = "ad_closed";
     @Kroll.constant
     public static final String AD_FAILED_TO_LOAD = "ad_failed_to_load";

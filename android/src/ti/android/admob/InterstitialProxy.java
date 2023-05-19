@@ -55,8 +55,17 @@ public class InterstitialProxy extends KrollProxy {
                 _interstitialAd = interstitialAd;
                 setInterstitialEvents();
                 Log.i(TAG, "onAdLoaded");
+
+                KrollDict sCallback = new KrollDict();
+
                 if (hasListeners(AdmobModule.AD_LOADED)) {
-                    fireEvent(AdmobModule.AD_LOADED, new KrollDict());
+                    fireEvent(AdmobModule.AD_LOADED, sCallback);
+                }
+
+                // DEPRECATED
+                if (hasListeners(AdmobModule.AD_RECEIVED)) {
+                    Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
+                    fireEvent(AdmobModule.AD_RECEIVED, sCallback);
                 }
             }
 
@@ -66,13 +75,21 @@ public class InterstitialProxy extends KrollProxy {
                 _interstitialAd = null;
                 Log.d(TAG, "onAdFailedToLoad");
                 Log.i(TAG, loadAdError.getMessage());
+
+                KrollDict errorCallback = new KrollDict();
+                errorCallback.put("cause", loadAdError.getCause());
+                errorCallback.put("code", loadAdError.getCode());
+                errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
+                errorCallback.put("message", loadAdError.getMessage());
+
                 if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
-                    KrollDict errorCallback = new KrollDict();
-                    errorCallback.put("cause", loadAdError.getCause());
-                    errorCallback.put("code", loadAdError.getCode());
-                    errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
-                    errorCallback.put("message", loadAdError.getMessage());
                     fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
+                }
+
+                //DEPRECATED
+                if (hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                    Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
+                    fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
                 }
             }
         });
