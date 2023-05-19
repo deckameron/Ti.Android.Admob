@@ -113,6 +113,13 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String NATIVE_ADS = "NATIVE_ADS";
 
+    // ADAPTIVE TYPES
+    @Kroll.constant
+    public static final String ADAPTIVE_ANCHORED = "ADAPTIVE_ANCHORED";
+
+    @Kroll.constant
+    public static final String ADAPTIVE_INLINE = "ADAPTIVE_INLINE";
+
     // AD UNIT IDS
     public static String AD_UNIT_ID;
     public static String BANNER_AD_UNIT_ID;

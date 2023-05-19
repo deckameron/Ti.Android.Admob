@@ -13,7 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.2.1](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.2.1.zip)
+For Ti.Android.Admob [9.2.2](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.2.2.zip)
 - [x] Titanium SDK 10.0.0+
 
 
@@ -115,9 +115,14 @@ adView.addEventListener(Admob.AD_FAILED_TO_LOAD, function(e) {
 ```javascript
 let adView = Admob.createAdaptiveBanner({  
     adUnitId: 'ca-app-pub-3940256099942544/6300978111', //USE YOUR AD_UNIT
+    
     // DFP mapping
     //keyword : "titanium",
-    //contentUrl : "www.myur.com",   
+    //contentUrl : "www.myur.com",
+    
+    // Adaptive Type
+    adaptiveType: Admob.ADAPTIVE_INLINE, // or Admob.ADAPTIVE_ANCHORED
+    maxHeight: 250 // ONLY IF adaptiveType is Admob.ADAPTIVE_INLINE, maxHeight must be set. Default value is 50
 });  
 window.add(adView);
 
