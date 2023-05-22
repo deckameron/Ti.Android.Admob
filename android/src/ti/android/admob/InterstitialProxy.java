@@ -111,6 +111,9 @@ public class InterstitialProxy extends KrollProxy {
             public void onAdClicked() {
                 // Called when a click is recorded for an ad.
                 Log.d(TAG, "Ad was clicked.");
+                if (hasListeners(AdmobModule.AD_CLICKED)) {
+                    fireEvent(AdmobModule.AD_CLICKED, new KrollDict());
+                }
             }
 
             @Override
