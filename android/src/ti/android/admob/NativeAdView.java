@@ -242,8 +242,17 @@ public class NativeAdView extends TiUIView {
 			public void onAdLoaded() {
 				Log.d(TAG, "onAdLoaded()");
 				if (proxy != null) {
+
+					KrollDict sCallback = new KrollDict();
+
+					if (proxy.hasListeners(AdmobModule.AD_LOADED)) {
+						proxy.fireEvent(AdmobModule.AD_LOADED, sCallback);
+					}
+
+					// DEPRECATED
 					if (proxy.hasListeners(AdmobModule.AD_RECEIVED)) {
-						proxy.fireEvent(AdmobModule.AD_RECEIVED, new KrollDict());
+						Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
+						proxy.fireEvent(AdmobModule.AD_RECEIVED, sCallback);
 					}
 				}
 			}
@@ -252,12 +261,20 @@ public class NativeAdView extends TiUIView {
 			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
 				Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode())));
 				if (proxy != null) {
+
+					KrollDict errorCallback = new KrollDict();
+					errorCallback.put("cause", loadAdError.getCause());
+					errorCallback.put("code", loadAdError.getCode());
+					errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
+					errorCallback.put("message", loadAdError.getMessage());
+
+					if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
+						proxy.fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
+					}
+
+					//DEPRECATED
 					if (proxy.hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
-						KrollDict errorCallback = new KrollDict();
-						errorCallback.put("cause", loadAdError.getCause());
-						errorCallback.put("code", loadAdError.getCode());
-						errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
-						errorCallback.put("message", loadAdError.getMessage());
+						org.appcelerator.kroll.common.Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
 						proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
 					}
 				}

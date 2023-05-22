@@ -50,20 +50,36 @@ public class RewardedInterstitialProxy extends KrollProxy implements OnUserEarne
                         rewardedInterstitialAd = ad;
                         Log.e(TAG, "onAdLoaded");
                         setRewardedInterstitialEvents();
+
+                        KrollDict sCallback = new KrollDict();
+
                         if (hasListeners(AdmobModule.AD_LOADED)) {
-                            fireEvent(AdmobModule.AD_LOADED, new KrollDict());
+                            fireEvent(AdmobModule.AD_LOADED, sCallback);
+                        }
+                        // DEPRECATED
+                        if (hasListeners(AdmobModule.AD_RECEIVED)) {
+                            Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
+                            fireEvent(AdmobModule.AD_RECEIVED, sCallback);
                         }
                     }
                     @Override
                     public void onAdFailedToLoad(LoadAdError loadAdError) {
                         Log.e(TAG, "onAdFailedToLoad");
                         rewardedInterstitialAd = null;
+
                         KrollDict rewardedError = new KrollDict();
                         rewardedError.put("cause", loadAdError.getCause());
                         rewardedError.put("code", loadAdError.getCode());
                         rewardedError.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
                         rewardedError.put("message", loadAdError.getMessage());
+
+                        if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
+                            fireEvent(AdmobModule.AD_FAILED_TO_LOAD, rewardedError);
+                        }
+
+                        //DEPRECATED
                         if (hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                            Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
                             fireEvent(AdmobModule.AD_NOT_RECEIVED, rewardedError);
                         }
                     }
@@ -111,10 +127,10 @@ public class RewardedInterstitialProxy extends KrollProxy implements OnUserEarne
     public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
         Log.i(TAG, "onUserEarnedReward");
         if (hasListeners(AdmobModule.AD_REWARDED)) {
-            KrollDict errorCallback = new KrollDict();
-            errorCallback.put("amount", rewardItem.getAmount());
-            errorCallback.put("type", rewardItem.getType());
-            fireEvent(AdmobModule.AD_REWARDED, errorCallback);
+            KrollDict rewardCallback = new KrollDict();
+            rewardCallback.put("amount", rewardItem.getAmount());
+            rewardCallback.put("type", rewardItem.getType());
+            fireEvent(AdmobModule.AD_REWARDED, rewardCallback);
         }
     }
 

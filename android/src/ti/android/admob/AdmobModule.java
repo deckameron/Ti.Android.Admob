@@ -59,13 +59,18 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String AD_RECEIVED = "ad_received";
     @Kroll.constant
+    public static final String AD_NOT_RECEIVED = "ad_received";
+    @Kroll.constant
     public static final String AD_CLOSED = "ad_closed";
     @Kroll.constant
-    public static final String AD_NOT_RECEIVED = "ad_not_received";
+    public static final String AD_FAILED_TO_LOAD = "ad_failed_to_load";
     @Kroll.constant
     public static final String AD_LOADED = "ad_loaded";
     @Kroll.constant
     public static final String AD_OPENED = "ad_opened";
+
+    @Kroll.constant
+    public static final String AD_NOT_READY= "ad_not_ready";
     @Kroll.constant
     public static final String AD_FAILED_TO_SHOW = "ad_failed_to_show";
     @Kroll.constant
@@ -108,10 +113,18 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String NATIVE_ADS = "NATIVE_ADS";
 
+    // ADAPTIVE TYPES
+    @Kroll.constant
+    public static final String ADAPTIVE_ANCHORED = "ADAPTIVE_ANCHORED";
+
+    @Kroll.constant
+    public static final String ADAPTIVE_INLINE = "ADAPTIVE_INLINE";
+
     // AD UNIT IDS
     public static String AD_UNIT_ID;
     public static String BANNER_AD_UNIT_ID;
     public static String INTERSTITIAL_AD_UNIT_ID;
+    public static String APP_OPEN_AD_UNIT_ID;
     public static String REWARDED_AD_UNIT_ID;
     public static String REWARDED_INTERSTITIAL_AD_UNIT_ID;
     public static String NATIVE_AD_UNIT_ID;
@@ -224,6 +237,7 @@ public class AdmobModule extends KrollModule
     @Kroll.onAppCreate
     public static void onAppCreate(TiApplication app) {
         Log.d(TAG, "-- Ti.Android.Admob -> onAppCreate --");
+
         MobileAds.initialize(app, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -331,6 +345,7 @@ public class AdmobModule extends KrollModule
                         if (hasListeners(CONSENT_INFO_UPDATE_FAILURE)) {
                             KrollDict errorCallback = new KrollDict();
                             errorCallback.put("message", formError.getMessage());
+                            errorCallback.put("code", formError.getErrorCode());
                             fireEvent(CONSENT_INFO_UPDATE_FAILURE, errorCallback);
                         }
                     }

@@ -1,10 +1,29 @@
-dependencies {
-	implementation 'com.google.android.ump:user-messaging-platform:2.0.0'
-	implementation 'com.google.android.gms:play-services-ads:22.0.0'
-	implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
-	implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+println "Running gradle version: $gradle.gradleVersion"
 
-	//MEDIATION
-	/* inMobi */
-	implementation 'com.google.ads.mediation:inmobi:10.5.4.1'
-}
+// repositories {
+//     google();
+//     maven { url 'https://jitpack.io' }
+//     maven { url 'https://repo.jenkins-ci.org/public/' }
+//     maven { url 'https://artifact.bytedance.com/repository/pangle/'}
+//     maven { url 'https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea'}
+//     jcenter()
+//     mavenCentral()
+//     flatDir {
+//         dirs 'libs'
+//     }
+// }
+
+dependencies {
+ 	implementation 'com.google.android.ump:user-messaging-platform:2.0.0'
+ 	implementation 'com.google.android.gms:play-services-ads:22.0.0'
+ 	implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
+ 	implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+
+ 	/* App Open Ad */
+	implementation 'androidx.appcompat:appcompat:1.3.0'
+	implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+
+ 	//MEDIATION
+ 	/* inMobi */
+ 	implementation 'com.google.ads.mediation:inmobi:10.1.2.1'
+ }
