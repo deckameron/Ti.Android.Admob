@@ -2,7 +2,11 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
+<<<<<<< HEAD
 version: 9.2.3
+=======
+version: 9.3.1
+>>>>>>> f84a5db060aa25b6b49f083380e07111f80a6ad1
 apiversion: 4
 architectures: arm64-v8a armeabi-v7a x86 x86_64
 description: admob 

@@ -80,7 +80,7 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String AD_CLICKED = "ad_clicked";
     @Kroll.constant
-    public static final String AD_SHOWED_FULLSCREEN_CONTENT = "ad_clicked";
+    public static final String AD_SHOWED_FULLSCREEN_CONTENT = "ad_showed_fullscreen_content";
     @Kroll.constant
     public static final String CONSENT_FORM_READY = "consent_ready";
     @Kroll.constant

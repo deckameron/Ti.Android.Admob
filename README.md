@@ -464,7 +464,7 @@ window.add(nativeAd);
 |_AD_FAILED_TO_LOAD_                    |   A error occurred and the ads failed
 |_AD_DESTROYED_   |     Ad had been successfully destroyed and wiped out of memory
 |_AD_OPENED_                |   **(BANNER)** Called when an ad opens an overlay that covers the screen. (click)
-|_AD_CLICKED_                |   **(BANNER)** Called when an ad click is validated.
+|_AD_CLICKED_                |   **(BANNER or INTERSTITIAL)** Called when an ad click is validated.
 |_AD_CLOSED_    |   **(REWARDED or INTERSTITIAL)** Ad had been successfully closed  
 |_AD_REWARDED_      |   **(REWARDED)** When the video ended successfully and you can reward you user with his prize
 |_AD_FAILED_TO_SHOW_ |  **(REWARDED or INTERSTITIAL)** When the ad fails to be displayed
