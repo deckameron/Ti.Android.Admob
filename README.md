@@ -13,7 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.2.2](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.2.2.zip)
+For Ti.Android.Admob [9.2.3](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.2.3.zip)
 - [x] Titanium SDK 10.0.0+
 
 
@@ -496,6 +496,8 @@ This guide walks you through how to install the SDK, implement the IAB solutions
 Request the latest consent information
 
 It is recommended that you request an update of the consent information at every app launch. This will determine whether or not your user needs to provide consent.
+
+We have to reset TC string if last updated date was more than 13 months ago (https://developers.google.com/admob/ios/privacy/gdpr#troubleshooting), but Google UMP has a bug that generates 3.3 typed IAB TCF v2.0 because this string never gets automatic updated. So I have implemented [bocops workaround](https://github.com/bocops/UMP-workarounds#admob-error-33) in order to address it. Thanks to [Bocops](https://github.com/bocops) and [Astrovics](https://github.com/Astrovic)
 
 
 ### `resetConsentForm()`
