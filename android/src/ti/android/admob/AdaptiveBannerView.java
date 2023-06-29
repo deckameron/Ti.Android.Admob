@@ -27,7 +27,7 @@ public class AdaptiveBannerView extends TiUIView {
     private AdView adaptiveAdView;
 
     private int maxHeight = 50;
-    private String adaptiveType;
+    public String adaptiveType;
     private String keyword;
     private String contentUrl;
 
@@ -77,7 +77,7 @@ public class AdaptiveBannerView extends TiUIView {
         // Step 3 - Get adaptive ad size and return for setting on the ad view.
         // AdmobModule.ADAPTIVE_ANCHORED
         AdSize adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(proxy.getActivity(), adWidth);
-        if (adaptiveType == AdmobModule.ADAPTIVE_INLINE) {
+        if (adaptiveType.equals(AdmobModule.ADAPTIVE_INLINE)) {
             Log.w(TAG, "maxHeight: " + String.valueOf(maxHeight));
             adSize = AdSize.getInlineAdaptiveBannerAdSize(adWidth, maxHeight);
         }

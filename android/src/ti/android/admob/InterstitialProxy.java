@@ -1,7 +1,11 @@
 package ti.android.admob;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
+import com.applovin.mediation.AppLovinExtras;
+import com.applovin.mediation.ApplovinAdapter;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -43,7 +47,13 @@ public class InterstitialProxy extends KrollProxy {
 
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 
-        AdRequest adRequest = adRequestBuilder.build();
+        Bundle extras = new AppLovinExtras.Builder()
+                .setMuteAudio(true)
+                .build();
+
+        AdRequest adRequest = adRequestBuilder
+                .addNetworkExtrasBundle(ApplovinAdapter.class, extras)
+                .build();
 
         Log.d(TAG, "Is test device? " + adRequest.isTestDevice(getActivity()));
 

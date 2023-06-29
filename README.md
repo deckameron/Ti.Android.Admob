@@ -13,7 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.2.3](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.3.3.zip)
+For Ti.Android.Admob [9.3.6](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.3.6.zip)
 - [x] Titanium SDK 10.0.0+
 
 
@@ -500,9 +500,14 @@ It is recommended that you request an update of the consent information at every
 We have to reset TC string if last updated date was more than 13 months ago (https://developers.google.com/admob/ios/privacy/gdpr#troubleshooting), but Google UMP has a bug that generates 3.3 typed IAB TCF v2.0 because this string never gets automatic updated. So I have implemented [bocops workaround](https://github.com/bocops/UMP-workarounds#admob-error-33) in order to address it. Thanks to [Bocops](https://github.com/bocops) and [Astrovics](https://github.com/Astrovic)
 
 
-### `resetConsentForm()`
+### `showConsentForm()`
 
-Shows a consent modal form. Arguments:
+Presents the consent form.
+
+Only call this method if Admod.CONSENT_REQUIRED.
+
+
+### `resetConsentForm()`
 
 Reset consent state
 
@@ -532,8 +537,35 @@ Admob.addEventListener(Admob.CONSENT_ERROR, function (e){
     console.log(e.message);
 });
 
+Admob.addEventListener(Admob.CONSENT_REQUIRED, function (){  
+    console.warn("Admod.CONSENT_REQUIRED");  
+    Admob.showConsentForm();  
+});
 Admob.requestConsentForm();
 ```
+
+## User Consent and Ad serving
+
+**If consent is denied, or if certain values are not checked in the consent management phase, the ads will not be loaded**.
+
+Why does this happen? If you pay attention to the **ConsentStatus.OBTAINED**  field, you will notice that it says that  **the consent is obtained, but the personalization is not defined**. As you see [here](https://itnext.io/android-admob-consent-with-ump-personalized-or-non-personalized-ads-in-eea-3592e192ec90).
+
+It is up to us developers to check if the user has granted the  [**minimum requirements**](https://support.google.com/admob/answer/9760862?ref_topic=10303737)  to be able to view the ads, and if he has chosen to see personalized or non-personalized ones. 
+
+In order to assist you with this, [Mirko Dimartino](https://mirko-ddd.medium.com/?source=post_page-----3592e192ec90--------------------------------) created a solution that I have implemented in this module.
+
+
+### `canShowAds()`
+
+If false (and GDPR applies, so if in EEA) you should prompt the user or to accept all, or explain in details (check above) what to check to display at least Non-Personalized Ads, or ask the user to opt for a premium version of the app, otherwise you will earn absolutely nothing.
+
+If true you can check if user granted at least minimum requirements to show Personalized Ads with the following method.
+
+
+### `canShowPersonalizedAds()`
+
+Finally you know if you can request AdMob Personalized or Non-Personalized Ads, if **Non-Personalized** you have to forward the request using this snippet.
+
 
 # Mediation Networks
 
@@ -563,3 +595,4 @@ dependencies {
 |[Interstitial Video](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/8691691433
 |[Rewarded Video](https://developers.google.com/admob/android/rewarded-video#request_rewarded_video_ad) | ca-app-pub-3940256099942544/5224354917
 |[Native](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/2247696110
+|[AppOpen](https://developers.google.com/admob/android/app-open) | ca-app-pub-3940256099942544/3419835294

@@ -16,6 +16,8 @@ import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
 
+import com.applovin.sdk.AppLovinPrivacySettings;
+import com.applovin.sdk.AppLovinSdk;
 import com.google.ads.mediation.inmobi.InMobiConsent;
 import com.google.android.ads.mediationtestsuite.MediationTestSuite;
 import com.google.android.gms.ads.MobileAds;
@@ -39,6 +41,7 @@ import org.appcelerator.titanium.TiApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -263,6 +266,9 @@ public class AdmobModule extends KrollModule
                 Log.d(TAG, "-- INIT_READY is now TRUE --");
 
                 INIT_READY = true;
+
+                setInMobi_updateGDPRConsent(true);
+                setAppLovinGDPRConsent(true);
             }
         });
     }
@@ -278,7 +284,7 @@ public class AdmobModule extends KrollModule
     }
 
     @Kroll.method
-    public void setInMobi_updateGDPRConsent(boolean isEnable) {
+    public static void setInMobi_updateGDPRConsent(boolean isEnable) {
         JSONObject consentObject = new JSONObject();
         try {
             if (isEnable){
@@ -297,6 +303,16 @@ public class AdmobModule extends KrollModule
         }
 
         InMobiConsent.updateGDPRConsent(consentObject);
+    }
+
+    @Kroll.method
+    private static void setAppLovinGDPRConsent(boolean isEnable){
+        // EU consent and GDPR
+        AppLovinPrivacySettings.setHasUserConsent(isEnable, TiApplication.getInstance().getCurrentActivity());
+        AppLovinPrivacySettings.setIsAgeRestrictedUser(false, TiApplication.getInstance().getCurrentActivity());
+
+        // CCPA
+        AppLovinPrivacySettings.setDoNotSell(!isEnable, TiApplication.getInstance().getCurrentActivity());
     }
 
     @Kroll.method
@@ -553,6 +569,96 @@ public class AdmobModule extends KrollModule
             }
         }
         return errorReason;
+    }
+
+    @Kroll.method
+    public boolean canShowAds(){
+        return canShowAds(TiApplication.getInstance());
+    }
+
+    public boolean canShowAds(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        String purposeConsent = prefs.getString("IABTCF_PurposeConsents", "");
+        String vendorConsent = prefs.getString("IABTCF_VendorConsents","");
+        String vendorLI = prefs.getString("IABTCF_VendorLegitimateInterests","");
+        String purposeLI = prefs.getString("IABTCF_PurposeLegitimateInterests","");
+
+        int googleId = 755;
+        boolean hasGoogleVendorConsent = hasAttribute(vendorConsent, googleId);
+        boolean hasGoogleVendorLI = hasAttribute(vendorLI, googleId);
+
+        List<Integer> indexes = new ArrayList<>();
+        indexes.add(1);
+
+        List<Integer> indexesLI = new ArrayList<>();
+        indexesLI.add(2);
+        indexesLI.add(7);
+        indexesLI.add(9);
+        indexesLI.add(10);
+
+        return hasConsentFor(indexes, purposeConsent, hasGoogleVendorConsent)
+                && hasConsentOrLegitimateInterestFor(indexesLI, purposeConsent, purposeLI, hasGoogleVendorConsent, hasGoogleVendorLI);
+
+    }
+
+    @Kroll.method
+    public boolean canShowPersonalizedAds(){
+        return canShowPersonalizedAds(TiApplication.getInstance());
+    }
+
+    public boolean canShowPersonalizedAds(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        String purposeConsent = prefs.getString("IABTCF_PurposeConsents", "");
+        String vendorConsent = prefs.getString("IABTCF_VendorConsents","");
+        String vendorLI = prefs.getString("IABTCF_VendorLegitimateInterests","");
+        String purposeLI = prefs.getString("IABTCF_PurposeLegitimateInterests","");
+
+        int googleId = 755;
+        boolean hasGoogleVendorConsent = hasAttribute(vendorConsent, googleId);
+        boolean hasGoogleVendorLI = hasAttribute(vendorLI, googleId);
+
+        List<Integer> indexes = new ArrayList<>();
+        indexes.add(1);
+        indexes.add(3);
+        indexes.add(4);
+
+        List<Integer> indexesLI = new ArrayList<>();
+        indexesLI.add(2);
+        indexesLI.add(7);
+        indexesLI.add(9);
+        indexesLI.add(10);
+
+        return hasConsentFor(indexes, purposeConsent, hasGoogleVendorConsent)
+                && hasConsentOrLegitimateInterestFor(indexesLI, purposeConsent, purposeLI, hasGoogleVendorConsent, hasGoogleVendorLI);
+
+    }
+
+    private boolean hasAttribute(String input, int index) {
+        if (input == null) return false;
+        return input.length() >= index && input.charAt(index-1) == '1';
+    }
+
+    private boolean hasConsentFor(List<Integer> indexes, String purposeConsent, boolean hasVendorConsent) {
+        for (Integer p: indexes) {
+            if (!hasAttribute(purposeConsent, p)) {
+                Log.e(TAG, "hasConsentFor: denied for purpose #" + p );
+                return false;
+            }
+        }
+        return hasVendorConsent;
+    }
+
+    private boolean hasConsentOrLegitimateInterestFor(List<Integer> indexes, String purposeConsent, String purposeLI, boolean hasVendorConsent, boolean hasVendorLI){
+        for (Integer p: indexes) {
+            boolean purposeAndVendorLI = hasAttribute(purposeLI, p) && hasVendorLI;
+            boolean purposeConsentAndVendorConsent = hasAttribute(purposeConsent, p) && hasVendorConsent;
+            boolean isOk = purposeAndVendorLI || purposeConsentAndVendorConsent;
+            if (!isOk){
+                Log.e(TAG, "hasConsentOrLegitimateInterestFor: denied for #" + p);
+                return false;
+            }
+        }
+        return true;
     }
 
     /*
