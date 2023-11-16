@@ -13,7 +13,7 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.3.6](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.3.6.zip)
+For Ti.Android.Admob [9.3.8](https://github.com/deckameron/Ti.Android.Admob/blob/master/android/dist/ti.android.admob-android-9.3.8.zip)
 - [x] Titanium SDK 10.0.0+
 
 
@@ -120,6 +120,9 @@ let adView = Admob.createAdaptiveBanner({
     //keyword : "titanium",
     //contentUrl : "www.myur.com",
     
+    // Collapsible
+    collapsible: Admob.COLLAPSIBLE_BOTTOM, // or Admob.COLLAPSIBLE_TOP
+
     // Adaptive Type
     adaptiveType: Admob.ADAPTIVE_INLINE, // or Admob.ADAPTIVE_ANCHORED
     maxHeight: 250 // ONLY IF adaptiveType is Admob.ADAPTIVE_INLINE, maxHeight must be set. Default value is 50

@@ -30,6 +30,7 @@ public class AdaptiveBannerView extends TiUIView {
     public String adaptiveType;
     private String keyword;
     private String contentUrl;
+    private String collapsible;
 
     public AdaptiveBannerView(TiViewProxy proxy) {
         super(proxy);
@@ -172,13 +173,10 @@ public class AdaptiveBannerView extends TiUIView {
             adRequestBuilder.setContentUrl(contentUrl);
         }
 
-        Bundle bundle = AdmobModule.createAdRequestProperties();
-        if (bundle.size() > 0) {
-            Log.d(TAG, "extras.size() > 0 -- set ad properties");
-            Log.d(TAG, bundle.toString());
+        if (collapsible != null && !collapsible.isEmpty()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("collapsible", collapsible);
             adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
-        } else {
-            Log.d(TAG, "extras.size() = 0 -- no NPA detected");
         }
 
         AdRequest adRequest = adRequestBuilder.build();
@@ -212,9 +210,18 @@ public class AdaptiveBannerView extends TiUIView {
             contentUrl = d.getString("contentUrl");
         }
 
-        if (d.containsKeyAndNotNull("keyword")) {
-            Log.d(TAG, ("has KEYWORD: " + d.getString("keyword")));
-            keyword = d.getString("keyword");
+        if (d.containsKeyAndNotNull("collapsible")) {
+            Log.d(TAG, ("is COLLAPSIBLE: " + d.getString("collapsible")));
+            collapsible = d.getString("collapsible");
+
+            if (collapsible == AdmobModule.COLLAPSIBLE_BOTTOM){
+                Log.w(TAG, "The bottom of the expanded ad aligns to the bottom of the collapsed ad. The ad is placed at the bottom of the screen.");
+            } else if (collapsible == AdmobModule.COLLAPSIBLE_TOP){
+                Log.w(TAG, "The top of the expanded ad aligns to the top of the collapsed ad. The ad is placed at the top of the screen.");
+            } else {
+                Log.e(TAG, "The only supported values for collapsible are 'bottom' and 'top'.");
+                collapsible = null;
+            }
         }
 
         // Create the Banner

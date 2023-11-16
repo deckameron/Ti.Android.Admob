@@ -201,7 +201,11 @@ public class NativeAdView extends TiUIView {
 					frameLayout.removeAllViews();
 					frameLayout.addView(nativeAd);
 
-					fireEvent(AdmobModule.AD_LOADED, new KrollDict());
+					if (proxy != null) {
+						if (proxy.hasListeners(AdmobModule.AD_LOADED)) {
+							fireEvent(AdmobModule.AD_LOADED, new KrollDict());
+						}
+					}
 				} else {
 					Log.e(TAG, "No master_view defined!");
 				}
@@ -277,6 +281,7 @@ public class NativeAdView extends TiUIView {
 						org.appcelerator.kroll.common.Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
 						proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, errorCallback);
 					}
+
 				}
 			}
 		}).build();
@@ -671,7 +676,11 @@ public class NativeAdView extends TiUIView {
 
 					if (AdmobModule.INIT_READY == false){
 						Log.w(TAG, ("Admob is not ready yet!"));
-						proxy.fireEvent(AdmobModule.ADMOB_NOT_READY_YET, new KrollDict());
+						if (proxy != null) {
+							if (proxy.hasListeners(AdmobModule.ADMOB_NOT_READY_YET)) {
+								proxy.fireEvent(AdmobModule.ADMOB_NOT_READY_YET, new KrollDict());
+							}
+						}
 					} else if (adType.equals(AdmobModule.NATIVE_ADS)) {
 						if (AdmobModule.AD_UNIT_ID != null) {
 							AdmobModule.NATIVE_AD_UNIT_ID = AdmobModule.AD_UNIT_ID;

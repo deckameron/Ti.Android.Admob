@@ -125,6 +125,12 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String ADAPTIVE_INLINE = "ADAPTIVE_INLINE";
 
+    @Kroll.constant
+    public static final String COLLAPSIBLE_BOTTOM = "bottom";
+
+    @Kroll.constant
+    public static final String COLLAPSIBLE_TOP = "top";
+
     // AD UNIT IDS
     public static String AD_UNIT_ID;
     public static String BANNER_AD_UNIT_ID;
@@ -266,9 +272,6 @@ public class AdmobModule extends KrollModule
                 Log.d(TAG, "-- INIT_READY is now TRUE --");
 
                 INIT_READY = true;
-
-                setInMobi_updateGDPRConsent(true);
-                setAppLovinGDPRConsent(true);
             }
         });
     }
@@ -283,7 +286,15 @@ public class AdmobModule extends KrollModule
         return INIT_READY;
     }
 
+
     @Kroll.method
+    public void setInMobiGDPRConsent(KrollDict d){
+        if(d.containsKey((Object) "enabled")){
+            Log.d(TAG, "setInMobiGDPRConsent containsKey enabled");
+            setInMobi_updateGDPRConsent((boolean) d.getBoolean("enabled"));
+        }
+    }
+
     public static void setInMobi_updateGDPRConsent(boolean isEnable) {
         JSONObject consentObject = new JSONObject();
         try {
@@ -296,17 +307,23 @@ public class AdmobModule extends KrollModule
                 consentObject.put("gdpr", "0");
                 Log.d(TAG, "inMobi GDPR disabled");
             }
+            InMobiConsent.updateGDPRConsent(consentObject);
         } catch (JSONException exception) {
-            Log.e(TAG, "inMobi GDPR error");
+            Log.e(TAG, "inMobi GDPR update error");
             exception.printStackTrace();
             return;
         }
-
-        InMobiConsent.updateGDPRConsent(consentObject);
     }
 
     @Kroll.method
-    private static void setAppLovinGDPRConsent(boolean isEnable){
+    public void setAppLovinGDPRConsent(KrollDict d){
+        if(d.containsKeyAndNotNull("enabled")){
+            Log.d(TAG, "setAppLovinGDPRConsent containsKey enabled");
+            setAppLovin_GDPRConsent(d.getBoolean("enabled"));
+        }
+    }
+
+    private static void setAppLovin_GDPRConsent(boolean isEnable){
         // EU consent and GDPR
         AppLovinPrivacySettings.setHasUserConsent(isEnable, TiApplication.getInstance().getCurrentActivity());
         AppLovinPrivacySettings.setIsAgeRestrictedUser(false, TiApplication.getInstance().getCurrentActivity());
