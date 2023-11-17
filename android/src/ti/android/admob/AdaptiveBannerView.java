@@ -214,9 +214,9 @@ public class AdaptiveBannerView extends TiUIView {
             Log.d(TAG, ("is COLLAPSIBLE: " + d.getString("collapsible")));
             collapsible = d.getString("collapsible");
 
-            if (collapsible == AdmobModule.COLLAPSIBLE_BOTTOM){
+            if (collapsible.equals(AdmobModule.COLLAPSIBLE_BOTTOM)){
                 Log.w(TAG, "The bottom of the expanded ad aligns to the bottom of the collapsed ad. The ad is placed at the bottom of the screen.");
-            } else if (collapsible == AdmobModule.COLLAPSIBLE_TOP){
+            } else if (collapsible.equals(AdmobModule.COLLAPSIBLE_TOP)){
                 Log.w(TAG, "The top of the expanded ad aligns to the top of the collapsed ad. The ad is placed at the top of the screen.");
             } else {
                 Log.e(TAG, "The only supported values for collapsible are 'bottom' and 'top'.");
