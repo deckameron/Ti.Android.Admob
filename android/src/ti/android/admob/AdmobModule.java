@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import com.applovin.sdk.AppLovinPrivacySettings;
 import com.applovin.sdk.AppLovinSdk;
 import com.google.ads.mediation.inmobi.InMobiConsent;
+import com.inmobi.sdk.InMobiSdk;
 import com.google.android.ads.mediationtestsuite.MediationTestSuite;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
@@ -31,7 +32,6 @@ import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.FormError;
 import com.google.android.ump.UserMessagingPlatform;
-import com.inmobi.sdk.InMobiSdk;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
@@ -248,8 +248,15 @@ public class AdmobModule extends KrollModule
     @Kroll.onAppCreate
     public static void onAppCreate(TiApplication app) {
         Log.d(TAG, "-- Ti.Android.Admob -> onAppCreate --");
+    }
 
-        MobileAds.initialize(app, new OnInitializationCompleteListener() {
+    public void initializeMobileAdsSdk(){
+
+        Log.d(TAG, ("Initializing Mobile Ads SDK!"));
+
+        Context appContext = TiApplication.getInstance().getApplicationContext();
+
+        MobileAds.initialize(appContext, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
                 Map<String, AdapterStatus> statusMap = initializationStatus.getAdapterStatusMap();
@@ -276,6 +283,18 @@ public class AdmobModule extends KrollModule
         });
     }
 
+    // Show a privacy options button if required.
+    @Kroll.method
+    public boolean isPrivacyOptionsRequired() {
+        Log.w(TAG, "isPrivacyOptionsRequired?");
+        if (consentInformation != null) {
+            Log.d(TAG, String.valueOf(consentInformation.getPrivacyOptionsRequirementStatus()));
+            Log.d(TAG, String.valueOf(ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED));
+            return consentInformation.getPrivacyOptionsRequirementStatus() == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+        }
+        return false;
+    }
+
     @Kroll.method
     public void showMediationTestSuite() {
         MediationTestSuite.launch(TiApplication.getInstance().getCurrentActivity());
@@ -285,7 +304,6 @@ public class AdmobModule extends KrollModule
     public boolean isAdmobReady(){
         return INIT_READY;
     }
-
 
     @Kroll.method
     public void setInMobiGDPRConsent(KrollDict d){
@@ -390,7 +408,6 @@ public class AdmobModule extends KrollModule
         );
     }
 
-
     /**
      * This function checks the date of last consent, which is base64-encoded in digits 1..7 of a string that is stored
      * in SharedPreferences under the key "IABTCF_TCString".
@@ -401,15 +418,18 @@ public class AdmobModule extends KrollModule
      * This should avoid errors of any used ad solution, which is supposed to consider consent older than 13 months "outdated".
      */
     public void deleteTCStringIfOutdated(Context context) {
-        // IABTCF string is stored in SharedPreferences
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // get IABTCF string containing creation timestamp;
-        // fall back to string encoding timestamp 0 if nothing is currently stored
-        String tcString = sharedPrefs.getString("IABTCF_TCString", "AAAAAAA");
+        // if the key does not exist, there is no IABTCF string to check; return early
+        String tcString = sharedPrefs.getString("IABTCF_TCString", null);
+        if (tcString == null) {
+            return;
+        }
 
         // base64 alphabet used to store data in IABTCF string
-        String base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        String base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
         // date is stored in digits 1..7 of the IABTCF string
         String dateSubstring = tcString.substring(1,7);
@@ -459,6 +479,7 @@ public class AdmobModule extends KrollModule
                             Log.d(TAG, ("Consent information is NOT REQUIRED!"));
                             if (hasListeners(CONSENT_NOT_REQUIRED)) {
                                 fireEvent(CONSENT_NOT_REQUIRED, new KrollDict());
+                                initializeMobileAdsSdk();
                             }
                         }
                     }
@@ -588,6 +609,24 @@ public class AdmobModule extends KrollModule
         return errorReason;
     }
 
+    /*
+    Currently the "Do not consent" button sets the followings ( Android / user-messaging-platform:2.1.0 ):
+
+    hasGoogleVendorConsent: false
+    hasGoogleVendorLI: true
+    hasConsent for purposes: 1-false, 3-false, 4-false
+    hasConsentOrLegitimateInterest for purposes: 2-true, 7-true, 9-true, 10-true
+
+    According to this description ( https://support.google.com/admob/answer/9760862#consent-policies ):
+      - Personalized ads - Consent for purposes 1,3,4, Legitimate Interest for 2, 7, 9, 10
+      - Non personalized ads - Consent for purpose 1, Legitimate Interest for 2, 7, 9, 10
+      - Limited ads - No consent for purpose 1
+
+    It is obvious, that without purpose 1 (and the Google vendor consent) no ads will be served, not even non-personalized ones.
+
+    This should be changed inside of the UMP lib.
+    https://groups.google.com/g/google-admob-ads-sdk/c/xRaBKayC_80/m/1d0GktrHBQAJ
+     */
     @Kroll.method
     public boolean canShowAds(){
         return canShowAds(TiApplication.getInstance());
