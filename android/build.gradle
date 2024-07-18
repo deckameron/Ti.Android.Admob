@@ -15,12 +15,12 @@ println "Running gradle version: $gradle.gradleVersion"
 
 dependencies {
  	implementation 'com.google.android.ump:user-messaging-platform:2.2.0'
- 	implementation 'com.google.android.gms:play-services-ads:23.0.0'
+ 	implementation 'com.google.android.gms:play-services-ads:23.2.0'
  	implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
- 	implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+ 	implementation 'com.google.android.gms:play-services-ads-identifier:18.1.0'
 
  	/* App Open Ad */
-	implementation 'androidx.appcompat:appcompat:1.6.1'
+	implementation 'androidx.appcompat:appcompat:1.7.0'
 	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
  	//MEDIATION
