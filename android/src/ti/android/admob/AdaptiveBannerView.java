@@ -1,9 +1,12 @@
 package ti.android.admob;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.WindowMetrics;
 
 import androidx.annotation.NonNull;
@@ -17,6 +20,7 @@ import com.google.android.gms.ads.LoadAdError;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
+import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
 
@@ -38,55 +42,45 @@ public class AdaptiveBannerView extends TiUIView {
     }
 
     private void createAdaptiveAdView() {
-
         Log.d(TAG, "createAdaptiveAdView()");
-        adaptiveAdView = new AdView(proxy.getActivity());
+        adaptiveAdView = new AdView(TiApplication.getInstance().getApplicationContext());
 
         Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.BANNER_AD_UNIT_ID));
         adaptiveAdView.setAdUnitId(AdmobModule.BANNER_AD_UNIT_ID);
 
-        // Step 2 - Determine the screen width (less decorations) to use for the ad width.
         int adWidth = 0;
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            // API 30+ (Usando WindowMetrics)
             WindowMetrics windowMetrics = proxy.getActivity().getWindowManager().getCurrentWindowMetrics();
             Rect bounds = windowMetrics.getBounds();
-
-            float adWidthPixels = adaptiveAdView.getWidth();
-
-            // If the ad hasn't been laid out, default to the full screen width.
-            if (adWidthPixels == 0f) {
-                adWidthPixels = bounds.width();
-            }
-
             float density = proxy.getActivity().getResources().getDisplayMetrics().density;
-            adWidth = (int) (adWidthPixels / density);
-            Log.d(TAG, "VERSION_CODES.R");
-            Log.d(TAG, "ADAPTIVE adWidth = " + adWidth);
 
+            // Largura do anúncio em dp
+            adWidth = (int) (bounds.width() / density);
+            Log.d(TAG, "VERSION_CODES.R - ADAPTIVE adWidth = " + adWidth);
         } else {
-            Display display = proxy.getActivity().getWindowManager().getDefaultDisplay();
-            DisplayMetrics outMetrics = new DisplayMetrics();
-            display.getMetrics(outMetrics);
+            // API < 30 (Usando Resources)
+            DisplayMetrics displayMetrics = proxy.getActivity().getResources().getDisplayMetrics();
+            float widthPixels = displayMetrics.widthPixels;
+            float density = displayMetrics.density;
 
-            float widthPixels = outMetrics.widthPixels;
-            float density = outMetrics.density;
-
+            // Largura do anúncio em dp
             adWidth = (int) (widthPixels / density);
-            Log.d(TAG, "ADAPTIVE adWidth = " + adWidth);
+            Log.d(TAG, "VERSION_CODES.<R - ADAPTIVE adWidth = " + adWidth);
         }
 
-        // Step 3 - Get adaptive ad size and return for setting on the ad view.
-        // AdmobModule.ADAPTIVE_ANCHORED
+        // Determinar o tamanho adaptativo do anúncio
         AdSize adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(proxy.getActivity(), adWidth);
+
         if (adaptiveType.equals(AdmobModule.ADAPTIVE_INLINE)) {
-            Log.w(TAG, "maxHeight: " + String.valueOf(maxHeight));
+            Log.w(TAG, "maxHeight: " + maxHeight);
             adSize = AdSize.getInlineAdaptiveBannerAdSize(adWidth, maxHeight);
         }
 
         Log.d(TAG, "adSize: " + adSize);
 
-        // Step 4 - Set the adaptive ad size on the ad view.
-        // adaptiveAdView.setAdSize(new AdSize(adWidth, 65));
+        // Configurar o tamanho do anúncio no AdView
         adaptiveAdView.setAdSize(adSize);
 
         // Step 5 - Set the adaptive event listeners.
@@ -187,6 +181,16 @@ public class AdaptiveBannerView extends TiUIView {
     }
 
     @Override
+    public void release() {
+        super.release();
+        Log.d(TAG, "release called, destroying AdView");
+        if (adaptiveAdView != null) {
+            adaptiveAdView.destroy();
+            adaptiveAdView = null;
+        }
+    }
+
+    @Override
     public void processProperties(KrollDict d) {
         super.processProperties(d);
         Log.d(TAG, "Process properties");
@@ -243,6 +247,15 @@ public class AdaptiveBannerView extends TiUIView {
     public void destroy()
     {
         Log.d(TAG, "destroy");
-        adaptiveAdView.destroy();
+
+        if (adaptiveAdView != null) {
+            // Remove the AdView from its parent to ensure it is properly garbage collected
+            if (adaptiveAdView.getParent() != null && adaptiveAdView.getParent() instanceof ViewGroup) {
+                ((ViewGroup) adaptiveAdView.getParent()).removeView(adaptiveAdView);
+            }
+
+            adaptiveAdView.destroy(); // Libera os recursos do AdView
+            adaptiveAdView = null;   // Remove referência para evitar vazamento
+        }
     }
 }

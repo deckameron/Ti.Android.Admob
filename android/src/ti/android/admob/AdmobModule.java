@@ -309,7 +309,7 @@ public class AdmobModule extends KrollModule
     public void setInMobiGDPRConsent(KrollDict d){
         if(d.containsKey((Object) "enabled")){
             Log.d(TAG, "setInMobiGDPRConsent containsKey enabled");
-            setInMobi_updateGDPRConsent((boolean) d.getBoolean("enabled"));
+            setInMobi_updateGDPRConsent(d.getBoolean("enabled"));
         }
     }
 
@@ -419,7 +419,9 @@ public class AdmobModule extends KrollModule
      */
     public void deleteTCStringIfOutdated(Context context) {
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        // SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        // Substitui o método deprecrado com um nome de arquivo específico para SharedPreferences
+        SharedPreferences sharedPrefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
 
         // get IABTCF string containing creation timestamp;
         // if the key does not exist, there is no IABTCF string to check; return early
@@ -633,7 +635,10 @@ public class AdmobModule extends KrollModule
     }
 
     public boolean canShowAds(Context context){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        // Substitui o método deprecrado com um nome de arquivo específico para SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+
         String purposeConsent = prefs.getString("IABTCF_PurposeConsents", "");
         String vendorConsent = prefs.getString("IABTCF_VendorConsents","");
         String vendorLI = prefs.getString("IABTCF_VendorLegitimateInterests","");
@@ -663,7 +668,10 @@ public class AdmobModule extends KrollModule
     }
 
     public boolean canShowPersonalizedAds(Context context){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        // Substitui o método deprecrado com um nome de arquivo específico para SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+
         String purposeConsent = prefs.getString("IABTCF_PurposeConsents", "");
         String vendorConsent = prefs.getString("IABTCF_VendorConsents","");
         String vendorLI = prefs.getString("IABTCF_VendorLegitimateInterests","");
