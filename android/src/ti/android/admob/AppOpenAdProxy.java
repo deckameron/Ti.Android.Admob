@@ -1,7 +1,11 @@
 package ti.android.admob;
 
+import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -14,7 +18,6 @@ import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.titanium.TiApplication;
 
-import java.util.Date;
 
 @Kroll.proxy(creatableInModule = AdmobModule.class)
 public class AppOpenAdProxy extends KrollProxy {
@@ -34,6 +37,7 @@ public class AppOpenAdProxy extends KrollProxy {
 
     @Override
     public void handleCreationDict(KrollDict options) {
+
         org.appcelerator.kroll.common.Log.d(TAG, "handleCreationDict...");
         super.handleCreationDict(options);
 
@@ -45,6 +49,11 @@ public class AppOpenAdProxy extends KrollProxy {
         if (options.containsKeyAndNotNull("refreshTimeInHours")){
             _numHours = Long.valueOf(options.getInt("refreshTimeInHours"));
             Log.d(TAG, "refreshTimeInHours: " + String.valueOf(_numHours));
+        }
+
+        if (options.containsKey(AdmobModule.EXTRA_BUNDLE)) {
+            AdmobModule.extras = AdmobModule.mapToBundle(options.getKrollDict(AdmobModule.EXTRA_BUNDLE));
+            Log.d(TAG, "Has extras");
         }
 
         load();
@@ -61,7 +70,15 @@ public class AppOpenAdProxy extends KrollProxy {
         isLoadingAd = true;
 
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+        Bundle bundle = AdmobModule.createAdRequestProperties();
+        if (!bundle.isEmpty()) {
+            Log.d(TAG, "Has extras -- Setting Ad properties");
+            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+        }
+
         AdRequest adRequest = adRequestBuilder.build();
+
         AppOpenAd.load(
                 TiApplication.getAppCurrentActivity(),
                 AdmobModule.APP_OPEN_AD_UNIT_ID,
@@ -69,7 +86,7 @@ public class AppOpenAdProxy extends KrollProxy {
                 // AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
                 new AppOpenAdLoadCallback() {
                     @Override
-                    public void onAdLoaded(AppOpenAd ad) {
+                    public void onAdLoaded(@NonNull AppOpenAd ad) {
                         // Called when an app open ad has loaded.
                         Log.d(TAG, "Ad was loaded.");
                         appOpenAd = ad;
@@ -91,7 +108,7 @@ public class AppOpenAdProxy extends KrollProxy {
                     }
 
                     @Override
-                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         // Called when an app open ad has failed to load.
                         org.appcelerator.kroll.common.Log.d(TAG, "onAdFailedToLoad");
                         Log.d(TAG, loadAdError.getMessage());
@@ -136,7 +153,7 @@ public class AppOpenAdProxy extends KrollProxy {
             }
 
             @Override
-            public void onAdFailedToShowFullScreenContent(AdError adError) {
+            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                 // Called when fullscreen content failed to show.
                 // Set the reference to null so isAdAvailable() returns false.
                 appOpenAd = null;
@@ -203,11 +220,7 @@ public class AppOpenAdProxy extends KrollProxy {
                 rewardedError.put("message", "Ad not ready yet! You should run the method load() first and wait for the callbacks");
                 fireEvent(AdmobModule.AD_NOT_READY, rewardedError);
             }
-            // load();
-            return;
-        }
-
-        if(isAdAvailable()){
+        } else {
             isShowingAd = true;
             appOpenAd.show(TiApplication.getAppCurrentActivity());
         }

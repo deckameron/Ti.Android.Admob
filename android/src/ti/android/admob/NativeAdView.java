@@ -1,18 +1,12 @@
 package ti.android.admob;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
-import org.appcelerator.titanium.TiBlob;
-import org.appcelerator.titanium.io.TiBaseFile;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.proxy.TiWindowProxy;
 import org.appcelerator.titanium.view.TiBorderWrapperView;
 import org.appcelerator.titanium.view.TiUIView;
 import org.appcelerator.titanium.util.TiColorHelper;
-import org.appcelerator.titanium.util.TiConvert;
 
 import ti.modules.titanium.ui.ButtonProxy;
 import ti.modules.titanium.ui.ImageViewProxy;
@@ -289,10 +283,9 @@ public class NativeAdView extends TiUIView {
 		AdManagerAdRequest.Builder AdRequestBuilder = new AdManagerAdRequest.Builder();
 
 		Bundle bundle = AdmobModule.createAdRequestProperties();
-		if (bundle.size() > 0) {
-			Log.d(TAG, "extras.size() > 0 -- set ad properties");
+		if (!bundle.isEmpty()) {
+			Log.d(TAG, "Has extras -- Setting Ad properties");
 			AdRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
-			// AdRequestBuilder.addNetworkExtras(new AdMobExtras(bundle));
 		}
 
 		if (keyword != null) {
@@ -507,12 +500,12 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.EXTRA_BUNDLE)) {
 					Log.d(TAG, "Has extras");
-					AdmobModule.extras = mapToBundle(d.getKrollDict("extras"));
+					AdmobModule.extras = AdmobModule.mapToBundle(d.getKrollDict(AdmobModule.EXTRA_BUNDLE));
 				}
 
 				if (d.containsKey(AdmobModule.MASTER_VIEW)) {
 					Object view = d.get(AdmobModule.MASTER_VIEW);
-					if (view != null && view instanceof TiViewProxy) {
+					if (view instanceof TiViewProxy) {
 						if (view instanceof TiWindowProxy) {
 							throw new IllegalStateException("[ERROR] Cannot use window as AdmobView view");
 						}
@@ -525,7 +518,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.MEDIA_VIEW)) {
 					Object view = d.get(AdmobModule.MEDIA_VIEW);
-					if (view != null && view instanceof TiViewProxy) {
+					if (view instanceof TiViewProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_media is TiViewProxy");
 						contentad_media_proxy = (TiViewProxy) view;
 					} else {
@@ -535,7 +528,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.HEADLINE_LABEL)) {
 					Object view = d.get(AdmobModule.HEADLINE_LABEL);
-					if (view != null && view instanceof LabelProxy) {
+					if (view instanceof LabelProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_headline is LabelProxy");
 						contentad_headline_proxy = (LabelProxy) view;
 					} else {
@@ -545,7 +538,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.BODY_LABEL)) {
 					Object view = d.get(AdmobModule.BODY_LABEL);
-					if (view != null && view instanceof LabelProxy) {
+					if (view instanceof LabelProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_body is LabelProxy");
 						contentad_body_proxy = (LabelProxy) view;
 					} else {
@@ -555,7 +548,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.CALL_TO_ACTION_BUTTON)) {
 					Object view = d.get(AdmobModule.CALL_TO_ACTION_BUTTON);
-					if (view != null && view instanceof ButtonProxy) {
+					if (view instanceof ButtonProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_call_to_action is ButtonProxy");
 						contentad_call_to_action_proxy = (ButtonProxy) view;
 					} else {
@@ -565,7 +558,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.LOGO_OR_ICON_IMAGE_VIEW)) {
 					Object view = d.get(AdmobModule.LOGO_OR_ICON_IMAGE_VIEW);
-					if (view != null && view instanceof ImageViewProxy) {
+					if (view instanceof ImageViewProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_logo is ImageViewProxy");
 						contentad_logo_proxy = (ImageViewProxy) view;
 					} else {
@@ -575,7 +568,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.ADVERTISER_LABEL)) {
 					Object view = d.get(AdmobModule.ADVERTISER_LABEL);
-					if (view != null && view instanceof LabelProxy) {
+					if (view instanceof LabelProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_advertiser is LabelProxy");
 						contentad_advertiser_proxy = (LabelProxy) view;
 					} else {
@@ -585,7 +578,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.PRICE_LABEL)) {
 					Object view = d.get(AdmobModule.PRICE_LABEL);
-					if (view != null && view instanceof LabelProxy) {
+					if (view instanceof LabelProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_price_view is LabelProxy");
 						contentad_price_proxy = (LabelProxy) view;
 					} else {
@@ -594,7 +587,7 @@ public class NativeAdView extends TiUIView {
 				}
 				if (d.containsKey(AdmobModule.IMAGE_LOGO)) {
 					Object view = d.get(AdmobModule.IMAGE_LOGO);
-					if (view != null && view instanceof ImageViewProxy) {
+					if (view instanceof ImageViewProxy) {
 						Log.d(TAG, "[SUCESS] type for content_ad_image_logo is ImageViewProxy");
 						content_ad_image_logo = (ImageViewProxy) view;
 					} else {
@@ -604,7 +597,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.STORE_LABEL)) {
 					Object view = d.get(AdmobModule.STORE_LABEL);
-					if (view != null && view instanceof LabelProxy) {
+					if (view instanceof LabelProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_store_view is LabelProxy");
 						contentad_store_proxy = (LabelProxy) view;
 					} else {
@@ -614,7 +607,7 @@ public class NativeAdView extends TiUIView {
 
 				if (d.containsKey(AdmobModule.STARS_VIEW)) {
 					Object view = d.get(AdmobModule.STARS_VIEW);
-					if (view != null && view instanceof TiViewProxy) {
+					if (view instanceof TiViewProxy) {
 						Log.d(TAG, "[SUCESS] type for contentad_rating_view is TiViewProxy");
 						contentad_stars_proxy = (TiViewProxy) view;
 					} else {
@@ -674,7 +667,7 @@ public class NativeAdView extends TiUIView {
 
 					adType = d.getString(AdmobModule.AD_SIZE_TYPE);
 
-					if (AdmobModule.INIT_READY == false){
+					if (!AdmobModule.INIT_READY){
 						Log.w(TAG, ("Admob is not ready yet!"));
 						if (proxy != null) {
 							if (proxy.hasListeners(AdmobModule.ADMOB_NOT_READY_YET)) {
@@ -718,32 +711,5 @@ public class NativeAdView extends TiUIView {
 			color = "000000";
 		}
 		return color;
-	}
-
-	private Bundle mapToBundle(Map<String, Object> map) {
-		if (map == null) {
-			return new Bundle();
-		}
-
-		Bundle bundle = new Bundle(map.size());
-
-		for (String key : map.keySet()) {
-			Object val = map.get(key);
-			if (val == null) {
-				bundle.putString(key, null);
-			} else if (val instanceof TiBlob) {
-				bundle.putByteArray(key, ((TiBlob) val).getBytes());
-			} else if (val instanceof TiBaseFile) {
-				try {
-					bundle.putByteArray(key, ((TiBaseFile) val).read().getBytes());
-				} catch (IOException e) {
-					Log.e(TAG, "Unable to put '" + key + "' value into bundle: " + e.getLocalizedMessage(), e);
-				}
-			} else {
-				bundle.putString(key, TiConvert.toString(val));
-			}
-		}
-
-		return bundle;
 	}
 }

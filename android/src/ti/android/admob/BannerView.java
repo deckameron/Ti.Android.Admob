@@ -48,10 +48,9 @@ public class BannerView extends TiUIView {
         AdManagerAdRequest.Builder AdRequestBuilder = new AdManagerAdRequest.Builder();
 
         Bundle bundle = AdmobModule.createAdRequestProperties();
-        if (bundle.size() > 0) {
-            Log.d(TAG, "extras.size() > 0 -- set ad properties");
+        if (!bundle.isEmpty()) {
+            Log.d(TAG, "Has extras -- Setting Ad properties");
             AdRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
-            // AdRequestBuilder.addNetworkExtras(new AdMobExtras(bundle));
         }
 
         if (keyword != null) {
@@ -153,6 +152,7 @@ public class BannerView extends TiUIView {
         super.processProperties(d);
         Log.d(TAG, "Process properties");
 
+
         if(d.containsKeyAndNotNull("adUnitId")){
             AdmobModule.BANNER_AD_UNIT_ID = d.getString("adUnitId");
         }
@@ -167,6 +167,11 @@ public class BannerView extends TiUIView {
             keyword = d.getString("keyword");
         }
 
+        if (d.containsKey(AdmobModule.EXTRA_BUNDLE)) {
+            Log.d(TAG, "Has extras");
+            AdmobModule.extras = AdmobModule.mapToBundle(d.getKrollDict(AdmobModule.EXTRA_BUNDLE));
+        }
+
         if (d.containsKeyAndNotNull("customAdSize")) {
             Log.d(TAG, ("has customAdSize"));
 
@@ -178,13 +183,13 @@ public class BannerView extends TiUIView {
             if (cas.get("width") instanceof String){
                 adWidth = Integer.parseInt((String) cas.get("width"));
             } else {
-                adWidth = (int) cas.get("width");
+                adWidth = cas.getInt("width");
             }
 
             if (cas.get("height") instanceof String){
                 adHeight = Integer.parseInt((String) cas.get("height"));
             } else {
-                adHeight = (int) cas.get("height");
+                adHeight = cas.getInt("height");
             }
 
             createSmartBannerView(new AdSize(adWidth, adHeight));

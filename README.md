@@ -13,8 +13,8 @@ for instructions on getting started with using this module in your application.
 
 ## Requirements
 
-For Ti.Android.Admob [9.3.14](https://github.com/deckameron/Ti.Android.Admob/raw/master/android/dist/ti.android.admob-android-9.3.14.zip)
-- [x] Titanium SDK 10.0.0+
+For Ti.Android.Admob [11.0.1](https://github.com/deckameron/Ti.Android.Admob/raw/master/android/dist/ti.android.admob-android-11.0.1.zip)
+- [x] Titanium SDK 12.5.0+
 
 
 ## Doubleclick for Publishers Developer Docs
@@ -457,6 +457,12 @@ let nativeAd = Admob.createNativeAd({
 });
 window.add(nativeAd);
 ```
+# Ads Video Volume
+
+You call this method do drop the volume to a percentage of the current volume.
+```
+Admob.setAppVolume("50%"); // Will set the volume to 50% of the current volume.
+```
 # Events
 
 |Events                |Description                          |
@@ -501,6 +507,17 @@ Request the latest consent information
 It is recommended that you request an update of the consent information at every app launch. This will determine whether or not your user needs to provide consent.
 
 We have to reset TC string if last updated date was more than 13 months ago (https://developers.google.com/admob/ios/privacy/gdpr#troubleshooting), but Google UMP has a bug that generates 3.3 typed IAB TCF v2.0 because this string never gets automatic updated. So I have implemented [bocops workaround](https://github.com/bocops/UMP-workarounds#admob-error-33) in order to address it. Thanks to [Bocops](https://github.com/bocops) and [Astrovics](https://github.com/Astrovic)
+
+#### Debug Geography
+You can also call ```requestConsentForm(Admob.DEBUG_GEOGRAPHY_EEA);```
+
+|Constants                |Description                          |
+|----------------|-------------------------------|
+|DEBUG_GEOGRAPHY_DISABLED             |   Debug geography disabled for debug devices.
+|DEBUG_GEOGRAPHY_OTHER             |   Geography appears as in a region with no regulation in force for debug device.
+|DEBUG_GEOGRAPHY_EEA             |   Geography appears as in EEA for debug devices.
+|DEBUG_GEOGRAPHY_REGULATED_US_STATE             |   Geography appears as in a regulated US State for debug devices.
+
 
 
 ### `showConsentForm()`

@@ -28,23 +28,23 @@ public class RewardedProxy extends KrollProxy implements OnUserEarnedRewardListe
     public RewardedProxy() {
         super();
         Log.d(TAG, "createRewarded()");
-
-//        MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
-//            @Override
-//            public void onInitializationComplete(InitializationStatus initializationStatus) {
-//                Log.d(TAG, "Initialized sucessfully!");
-//            }
-//        });
     }
 
     // Handle creation options
     @Override
     public void handleCreationDict(KrollDict options) {
+
         Log.d(TAG, "handleCreationDict...");
         super.handleCreationDict(options);
+
         if (options.containsKeyAndNotNull("adUnitId")) {
             AdmobModule.REWARDED_AD_UNIT_ID = options.getString("adUnitId");
             Log.d(TAG, "adUnitId: " + AdmobModule.REWARDED_AD_UNIT_ID);
+        }
+
+        if (options.containsKey(AdmobModule.EXTRA_BUNDLE)) {
+            AdmobModule.extras = AdmobModule.mapToBundle(options.getKrollDict(AdmobModule.EXTRA_BUNDLE));
+            android.util.Log.d(TAG, "Has extras");
         }
 
         load();
@@ -56,9 +56,8 @@ public class RewardedProxy extends KrollProxy implements OnUserEarnedRewardListe
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 
         Bundle bundle = AdmobModule.createAdRequestProperties();
-        if (bundle.size() > 0) {
-            Log.d(TAG, "extras.size() > 0 -- set ad properties");
-            Log.d(TAG, bundle.toString());
+        if (!bundle.isEmpty()) {
+            android.util.Log.d(TAG, "Has extras -- Setting Ad properties");
             adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
         }
 

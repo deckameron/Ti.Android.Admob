@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -30,11 +31,18 @@ public class InterstitialProxy extends KrollProxy {
     // Handle creation options
     @Override
     public void handleCreationDict(KrollDict options) {
+
         Log.d(TAG, "handleCreationDict...");
         super.handleCreationDict(options);
+
         if (options.containsKeyAndNotNull("adUnitId")) {
             AdmobModule.INTERSTITIAL_AD_UNIT_ID = options.getString("adUnitId");
             Log.d(TAG, "adUnitId: " + AdmobModule.INTERSTITIAL_AD_UNIT_ID);
+        }
+
+        if (options.containsKeyAndNotNull(AdmobModule.EXTRA_BUNDLE)) {
+            AdmobModule.extras = AdmobModule.mapToBundle(options.getKrollDict(AdmobModule.EXTRA_BUNDLE));
+            android.util.Log.d(TAG, "Has extras");
         }
 
         load();
@@ -44,6 +52,12 @@ public class InterstitialProxy extends KrollProxy {
     public void load(){
 
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+        Bundle bundle = AdmobModule.createAdRequestProperties();
+        if (!bundle.isEmpty()) {
+            android.util.Log.d(TAG, "Has extras -- Setting Ad properties");
+            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+        }
 
         AdRequest adRequest = adRequestBuilder.build();
 
@@ -125,7 +139,7 @@ public class InterstitialProxy extends KrollProxy {
             }
 
             @Override
-            public void onAdFailedToShowFullScreenContent(AdError adError) {
+            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                 // Called when ad fails to show.
                 Log.d(TAG, "Ad failed to show.");
                 if (hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {

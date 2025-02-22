@@ -17,10 +17,9 @@ import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 
 import com.applovin.sdk.AppLovinPrivacySettings;
-import com.applovin.sdk.AppLovinSdk;
 import com.google.ads.mediation.inmobi.InMobiConsent;
+import com.inmobi.media.L;
 import com.inmobi.sdk.InMobiSdk;
-import com.google.android.ads.mediationtestsuite.MediationTestSuite;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.initialization.AdapterStatus;
@@ -38,9 +37,13 @@ import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.titanium.TiBlob;
+import org.appcelerator.titanium.io.TiBaseFile;
+import org.appcelerator.titanium.util.TiConvert;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,8 +88,6 @@ public class AdmobModule extends KrollModule
     @Kroll.constant
     public static final String AD_SHOWED_FULLSCREEN_CONTENT = "ad_showed_fullscreen_content";
     @Kroll.constant
-    public static final String CONSENT_FORM_READY = "consent_ready";
-    @Kroll.constant
     public static final String CONSENT_ERROR = "consent_error";
     @Kroll.constant
     public static final String CONSENT_INFO_UPDATE_FAILURE = "consent_info_update_failure";
@@ -98,8 +99,6 @@ public class AdmobModule extends KrollModule
     public static final String CONSENT_NOT_REQUIRED = "consent_not_required";
     @Kroll.constant
     public static final String CONSENT_REQUIRED = "consent_required";
-    @Kroll.constant
-    public static final String CONSENT_FORM_NOT_AVAILABLE = "consent_not_available";
 
     //AD SIZES
     @Kroll.constant
@@ -248,9 +247,11 @@ public class AdmobModule extends KrollModule
     @Kroll.onAppCreate
     public static void onAppCreate(TiApplication app) {
         Log.d(TAG, "-- Ti.Android.Admob -> onAppCreate --");
+        initializeMobileAdsSdk();
     }
 
-    public void initializeMobileAdsSdk(){
+    @Kroll.method
+    public static void initializeMobileAdsSdk(){
 
         Log.d(TAG, ("Initializing Mobile Ads SDK!"));
 
@@ -283,6 +284,13 @@ public class AdmobModule extends KrollModule
         });
     }
 
+    @Kroll.method
+    public void setAppVolume(String percentage){
+        Float percent = convertPercentage(percentage);
+        // Set app volume to be half of current device volume.
+        MobileAds.setAppVolume(percent);
+    }
+
     // Show a privacy options button if required.
     @Kroll.method
     public boolean isPrivacyOptionsRequired() {
@@ -293,11 +301,6 @@ public class AdmobModule extends KrollModule
             return consentInformation.getPrivacyOptionsRequirementStatus() == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
         }
         return false;
-    }
-
-    @Kroll.method
-    public void showMediationTestSuite() {
-        MediationTestSuite.launch(TiApplication.getInstance().getCurrentActivity());
     }
 
     @Kroll.method
@@ -344,22 +347,35 @@ public class AdmobModule extends KrollModule
     private static void setAppLovin_GDPRConsent(boolean isEnable){
         // EU consent and GDPR
         AppLovinPrivacySettings.setHasUserConsent(isEnable, TiApplication.getInstance().getCurrentActivity());
-        AppLovinPrivacySettings.setIsAgeRestrictedUser(false, TiApplication.getInstance().getCurrentActivity());
-
         // CCPA
         AppLovinPrivacySettings.setDoNotSell(!isEnable, TiApplication.getInstance().getCurrentActivity());
     }
 
+    // CONSENT STATUS
+    @Kroll.constant
+    public static final int DEBUG_GEOGRAPHY_EEA = ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA;
+    @Kroll.constant
+    public static final int DEBUG_GEOGRAPHY_DISABLED = ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_DISABLED;
+    @Kroll.constant
+    public static final int DEBUG_GEOGRAPHY_OTHER = ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_OTHER;
+    @Kroll.constant
+    public static final int DEBUG_GEOGRAPHY_REGULATED_US_STATE = ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_REGULATED_US_STATE;
+
     @Kroll.method
-    private void requestConsentForm(){
+    private void requestConsentForm(@Kroll.argument(optional = true) Integer debugGeography) {
+
+        int safeDebugGeographyValue = DEBUG_GEOGRAPHY_DISABLED;
+
+        if (debugGeography != null) {
+            safeDebugGeographyValue = debugGeography.intValue();
+            Log.d(TAG, ("RequestConsentForm with debugGeography: " + safeDebugGeographyValue));
+        }
 
         Context appContext = TiApplication.getInstance().getApplicationContext();
         Context currentActivity = TiApplication.getInstance().getCurrentActivity();
 
         ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(appContext)
-                .setDebugGeography(ConsentDebugSettings
-                        .DebugGeography
-                        .DEBUG_GEOGRAPHY_EEA)
+                .setDebugGeography(safeDebugGeographyValue)
                 .addTestDeviceHashedId(TEST_DEVICE_ID)
                 .build();
 
@@ -379,15 +395,16 @@ public class AdmobModule extends KrollModule
                     public void onConsentInfoUpdateSuccess() {
                         // The consent information state was updated.
                         // You are now ready to check if a form is available.
-                        if (consentInformation.isConsentFormAvailable()) {
-                            loadForm();
-                            if (hasListeners(CONSENT_FORM_READY)) {
-                                fireEvent(CONSENT_FORM_READY, new KrollDict());
+                        if(consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
+                            Log.d(TAG, ("Consent information is REQUIRED! Calling loadForm()"));
+                            if (hasListeners(CONSENT_REQUIRED)) {
+                                fireEvent(CONSENT_REQUIRED, new KrollDict());
+                                loadForm();
                             }
                         } else {
-                            Log.d(TAG, ("Consent form is NOT AVAILABLE!"));
-                            if (hasListeners(CONSENT_FORM_NOT_AVAILABLE)) {
-                                fireEvent(CONSENT_FORM_NOT_AVAILABLE, new KrollDict());
+                            Log.d(TAG, ("Consent information is NOT REQUIRED!"));
+                            if (hasListeners(CONSENT_NOT_REQUIRED)) {
+                                fireEvent(CONSENT_NOT_REQUIRED, new KrollDict());
                             }
                         }
                     }
@@ -459,7 +476,8 @@ public class AdmobModule extends KrollModule
 
     private void loadForm(){
 
-	    Context appContext = TiApplication.getInstance().getApplicationContext();
+        Log.d(TAG, "loadForm running...");
+	    Context appContext = TiApplication.getInstance().getCurrentActivity();
 
         UserMessagingPlatform.loadConsentForm(
                 appContext,
@@ -468,21 +486,8 @@ public class AdmobModule extends KrollModule
                     public void onConsentFormLoadSuccess(ConsentForm consentForm) {
 
                         if (hasListeners(CONSENT_FORM_LOADED)) {
+                            Log.d(TAG, ("Consent form is LOADED! You should call showConsentForm()"));
                             fireEvent(CONSENT_FORM_LOADED, new KrollDict());
-                        }
-
-                        _consentForm = consentForm;
-                        if(consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
-                            Log.d(TAG, ("Consent information is REQUIRED! You should call showConsentForm()"));
-                            if (hasListeners(CONSENT_REQUIRED)) {
-                                fireEvent(CONSENT_REQUIRED, new KrollDict());
-                            }
-                        } else {
-                            Log.d(TAG, ("Consent information is NOT REQUIRED!"));
-                            if (hasListeners(CONSENT_NOT_REQUIRED)) {
-                                fireEvent(CONSENT_NOT_REQUIRED, new KrollDict());
-                                initializeMobileAdsSdk();
-                            }
                         }
                     }
                 },
@@ -535,11 +540,24 @@ public class AdmobModule extends KrollModule
     }
 
     @Kroll.method
+    public Boolean canRequestAds(){
+        return consentInformation.canRequestAds();
+    }
+
+    @Kroll.method
+    public Boolean isConsentFormAvailable(){
+        if (consentInformation != null) {
+            return consentInformation.isConsentFormAvailable();
+        }
+        return false;
+    }
+
+    @Kroll.method
     public void showConsentForm(){
 
         Context currentActivity = TiApplication.getInstance().getCurrentActivity();
 
-        _consentForm.show((Activity) currentActivity,
+        UserMessagingPlatform.showPrivacyOptionsForm((Activity) currentActivity,
                 new ConsentForm.OnConsentFormDismissedListener() {
                     @Override
                     public void onConsentFormDismissed(@Nullable FormError formError) {
@@ -552,7 +570,7 @@ public class AdmobModule extends KrollModule
                             }
                             fireEvent(CONSENT_FORM_DISMISSED, errorCallback);
                         }
-                        loadForm();
+                        // loadForm();
                     }
                 }
         );
@@ -565,6 +583,67 @@ public class AdmobModule extends KrollModule
         } else {
             Log.e(TAG, ("ConsentStatus error : CONSENT_INFO_NOT_READY. Did you call requestConsentForm()"));
         }
+    }
+
+    public static Bundle convertKrollDictToBundle(KrollDict krollDict) {
+        Bundle bundle = new Bundle();
+
+        if (krollDict != null) {
+            for (String key : krollDict.keySet()) {
+                Object value = krollDict.get(key);
+
+                if (value instanceof String) {
+                    bundle.putString(key, (String) value);
+                } else if (value instanceof Integer) {
+                    bundle.putInt(key, (Integer) value);
+                } else if (value instanceof Boolean) {
+                    bundle.putBoolean(key, (Boolean) value);
+                } else if (value instanceof Double) {
+                    bundle.putDouble(key, (Double) value);
+                } else if (value instanceof Float) {
+                    bundle.putFloat(key, (Float) value);
+                } else if (value instanceof Long) {
+                    bundle.putLong(key, (Long) value);
+                } else if (value instanceof String[]) {
+                    bundle.putStringArray(key, (String[]) value);
+                } else if (value instanceof int[]) {
+                    bundle.putIntArray(key, (int[]) value);
+                } else if (value instanceof boolean[]) {
+                    bundle.putBooleanArray(key, (boolean[]) value);
+                } else {
+                    Log.w("Admob Module", "Unsupported type for key: " + key + ", value: " + value);
+                }
+            }
+        }
+
+        return bundle;
+    }
+
+    public static Bundle mapToBundle(Map<String, Object> map) {
+        if (map == null) {
+            return new Bundle();
+        }
+
+        Bundle bundle = new Bundle(map.size());
+
+        for (String key : map.keySet()) {
+            Object val = map.get(key);
+            if (val == null) {
+                bundle.putString(key, null);
+            } else if (val instanceof TiBlob) {
+                bundle.putByteArray(key, ((TiBlob) val).getBytes());
+            } else if (val instanceof TiBaseFile) {
+                try {
+                    bundle.putByteArray(key, ((TiBaseFile) val).read().getBytes());
+                } catch (IOException e) {
+                    Log.e(TAG, "Unable to put '" + key + "' value into bundle: " + e.getLocalizedMessage(), e);
+                }
+            } else {
+                bundle.putString(key, TiConvert.toString(val));
+            }
+        }
+
+        return bundle;
     }
 
     public static Bundle createAdRequestProperties() {
@@ -629,24 +708,45 @@ public class AdmobModule extends KrollModule
     This should be changed inside of the UMP lib.
     https://groups.google.com/g/google-admob-ads-sdk/c/xRaBKayC_80/m/1d0GktrHBQAJ
      */
+
+    @Kroll.method
+    public Boolean isGDPR() {
+        Context context = TiApplication.getInstance();
+        SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+        int gdpr = prefs.getInt("IABTCF_gdprApplies", 0);
+        return gdpr == 1;
+    }
+
     @Kroll.method
     public boolean canShowAds(){
         return canShowAds(TiApplication.getInstance());
     }
 
     public boolean canShowAds(Context context){
-        // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         // Substitui o método deprecrado com um nome de arquivo específico para SharedPreferences
-        SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+        // SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+
+//        int gad_rdp = prefs.getInt("gad_rdp", 100);
+//        if (gad_rdp == 1 || gad_rdp == 0){
+//            Log.d(TAG, "Form is from U.S. states privacy!");
+//            return true;
+//        }
 
         String purposeConsent = prefs.getString("IABTCF_PurposeConsents", "");
+        Log.d(TAG, "purposeConsent: " + purposeConsent);
         String vendorConsent = prefs.getString("IABTCF_VendorConsents","");
+        Log.d(TAG, "vendorConsent: " + vendorConsent);
         String vendorLI = prefs.getString("IABTCF_VendorLegitimateInterests","");
+        Log.d(TAG, "vendorLI: " + vendorLI);
         String purposeLI = prefs.getString("IABTCF_PurposeLegitimateInterests","");
+        Log.d(TAG, "purposeLI: " + purposeLI);
 
         int googleId = 755;
         boolean hasGoogleVendorConsent = hasAttribute(vendorConsent, googleId);
+        Log.d(TAG, "hasGoogleVendorConsent: " + hasGoogleVendorConsent);
         boolean hasGoogleVendorLI = hasAttribute(vendorLI, googleId);
+        Log.d(TAG, "hasGoogleVendorLI: " + hasGoogleVendorLI);
 
         List<Integer> indexes = new ArrayList<>();
         indexes.add(1);
@@ -668,18 +768,30 @@ public class AdmobModule extends KrollModule
     }
 
     public boolean canShowPersonalizedAds(Context context){
-        // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         // Substitui o método deprecrado com um nome de arquivo específico para SharedPreferences
-        SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+        // SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+
+//        int gad_rdp = prefs.getInt("gad_rdp", 100);
+//        if (gad_rdp == 1 || gad_rdp == 0){
+//            Log.d(TAG, "Form is from U.S. states privacy!");
+//            return true;
+//        }
 
         String purposeConsent = prefs.getString("IABTCF_PurposeConsents", "");
+        Log.d(TAG, "purposeConsent: " + purposeConsent);
         String vendorConsent = prefs.getString("IABTCF_VendorConsents","");
+        Log.d(TAG, "vendorConsent: " + vendorConsent);
         String vendorLI = prefs.getString("IABTCF_VendorLegitimateInterests","");
+        Log.d(TAG, "vendorLI: " + vendorLI);
         String purposeLI = prefs.getString("IABTCF_PurposeLegitimateInterests","");
+        Log.d(TAG, "purposeLI: " + purposeLI);
 
         int googleId = 755;
         boolean hasGoogleVendorConsent = hasAttribute(vendorConsent, googleId);
+        Log.d(TAG, "hasGoogleVendorConsent: " + hasGoogleVendorConsent);
         boolean hasGoogleVendorLI = hasAttribute(vendorLI, googleId);
+        Log.d(TAG, "hasGoogleVendorLI: " + hasGoogleVendorLI);
 
         List<Integer> indexes = new ArrayList<>();
         indexes.add(1);
@@ -723,6 +835,19 @@ public class AdmobModule extends KrollModule
             }
         }
         return true;
+    }
+
+    public static Float convertPercentage(String percentage) {
+        if (percentage == null || !percentage.endsWith("%")) {
+            throw new IllegalArgumentException("Invalid Format. The string must end in '%'.");
+        }
+        try {
+            String numericPart = percentage.substring(0, percentage.length() - 1).trim();
+            float value = Float.parseFloat(numericPart);
+            return value / 100f;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number in the percentage string.");
+        }
     }
 
     /*

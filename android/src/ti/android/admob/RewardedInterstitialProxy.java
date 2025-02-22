@@ -1,7 +1,10 @@
 package ti.android.admob;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -31,11 +34,18 @@ public class RewardedInterstitialProxy extends KrollProxy implements OnUserEarne
     // Handle creation options
     @Override
     public void handleCreationDict(KrollDict options) {
+
         Log.d(TAG, "handleCreationDict...");
         super.handleCreationDict(options);
+
         if (options.containsKeyAndNotNull("adUnitId")) {
             AdmobModule.REWARDED_INTERSTITIAL_AD_UNIT_ID = options.getString("adUnitId");
             Log.d(TAG, "adUnitId: " + AdmobModule.REWARDED_INTERSTITIAL_AD_UNIT_ID);
+        }
+
+        if (options.containsKey(AdmobModule.EXTRA_BUNDLE)) {
+            AdmobModule.extras = AdmobModule.mapToBundle(options.getKrollDict(AdmobModule.EXTRA_BUNDLE));
+            android.util.Log.d(TAG, "Has extras");
         }
 
         load();
@@ -43,10 +53,19 @@ public class RewardedInterstitialProxy extends KrollProxy implements OnUserEarne
 
     @Kroll.method
     public void load(){
+
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+        Bundle bundle = AdmobModule.createAdRequestProperties();
+        if (!bundle.isEmpty()) {
+            android.util.Log.d(TAG, "Has extras -- Setting Ad properties");
+            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+        }
+
         RewardedInterstitialAd.load(getActivity(), AdmobModule.REWARDED_INTERSTITIAL_AD_UNIT_ID,
-                new AdRequest.Builder().build(),  new RewardedInterstitialAdLoadCallback() {
+                adRequestBuilder.build(),  new RewardedInterstitialAdLoadCallback() {
                     @Override
-                    public void onAdLoaded(RewardedInterstitialAd ad) {
+                    public void onAdLoaded(@NonNull RewardedInterstitialAd ad) {
                         rewardedInterstitialAd = ad;
                         Log.e(TAG, "onAdLoaded");
                         setRewardedInterstitialEvents();
@@ -63,7 +82,7 @@ public class RewardedInterstitialProxy extends KrollProxy implements OnUserEarne
                         }
                     }
                     @Override
-                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         Log.e(TAG, "onAdFailedToLoad");
                         rewardedInterstitialAd = null;
 
@@ -90,7 +109,7 @@ public class RewardedInterstitialProxy extends KrollProxy implements OnUserEarne
         rewardedInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
             /** Called when the ad failed to show full screen content. */
             @Override
-            public void onAdFailedToShowFullScreenContent(AdError adError) {
+            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                 Log.i(TAG, "onAdFailedToShowFullScreenContent");
                 if (hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {
                     KrollDict rewardedError = new KrollDict();

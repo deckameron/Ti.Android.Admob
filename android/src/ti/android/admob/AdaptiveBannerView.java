@@ -1,12 +1,9 @@
 package ti.android.admob;
 
-import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.WindowMetrics;
 
 import androidx.annotation.NonNull;
@@ -167,9 +164,13 @@ public class AdaptiveBannerView extends TiUIView {
             adRequestBuilder.setContentUrl(contentUrl);
         }
 
+        Bundle bundle = AdmobModule.createAdRequestProperties();
         if (collapsible != null && !collapsible.isEmpty()) {
-            Bundle bundle = new Bundle();
             bundle.putString("collapsible", collapsible);
+        }
+
+        if (!bundle.isEmpty()) {
+            Log.d(TAG, "Has extras -- Setting Ad properties");
             adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
         }
 
@@ -199,6 +200,11 @@ public class AdaptiveBannerView extends TiUIView {
             AdmobModule.BANNER_AD_UNIT_ID = d.getString("adUnitId");
         }
 
+        if (d.containsKey(AdmobModule.EXTRA_BUNDLE)) {
+            Log.d(TAG, "Has extras");
+            AdmobModule.extras = AdmobModule.mapToBundle(d.getKrollDict(AdmobModule.EXTRA_BUNDLE));
+        }
+
         if (d.containsKeyAndNotNull("adaptiveType")) {
             Log.d(TAG, ("has adaptiveType: " + d.getString("adaptiveType")));
             adaptiveType = d.getString("adaptiveType");
@@ -207,6 +213,11 @@ public class AdaptiveBannerView extends TiUIView {
         if (d.containsKeyAndNotNull("maxHeight")) {
             Log.d(TAG, ("has maxHeight: " + String.valueOf(d.getInt("maxHeight"))));
             maxHeight = d.getInt("maxHeight");
+        }
+
+        if (d.containsKeyAndNotNull("keyword")) {
+            Log.d(TAG, ("has keyword: " + d.getString("keyword")));
+            keyword = d.getString("keyword");
         }
 
         if (d.containsKeyAndNotNull("contentUrl")) {
