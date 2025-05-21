@@ -14,7 +14,7 @@ println "Running gradle version: $gradle.gradleVersion"
 // }
 
 dependencies {
- 	implementation 'com.google.android.ump:user-messaging-platform:3.1.0'
+ 	implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
  	implementation 'com.google.android.gms:play-services-ads:23.6.0'
  	implementation 'com.google.android.gms:play-services-ads-identifier:18.2.0'
  	implementation 'org.checkerframework:checker-qual:3.49.0'
@@ -25,7 +25,7 @@ dependencies {
 
  	//MEDIATION
  	/* inMobi */
-	implementation 'com.google.ads.mediation:inmobi:10.8.0.0'
+	implementation 'com.google.ads.mediation:inmobi:10.8.3.0'
 	/* AppLovin */
-    implementation 'com.google.ads.mediation:applovin:13.1.0.0'  
+    implementation 'com.google.ads.mediation:applovin:13.2.0.1'
  }
