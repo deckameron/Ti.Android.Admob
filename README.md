@@ -615,4 +615,4 @@ dependencies {
 |[Interstitial Video](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/8691691433
 |[Rewarded Video](https://developers.google.com/admob/android/rewarded-video#request_rewarded_video_ad) | ca-app-pub-3940256099942544/5224354917
 |[Native](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/2247696110
-|[AppOpen](https://developers.google.com/admob/android/app-open) | ca-app-pub-3940256099942544/3419835294
+|[AppOpen](https://developers.google.com/admob/android/app-open) | ca-app-pub-3940256099942544/9257395921

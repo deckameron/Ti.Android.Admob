@@ -710,10 +710,16 @@ public class AdmobModule extends KrollModule
      */
 
     @Kroll.method
-    public Boolean isGDPR() {
-        Context context = TiApplication.getInstance();
-        SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+    public boolean isGDPR(){
+        return isGDPR(TiApplication.getInstance());
+    }
+ 
+    public boolean isGDPR(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        //Context context = TiApplication.getInstance();
+        //SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
         int gdpr = prefs.getInt("IABTCF_gdprApplies", 0);
+        Log.d(TAG, "gdprApplies: " + gdpr);
         return gdpr == 1;
     }
 
