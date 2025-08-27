@@ -863,6 +863,6 @@ public class AdmobModule extends KrollModule
      * ca-app-pub-3940256099942544/5224354917 Native Advanced
      * ca-app-pub-3940256099942544/2247696110 Native Advanced Video
      * ca-app-pub-3940256099942544/1044960115 Banner
-     * ca-app-pub-3940256099942544/3419835294 Open App
+     * ca-app-pub-3940256099942544/9257395921 Open App
      */
 }
