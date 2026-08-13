@@ -25,17 +25,17 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.MediaAspectRatio;
-import com.google.android.gms.ads.admanager.AdManagerAdRequest;
-import com.google.android.gms.ads.VideoOptions;
-import com.google.android.gms.ads.nativead.MediaView;
-import com.google.android.gms.ads.nativead.NativeAdOptions;
-import com.google.android.gms.ads.nativead.NativeAd;
-import com.google.ads.mediation.admob.AdMobAdapter;
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
+import com.google.android.libraries.ads.mobile.sdk.common.VideoOptions;
+import com.google.android.libraries.ads.mobile.sdk.nativead.MediaView;
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAd;
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdEventCallback;
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoader;
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoaderCallback;
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdRequest;
 
+import java.util.Collections;
 
 @SuppressWarnings("deprecation")
 public class NativeAdView extends TiUIView {
@@ -93,18 +93,35 @@ public class NativeAdView extends TiUIView {
 
 	// NATIVE ADS
 	private void createNativeAds() {
-		AdLoader.Builder builder = new AdLoader.Builder(proxy.getActivity(),
-				AdmobModule.NATIVE_AD_UNIT_ID);
 
 		frameLayout = new FrameLayout(proxy.getActivity());
 		frameLayout.setLayoutParams(
 				new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 						ViewGroup.LayoutParams.WRAP_CONTENT));
 
-		builder.forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+		if (keyword != null || contentUrl != null) {
+			Log.w(TAG, "The 'keyword' and 'contentUrl' properties are no longer supported by " +
+					"the GMA Next-Gen SDK's NativeAdRequest and will be ignored.");
+		}
+
+		VideoOptions videoOptions = new VideoOptions.Builder().setStartMuted(true).build();
+
+		NativeAdRequest.Builder requestBuilder = new NativeAdRequest.Builder(
+				AdmobModule.NATIVE_AD_UNIT_ID, Collections.singletonList(NativeAd.NativeAdType.NATIVE))
+				.setVideoOptions(videoOptions);
+
+		Bundle bundle = AdmobModule.createAdRequestProperties();
+		if (!bundle.isEmpty()) {
+			Log.d(TAG, "Has extras -- Setting Ad properties");
+			requestBuilder.setGoogleExtrasBundle(bundle);
+		}
+
+		NativeAdRequest adRequest = requestBuilder.build();
+
+		NativeAdLoader.load(adRequest, new NativeAdLoaderCallback() {
 
 			@Override
-			public void onNativeAdLoaded(NativeAd unifiedNativeAd) {
+			public void onNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
 				// Show the ad.
 				Log.d(TAG, "onContentAdLoaded()");
 
@@ -121,7 +138,59 @@ public class NativeAdView extends TiUIView {
 					if (proxy == null) {
 						return;
 					}
-					com.google.android.gms.ads.nativead.NativeAdView nativeAd = new com.google.android.gms.ads.nativead.NativeAdView(proxy.getActivity());
+
+					unifiedNativeAd.setAdEventCallback(new NativeAdEventCallback() {
+						@Override
+						public void onAdShowedFullScreenContent() {
+							Log.d(TAG, "onAdShowedFullScreenContent()");
+							if (proxy != null) {
+								if (proxy.hasListeners(AdmobModule.AD_OPENED)) {
+									proxy.fireEvent(AdmobModule.AD_OPENED, new KrollDict());
+								}
+							}
+						}
+
+						@Override
+						public void onAdDismissedFullScreenContent() {
+							Log.d(TAG, "onAdDismissedFullScreenContent()");
+							if (proxy != null) {
+								if (proxy.hasListeners(AdmobModule.AD_CLOSED)) {
+									proxy.fireEvent(AdmobModule.AD_CLOSED, new KrollDict());
+								}
+							}
+						}
+
+						@Override
+						public void onAdFailedToShowFullScreenContent(
+								@NonNull FullScreenContentError fullScreenContentError) {
+							Log.d(TAG, "onAdFailedToShowFullScreenContent(): " + fullScreenContentError);
+							if (proxy != null) {
+								if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {
+									KrollDict errorCallback = new KrollDict();
+									errorCallback.put("message", fullScreenContentError.toString());
+									proxy.fireEvent(AdmobModule.AD_FAILED_TO_SHOW, errorCallback);
+								}
+							}
+						}
+
+						@Override
+						public void onAdImpression() {
+							Log.d(TAG, "onAdImpression()");
+						}
+
+						@Override
+						public void onAdClicked() {
+							Log.d(TAG, "onAdClicked()");
+							if (proxy != null) {
+								if (proxy.hasListeners(AdmobModule.AD_CLICKED)) {
+									proxy.fireEvent(AdmobModule.AD_CLICKED, new KrollDict());
+								}
+							}
+						}
+					});
+
+					com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdView nativeAd =
+							new com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdView(proxy.getActivity());
 
 					nativeAd.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 							ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -204,66 +273,15 @@ public class NativeAdView extends TiUIView {
 					Log.e(TAG, "No master_view defined!");
 				}
 			}
-		});
-
-		VideoOptions videoOptions = new VideoOptions.Builder().setStartMuted(true).build();
-
-		NativeAdOptions adOptions = new NativeAdOptions.Builder()
-				.setMediaAspectRatio(MediaAspectRatio.PORTRAIT)
-				.setVideoOptions(videoOptions).build();
-
-		builder.withNativeAdOptions(adOptions);
-
-		AdLoader adLoader = builder.withAdListener(new AdListener() {
-
-			@Override
-			public void onAdOpened() {
-				Log.d(TAG, "onAdOpened()");
-				if (proxy != null) {
-					if (proxy.hasListeners(AdmobModule.AD_OPENED)) {
-						proxy.fireEvent(AdmobModule.AD_OPENED, new KrollDict());
-					}
-				}
-			}
-
-			@Override
-			public void onAdClicked(){
-				Log.d(TAG, "onAdClicked()");
-				if (proxy != null) {
-					if (proxy.hasListeners(AdmobModule.AD_CLICKED)) {
-						proxy.fireEvent(AdmobModule.AD_CLICKED, new KrollDict());
-					}
-				}
-			}
-
-			@Override
-			public void onAdLoaded() {
-				Log.d(TAG, "onAdLoaded()");
-				if (proxy != null) {
-
-					KrollDict sCallback = new KrollDict();
-
-					if (proxy.hasListeners(AdmobModule.AD_LOADED)) {
-						proxy.fireEvent(AdmobModule.AD_LOADED, sCallback);
-					}
-
-					// DEPRECATED
-					if (proxy.hasListeners(AdmobModule.AD_RECEIVED)) {
-						Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
-						proxy.fireEvent(AdmobModule.AD_RECEIVED, sCallback);
-					}
-				}
-			}
 
 			@Override
 			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-				Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode())));
+				Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode().getValue())));
 				if (proxy != null) {
 
 					KrollDict errorCallback = new KrollDict();
-					errorCallback.put("cause", loadAdError.getCause());
 					errorCallback.put("code", loadAdError.getCode());
-					errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
+					errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode().getValue()));
 					errorCallback.put("message", loadAdError.getMessage());
 
 					if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
@@ -278,33 +296,13 @@ public class NativeAdView extends TiUIView {
 
 				}
 			}
-		}).build();
-
-		AdManagerAdRequest.Builder AdRequestBuilder = new AdManagerAdRequest.Builder();
-
-		Bundle bundle = AdmobModule.createAdRequestProperties();
-		if (!bundle.isEmpty()) {
-			Log.d(TAG, "Has extras -- Setting Ad properties");
-			AdRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
-		}
-
-		if (keyword != null) {
-			AdRequestBuilder.addKeyword(keyword);
-		}
-
-		if (contentUrl != null) {
-			AdRequestBuilder.setContentUrl(contentUrl);
-		}
-
-		AdManagerAdRequest AR = AdRequestBuilder.build();
-
-		adLoader.loadAd(AR);
+		});
 
 		setNativeView(frameLayout);
 	}
 
 	/**
-	 * Populates a {@link com.google.android.gms.ads.nativead.NativeAdView} object with data from a given
+	 * Populates a {@link com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdView} object with data from a given
 	 * {@link NativeAd}.
 	 *
 	 * @param nativeAd
@@ -312,13 +310,9 @@ public class NativeAdView extends TiUIView {
 	 * @param adView
 	 *            the view to be populated
 	 */
-	private void populateUnifiedNativeAdView(NativeAd nativeAd, com.google.android.gms.ads.nativead.NativeAdView adView) {
-		// Set the media view. Media content will be automatically populated in the
-		// media view once
-		// adView.setNativeAd() is called.
-		adView.setMediaView(contentad_media_view);
-
-		// Set other ad assets.
+	private void populateUnifiedNativeAdView(NativeAd nativeAd, com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdView adView) {
+		// Set other ad assets. The media view and native ad itself are registered together at
+		// the end via adView.registerNativeAd(nativeAd, mediaView).
 		if (contentad_headline != null) {
 			adView.setHeadlineView(contentad_headline);
 		}
@@ -331,9 +325,8 @@ public class NativeAdView extends TiUIView {
 		if (contentad_logo_view != null) {
 			adView.setIconView(contentad_logo_view);
 		}
-		if (image_logo_view != null) {
-			adView.setImageView(image_logo_view);
-		}
+		// NOTE: the GMA Next-Gen SDK's NativeAdView no longer exposes setImageView(); the
+		// image_logo_view ImageView is populated directly below with the icon drawable instead.
 		if (contentad_price != null) {
 			adView.setPriceView(contentad_price);
 		}
@@ -418,12 +411,10 @@ public class NativeAdView extends TiUIView {
 			}
 		}
 
-		// This method tells the Google Mobile Ads SDK that you have finished populating
-		// your
-		// native ad view with this native ad. The SDK will populate the adView's
-		// MediaView
-		// with the media content from this native ad.
-		adView.setNativeAd(nativeAd);
+		// This method tells the GMA Next-Gen SDK that you have finished populating your
+		// native ad view with this native ad, and registers the MediaView (which may be
+		// null) at the same time so the SDK can populate it with the ad's media content.
+		adView.registerNativeAd(nativeAd, contentad_media_view);
 
 		// Get the video controller for the ad. One will always be provided, even if the
 		// ad doesn't

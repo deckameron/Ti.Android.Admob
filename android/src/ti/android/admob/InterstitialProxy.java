@@ -4,13 +4,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.google.ads.mediation.admob.AdMobAdapter;
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest;
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd;
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
@@ -51,19 +50,17 @@ public class InterstitialProxy extends KrollProxy {
     @Kroll.method
     public void load(){
 
-        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder(AdmobModule.INTERSTITIAL_AD_UNIT_ID);
 
         Bundle bundle = AdmobModule.createAdRequestProperties();
         if (!bundle.isEmpty()) {
             android.util.Log.d(TAG, "Has extras -- Setting Ad properties");
-            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+            adRequestBuilder.setGoogleExtrasBundle(bundle);
         }
 
         AdRequest adRequest = adRequestBuilder.build();
 
-        Log.d(TAG, "Is test device? " + adRequest.isTestDevice(getActivity()));
-
-        InterstitialAd.load(getActivity(), AdmobModule.INTERSTITIAL_AD_UNIT_ID, adRequest, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(adRequest, new AdLoadCallback<InterstitialAd>() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                 // The _interstitialAd reference will be null until
@@ -93,9 +90,8 @@ public class InterstitialProxy extends KrollProxy {
                 Log.i(TAG, loadAdError.getMessage());
 
                 KrollDict errorCallback = new KrollDict();
-                errorCallback.put("cause", loadAdError.getCause());
                 errorCallback.put("code", loadAdError.getCode());
-                errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
+                errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode().getValue()));
                 errorCallback.put("message", loadAdError.getMessage());
 
                 if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
@@ -112,7 +108,7 @@ public class InterstitialProxy extends KrollProxy {
     }
 
     private void setInterstitialEvents() {
-        _interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+        _interstitialAd.setAdEventCallback(new InterstitialAdEventCallback() {
             @Override
             public void onAdShowedFullScreenContent() {
                 // Called when ad is shown.
@@ -139,14 +135,12 @@ public class InterstitialProxy extends KrollProxy {
             }
 
             @Override
-            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError adError) {
                 // Called when ad fails to show.
                 Log.d(TAG, "Ad failed to show.");
                 if (hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {
                     KrollDict rewardedError = new KrollDict();
-                    rewardedError.put("cause", adError.getCause());
-                    rewardedError.put("code", adError.getCode());
-                    rewardedError.put("message", adError.getMessage());
+                    rewardedError.put("message", adError.toString());
                     fireEvent(AdmobModule.AD_FAILED_TO_SHOW, rewardedError);
                 }
             }

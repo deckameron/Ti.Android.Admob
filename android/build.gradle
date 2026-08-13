@@ -13,19 +13,31 @@ println "Running gradle version: $gradle.gradleVersion"
 //     }
 // }
 
+// Ti.Android.Admob 13.0.0 - migrated to the GMA Next-Gen SDK
+// (com.google.android.libraries.ads.mobile.sdk). Mediation adapters still
+// pull in the legacy play-services-ads artifacts transitively, so we exclude
+// those globally to avoid duplicate-class build errors, as recommended by:
+// https://developers.google.com/admob/android/next-gen/migration
+configurations.configureEach {
+    exclude group: 'com.google.android.gms', module: 'play-services-ads'
+    exclude group: 'com.google.android.gms', module: 'play-services-ads-lite'
+    exclude group: 'com.google.android.gms', module: 'play-services-ads-api'
+    exclude group: 'com.google.android.gms', module: 'play-services-ads-base'
+}
+
 dependencies {
- 	implementation 'com.google.android.ump:user-messaging-platform:3.1.0'
- 	implementation 'com.google.android.gms:play-services-ads:23.6.0'
+ 	implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+ 	implementation 'com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.2.1'
  	implementation 'com.google.android.gms:play-services-ads-identifier:18.2.0'
- 	implementation 'org.checkerframework:checker-qual:3.49.0'
+ 	implementation 'org.checkerframework:checker-qual:3.52.1'
 
  	/* App Open Ad */
-	implementation 'androidx.appcompat:appcompat:1.7.0'
-	implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+	implementation 'androidx.appcompat:appcompat:1.7.1'
+	implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
  	//MEDIATION
  	/* inMobi */
-	implementation 'com.google.ads.mediation:inmobi:10.8.0.0'
+	implementation 'com.google.ads.mediation:inmobi:10.8.3.0'
 	/* AppLovin */
-    implementation 'com.google.ads.mediation:applovin:13.1.0.0'  
+    implementation 'com.google.ads.mediation:applovin:13.2.0.1'
  }

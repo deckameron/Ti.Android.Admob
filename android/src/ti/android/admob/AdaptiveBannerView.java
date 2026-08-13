@@ -8,12 +8,14 @@ import android.view.WindowMetrics;
 
 import androidx.annotation.NonNull;
 
-import com.google.ads.mediation.admob.AdMobAdapter;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.LoadAdError;
+import com.google.android.libraries.ads.mobile.sdk.banner.AdSize;
+import com.google.android.libraries.ads.mobile.sdk.banner.AdView;
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAd;
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdEventCallback;
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest;
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
@@ -40,10 +42,14 @@ public class AdaptiveBannerView extends TiUIView {
 
     private void createAdaptiveAdView() {
         Log.d(TAG, "createAdaptiveAdView()");
-        adaptiveAdView = new AdView(TiApplication.getInstance().getApplicationContext());
+        adaptiveAdView = new AdView(proxy.getActivity());
 
         Log.d(TAG, ("AdmobModule.AD_UNIT_ID: " + AdmobModule.BANNER_AD_UNIT_ID));
-        adaptiveAdView.setAdUnitId(AdmobModule.BANNER_AD_UNIT_ID);
+
+        if (keyword != null || contentUrl != null) {
+            Log.w(TAG, "The 'keyword' and 'contentUrl' properties are no longer supported by " +
+                    "the GMA Next-Gen SDK's BannerAdRequest and will be ignored.");
+        }
 
         int adWidth = 0;
 
@@ -77,41 +83,82 @@ public class AdaptiveBannerView extends TiUIView {
 
         Log.d(TAG, "adSize: " + adSize);
 
-        // Configurar o tamanho do anúncio no AdView
-        adaptiveAdView.setAdSize(adSize);
+        // Step 5 - Convert to Titanium Native View.
+        setNativeView(adaptiveAdView);
 
-        // Step 5 - Set the adaptive event listeners.
-        adaptiveAdView.setAdListener(new AdListener() {
-            @Override
-            public void onAdClicked() {
-                Log.d(TAG, "onAdClicked()");
-                if (proxy != null) {
-                    if (proxy.hasListeners(AdmobModule.AD_CLICKED)) {
-                        proxy.fireEvent(AdmobModule.AD_CLICKED, new KrollDict());
-                    }
-                } else {
-                    Log.d(TAG, "Will not fire AdmobModule.AD_CLICKED event! Proxy is null.");
-                }
-            }
+        // Step 6 - Build and request the Ad.
+        BannerAdRequest.Builder adRequestBuilder =
+                new BannerAdRequest.Builder(AdmobModule.BANNER_AD_UNIT_ID, adSize);
 
-            @Override
-            public void onAdOpened() {
-                Log.d(TAG, "onAdOpened()");
-                if (proxy != null) {
-                    if (proxy.hasListeners(AdmobModule.AD_OPENED)) {
-                        proxy.fireEvent(AdmobModule.AD_OPENED, new KrollDict());
-                    }
-                } else {
-                    Log.d(TAG, "Will not fire AdmobModule.AD_OPENED event! Proxy is null.");
-                }
-            }
+        Bundle bundle = AdmobModule.createAdRequestProperties();
+        if (collapsible != null && !collapsible.isEmpty()) {
+            bundle.putString("collapsible", collapsible);
+        }
 
+        if (!bundle.isEmpty()) {
+            Log.d(TAG, "Has extras -- Setting Ad properties");
+            adRequestBuilder.setGoogleExtrasBundle(bundle);
+        }
+
+        BannerAdRequest adRequest = adRequestBuilder.build();
+
+        // Step 7 - Start loading the ad in the background.
+        adaptiveAdView.loadAd(adRequest, new AdLoadCallback<BannerAd>() {
             @Override
-            public void onAdLoaded() {
+            public void onAdLoaded(@NonNull BannerAd ad) {
                 Log.d(TAG, "onAdLoaded()");
-                if (proxy != null) {
-                    // Log.d(TAG, "onAdLoaded() " + adView.getWidth() + ", " + adView.getHeight());
 
+                // Step 8 - Set the adaptive event callbacks.
+                ad.setAdEventCallback(new BannerAdEventCallback() {
+                    @Override
+                    public void onAdClicked() {
+                        Log.d(TAG, "onAdClicked()");
+                        if (proxy != null) {
+                            if (proxy.hasListeners(AdmobModule.AD_CLICKED)) {
+                                proxy.fireEvent(AdmobModule.AD_CLICKED, new KrollDict());
+                            }
+                        } else {
+                            Log.d(TAG, "Will not fire AdmobModule.AD_CLICKED event! Proxy is null.");
+                        }
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        Log.d(TAG, "onAdShowedFullScreenContent()");
+                        if (proxy != null) {
+                            if (proxy.hasListeners(AdmobModule.AD_OPENED)) {
+                                proxy.fireEvent(AdmobModule.AD_OPENED, new KrollDict());
+                            }
+                        } else {
+                            Log.d(TAG, "Will not fire AdmobModule.AD_OPENED event! Proxy is null.");
+                        }
+                    }
+
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        Log.d(TAG, "onAdDismissedFullScreenContent()");
+                        if (proxy != null) {
+                            if (proxy.hasListeners(AdmobModule.AD_CLOSED)) {
+                                proxy.fireEvent(AdmobModule.AD_CLOSED, new KrollDict());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(
+                            @NonNull FullScreenContentError fullScreenContentError) {
+                        Log.d(TAG, "onAdFailedToShowFullScreenContent(): " + fullScreenContentError);
+                        if (proxy != null) {
+                            if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {
+                                KrollDict errorCallback = new KrollDict();
+                                errorCallback.put("message", fullScreenContentError.toString());
+                                proxy.fireEvent(AdmobModule.AD_FAILED_TO_SHOW, errorCallback);
+                            }
+                        }
+                    }
+                });
+
+                if (proxy != null) {
                     KrollDict sCallback = new KrollDict();
 
                     if (proxy.hasListeners(AdmobModule.AD_LOADED)) {
@@ -127,15 +174,13 @@ public class AdaptiveBannerView extends TiUIView {
 
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode())));
+                Log.d(TAG, ("onAdFailedToLoad(): " + AdmobModule.getErrorReason(loadAdError.getCode().getValue())));
                 if (proxy != null) {
 
                     KrollDict errorCallback = new KrollDict();
-                    errorCallback.put("cause", loadAdError.getCause());
                     errorCallback.put("code", loadAdError.getCode());
                     errorCallback.put("message", loadAdError.getMessage());
-                    errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
-                    errorCallback.put("responseInfo", loadAdError.getResponseInfo().toString());
+                    errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode().getValue()));
 
                     if (proxy.hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
                         proxy.fireEvent(AdmobModule.AD_FAILED_TO_LOAD, errorCallback);
@@ -149,36 +194,6 @@ public class AdaptiveBannerView extends TiUIView {
                 }
             }
         });
-
-        // Step 6 - Convert to Titanium Native View.
-        setNativeView(adaptiveAdView);
-
-        // Step 7 - Build and request the Ad.
-        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
-
-        if (keyword != null) {
-            adRequestBuilder.addKeyword(keyword);
-        }
-
-        if (contentUrl != null) {
-            adRequestBuilder.setContentUrl(contentUrl);
-        }
-
-        Bundle bundle = AdmobModule.createAdRequestProperties();
-        if (collapsible != null && !collapsible.isEmpty()) {
-            bundle.putString("collapsible", collapsible);
-        }
-
-        if (!bundle.isEmpty()) {
-            Log.d(TAG, "Has extras -- Setting Ad properties");
-            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
-        }
-
-        AdRequest adRequest = adRequestBuilder.build();
-        Log.d(TAG, "Is test device? " + adRequest.isTestDevice(proxy.getActivity()));
-
-        // Step 8 - Start loading the ad in the background.
-        adaptiveAdView.loadAd(adRequest);
     }
 
     @Override
@@ -245,14 +260,12 @@ public class AdaptiveBannerView extends TiUIView {
 
     public void pause()
     {
-        Log.d(TAG, "pause");
-        adaptiveAdView.pause();
+        Log.d(TAG, "pause() is a no-op under the GMA Next-Gen SDK.");
     }
 
     public void resume()
     {
-        Log.d(TAG, "resume");
-        adaptiveAdView.resume();
+        Log.d(TAG, "resume() is a no-op under the GMA Next-Gen SDK.");
     }
 
     public void destroy()

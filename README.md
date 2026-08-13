@@ -16,6 +16,20 @@ for instructions on getting started with using this module in your application.
 For Ti.Android.Admob [11.0.1](https://github.com/deckameron/Ti.Android.Admob/raw/master/android/dist/ti.android.admob-android-11.0.1.zip)
 - [x] Titanium SDK 12.5.0+
 
+Starting with **13.0.0**, this module runs on the
+[GMA Next-Gen SDK](https://developers.google.com/admob/android/next-gen/quick-start) instead of
+the legacy `com.google.android.gms.ads` SDK. This brings new Android-level requirements for any
+app consuming the module:
+- [x] `minSdkVersion` 24 or higher
+- [x] `compileSdkVersion` / `targetSdkVersion` 34 or higher (35 recommended)
+
+The `com.google.android.gms.ads.APPLICATION_ID` meta-data entry in your `tiapp.xml` (see below)
+is still required — the module reads it automatically at runtime to initialize the Next-Gen SDK,
+and the UMP (consent) SDK still depends on it directly. No change is needed to existing `tiapp.xml`
+files. Mediation ad sources (InMobi, AppLovin) continue to work unmodified through AdMob mediation.
+The `keyword` and `contentUrl` properties on banner and native ad views are no longer supported by
+the Next-Gen SDK's ad request APIs and are now ignored (with a warning logged).
+
 
 ## Doubleclick for Publishers Developer Docs
 
@@ -615,4 +629,4 @@ dependencies {
 |[Interstitial Video](https://developers.google.com/admob/android/interstitial#create_an_interstitial_ad_object) | ca-app-pub-3940256099942544/8691691433
 |[Rewarded Video](https://developers.google.com/admob/android/rewarded-video#request_rewarded_video_ad) | ca-app-pub-3940256099942544/5224354917
 |[Native](https://developers.google.com/admob/android/native-advanced#build_an_adloader) | ca-app-pub-3940256099942544/2247696110
-|[AppOpen](https://developers.google.com/admob/android/app-open) | ca-app-pub-3940256099942544/3419835294
+|[AppOpen](https://developers.google.com/admob/android/app-open) | ca-app-pub-3940256099942544/9257395921

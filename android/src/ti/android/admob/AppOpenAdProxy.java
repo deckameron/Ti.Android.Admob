@@ -5,13 +5,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.ads.mediation.admob.AdMobAdapter;
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.appopen.AppOpenAd;
-import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAd;
+import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAdEventCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest;
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
@@ -69,22 +68,19 @@ public class AppOpenAdProxy extends KrollProxy {
 
         isLoadingAd = true;
 
-        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder(AdmobModule.APP_OPEN_AD_UNIT_ID);
 
         Bundle bundle = AdmobModule.createAdRequestProperties();
         if (!bundle.isEmpty()) {
             Log.d(TAG, "Has extras -- Setting Ad properties");
-            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+            adRequestBuilder.setGoogleExtrasBundle(bundle);
         }
 
         AdRequest adRequest = adRequestBuilder.build();
 
         AppOpenAd.load(
-                TiApplication.getAppCurrentActivity(),
-                AdmobModule.APP_OPEN_AD_UNIT_ID,
                 adRequest,
-                // AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
-                new AppOpenAdLoadCallback() {
+                new AdLoadCallback<AppOpenAd>() {
                     @Override
                     public void onAdLoaded(@NonNull AppOpenAd ad) {
                         // Called when an app open ad has loaded.
@@ -115,9 +111,8 @@ public class AppOpenAdProxy extends KrollProxy {
                         isLoadingAd = false;
 
                         KrollDict errorCallback = new KrollDict();
-                        errorCallback.put("cause", loadAdError.getCause());
                         errorCallback.put("code", loadAdError.getCode());
-                        errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
+                        errorCallback.put("reason", AdmobModule.getErrorReason(loadAdError.getCode().getValue()));
                         errorCallback.put("message", loadAdError.getMessage());
 
                         if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
@@ -134,8 +129,8 @@ public class AppOpenAdProxy extends KrollProxy {
     }
 
     private void setAppOpenEvents(){
-        appOpenAd.setFullScreenContentCallback(
-                new FullScreenContentCallback(){
+        appOpenAd.setAdEventCallback(
+                new AppOpenAdEventCallback(){
 
             @Override
             public void onAdDismissedFullScreenContent() {
@@ -153,7 +148,7 @@ public class AppOpenAdProxy extends KrollProxy {
             }
 
             @Override
-            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError adError) {
                 // Called when fullscreen content failed to show.
                 // Set the reference to null so isAdAvailable() returns false.
                 appOpenAd = null;
@@ -162,9 +157,7 @@ public class AppOpenAdProxy extends KrollProxy {
                 org.appcelerator.kroll.common.Log.d(TAG, "Ad failed to show.");
                 if (hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {
                     KrollDict rewardedError = new KrollDict();
-                    rewardedError.put("cause", adError.getCause());
-                    rewardedError.put("code", adError.getCode());
-                    rewardedError.put("message", adError.getMessage());
+                    rewardedError.put("message", adError.toString());
                     fireEvent(AdmobModule.AD_FAILED_TO_SHOW, rewardedError);
                 }
 

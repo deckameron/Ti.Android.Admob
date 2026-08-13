@@ -4,15 +4,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.google.ads.mediation.admob.AdMobAdapter;
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.OnUserEarnedRewardListener;
-import com.google.android.gms.ads.rewarded.RewardItem;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest;
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
+import com.google.android.libraries.ads.mobile.sdk.rewarded.OnUserEarnedRewardListener;
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardItem;
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAd;
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdEventCallback;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
@@ -53,59 +52,57 @@ public class RewardedProxy extends KrollProxy implements OnUserEarnedRewardListe
     @Kroll.method
     public void load(){
 
-        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder(AdmobModule.REWARDED_AD_UNIT_ID);
 
         Bundle bundle = AdmobModule.createAdRequestProperties();
         if (!bundle.isEmpty()) {
             android.util.Log.d(TAG, "Has extras -- Setting Ad properties");
-            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, bundle);
+            adRequestBuilder.setGoogleExtrasBundle(bundle);
         }
 
         AdRequest adRequest = adRequestBuilder.build();
 
-        RewardedAd.load(getActivity(), AdmobModule.REWARDED_AD_UNIT_ID,
-                adRequest, new RewardedAdLoadCallback(){
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error.
-                        Log.d(TAG, loadAdError.getMessage());
-                        _rewardedAd = null;
+        RewardedAd.load(adRequest, new AdLoadCallback<RewardedAd>(){
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                // Handle the error.
+                Log.d(TAG, loadAdError.getMessage());
+                _rewardedAd = null;
 
-                        KrollDict rewardedError = new KrollDict();
-                        rewardedError.put("cause", loadAdError.getCause());
-                        rewardedError.put("code", loadAdError.getCode());
-                        rewardedError.put("reason", AdmobModule.getErrorReason(loadAdError.getCode()));
-                        rewardedError.put("message", loadAdError.getMessage());
+                KrollDict rewardedError = new KrollDict();
+                rewardedError.put("code", loadAdError.getCode());
+                rewardedError.put("reason", AdmobModule.getErrorReason(loadAdError.getCode().getValue()));
+                rewardedError.put("message", loadAdError.getMessage());
 
-                        if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
-                            fireEvent(AdmobModule.AD_FAILED_TO_LOAD, rewardedError);
-                        }
+                if (hasListeners(AdmobModule.AD_FAILED_TO_LOAD)) {
+                    fireEvent(AdmobModule.AD_FAILED_TO_LOAD, rewardedError);
+                }
 
-                        //DEPRECATED
-                        if (hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
-                            Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
-                            fireEvent(AdmobModule.AD_NOT_RECEIVED, rewardedError);
-                        }
-                    }
+                //DEPRECATED
+                if (hasListeners(AdmobModule.AD_NOT_RECEIVED)) {
+                    Log.w(TAG, "AD_NOT_RECEIVED has been deprecated and should be replaced by AD_FAILED_TO_LOAD");
+                    fireEvent(AdmobModule.AD_NOT_RECEIVED, rewardedError);
+                }
+            }
 
-                    @Override
-                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                        _rewardedAd = rewardedAd;
-                        setRewardedEvents();
-                        Log.d(TAG, "onAdLoaded");
+            @Override
+            public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                _rewardedAd = rewardedAd;
+                setRewardedEvents();
+                Log.d(TAG, "onAdLoaded");
 
-                        KrollDict sCallback = new KrollDict();
+                KrollDict sCallback = new KrollDict();
 
-                        if (hasListeners(AdmobModule.AD_LOADED)) {
-                            fireEvent(AdmobModule.AD_LOADED, sCallback);
-                        }
-                        // DEPRECATED
-                        if (hasListeners(AdmobModule.AD_RECEIVED)) {
-                            Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
-                            fireEvent(AdmobModule.AD_RECEIVED, sCallback);
-                        }
-                    }
-                });
+                if (hasListeners(AdmobModule.AD_LOADED)) {
+                    fireEvent(AdmobModule.AD_LOADED, sCallback);
+                }
+                // DEPRECATED
+                if (hasListeners(AdmobModule.AD_RECEIVED)) {
+                    Log.w(TAG, "AD_RECEIVED has been deprecated and should be replaced by AD_LOADED");
+                    fireEvent(AdmobModule.AD_RECEIVED, sCallback);
+                }
+            }
+        });
     }
 
     @Override
@@ -120,7 +117,7 @@ public class RewardedProxy extends KrollProxy implements OnUserEarnedRewardListe
     }
 
     private void setRewardedEvents(){
-        _rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+        _rewardedAd.setAdEventCallback(new RewardedAdEventCallback() {
             @Override
             public void onAdShowedFullScreenContent() {
                 // Called when ad is shown.
@@ -132,14 +129,12 @@ public class RewardedProxy extends KrollProxy implements OnUserEarnedRewardListe
             }
 
             @Override
-            public void onAdFailedToShowFullScreenContent(AdError adError) {
+            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError adError) {
                 // Called when ad fails to show.
                 Log.d(TAG, "Ad failed to show.");
                 if (hasListeners(AdmobModule.AD_FAILED_TO_SHOW)) {
                     KrollDict rewardedError = new KrollDict();
-                    rewardedError.put("cause", adError.getCause());
-                    rewardedError.put("code", adError.getCode());
-                    rewardedError.put("message", adError.getMessage());
+                    rewardedError.put("message", adError.toString());
                     fireEvent(AdmobModule.AD_FAILED_TO_SHOW, rewardedError);
                 }
             }

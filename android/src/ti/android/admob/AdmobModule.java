@@ -11,20 +11,21 @@ package ti.android.admob;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.applovin.sdk.AppLovinPrivacySettings;
 import com.google.ads.mediation.inmobi.InMobiConsent;
 import com.inmobi.media.L;
 import com.inmobi.sdk.InMobiSdk;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.initialization.AdapterStatus;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.libraries.ads.mobile.sdk.MobileAds;
+import com.google.android.libraries.ads.mobile.sdk.common.RequestConfiguration;
+import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
@@ -250,26 +251,54 @@ public class AdmobModule extends KrollModule
         initializeMobileAdsSdk();
     }
 
+    /**
+     * The GMA Next-Gen SDK requires the AdMob App ID to be passed programmatically to
+     * MobileAds.initialize() instead of being read automatically from the
+     * "com.google.android.gms.ads.APPLICATION_ID" manifest meta-data (Legacy SDK behavior).
+     *
+     * To avoid requiring a change to consuming apps' tiapp.xml, we read that same meta-data key
+     * here via PackageManager. The UMP (consent) SDK still requires this meta-data entry in the
+     * app's AndroidManifest.xml regardless, so it stays in place either way.
+     */
+    private static String getAdMobApplicationId(Context context) {
+        try {
+            ApplicationInfo appInfo = context.getPackageManager()
+                    .getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            if (appInfo.metaData != null) {
+                String appId = appInfo.metaData.getString("com.google.android.gms.ads.APPLICATION_ID");
+                if (appId != null && !appId.isEmpty()) {
+                    return appId;
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "Unable to read the AdMob Application ID from the AndroidManifest.xml meta-data.", e);
+        }
+        return null;
+    }
+
     @Kroll.method
     public static void initializeMobileAdsSdk(){
 
-        Log.d(TAG, ("Initializing Mobile Ads SDK!"));
+        Log.d(TAG, ("Initializing GMA Next-Gen SDK!"));
 
-        Context appContext = TiApplication.getInstance().getApplicationContext();
+        final Context appContext = TiApplication.getInstance().getApplicationContext();
 
-        MobileAds.initialize(appContext, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Map<String, AdapterStatus> statusMap = initializationStatus.getAdapterStatusMap();
-                for (String adapterClass : statusMap.keySet()) {
-                    AdapterStatus status = statusMap.get(adapterClass);
-                    Log.d("Admob Adapters", String.format(
-                            "Adapter name: %s, Description: %s, Latency: %d",
-                            adapterClass, status.getDescription(), status.getLatency()));
-                }
+        final String appId = getAdMobApplicationId(appContext);
+        if (appId == null) {
+            Log.e(TAG, "Could not initialize the GMA Next-Gen SDK: missing the " +
+                    "'com.google.android.gms.ads.APPLICATION_ID' meta-data entry in your app's " +
+                    "AndroidManifest.xml (tiapp.xml). See the module README for setup instructions.");
+            return;
+        }
 
+        final InitializationConfig initConfig = new InitializationConfig.Builder(appId).build();
+
+        // GMA Next-Gen SDK must be initialized on a background thread, otherwise an ANR
+        // ("Application Not Responding") error may occur.
+        new Thread(() -> {
+            MobileAds.initialize(appContext, initConfig, initializationStatus -> {
                 // Start loading ads here...
-                Log.d(TAG, "-- All Adapters are ready to request ads --");
+                Log.d(TAG, "-- GMA Next-Gen SDK and mediation adapters are ready to request ads --");
 
                 AdmobModule module = getModuleInstance();
                 if (module != null && module.hasListeners(ADMOB_READY)) {
@@ -280,15 +309,20 @@ public class AdmobModule extends KrollModule
                 Log.d(TAG, "-- INIT_READY is now TRUE --");
 
                 INIT_READY = true;
-            }
-        });
+            });
+        }).start();
     }
+
+    // https://get.geojs.io/v1/ip/geo/187.20.100.218.json
+    // https://ipinfo.io/json
 
     @Kroll.method
     public void setAppVolume(String percentage){
         Float percent = convertPercentage(percentage);
         // Set app volume to be half of current device volume.
-        MobileAds.setAppVolume(percent);
+        // NOTE: MobileAds.setAppVolume() was renamed to setUserControlledAppVolume() in the
+        // GMA Next-Gen SDK.
+        MobileAds.setUserControlledAppVolume(percent);
     }
 
     // Show a privacy options button if required.
@@ -346,9 +380,9 @@ public class AdmobModule extends KrollModule
 
     private static void setAppLovin_GDPRConsent(boolean isEnable){
         // EU consent and GDPR
-        AppLovinPrivacySettings.setHasUserConsent(isEnable, TiApplication.getInstance().getCurrentActivity());
+        AppLovinPrivacySettings.setHasUserConsent(isEnable);
         // CCPA
-        AppLovinPrivacySettings.setDoNotSell(!isEnable, TiApplication.getInstance().getCurrentActivity());
+        AppLovinPrivacySettings.setDoNotSell(!isEnable);
     }
 
     // CONSENT STATUS
@@ -411,7 +445,7 @@ public class AdmobModule extends KrollModule
                 },
                 new ConsentInformation.OnConsentInfoUpdateFailureListener() {
                     @Override
-                    public void onConsentInfoUpdateFailure(FormError formError) {
+                    public void onConsentInfoUpdateFailure(@NonNull FormError formError) {
                         // Handle the error.
                         Log.e(TAG, ("ConsentForm Update Failure : " + formError.getMessage()));
                         if (hasListeners(CONSENT_INFO_UPDATE_FAILURE)) {
@@ -483,7 +517,7 @@ public class AdmobModule extends KrollModule
                 appContext,
                 new UserMessagingPlatform.OnConsentFormLoadSuccessListener() {
                     @Override
-                    public void onConsentFormLoadSuccess(ConsentForm consentForm) {
+                    public void onConsentFormLoadSuccess(@NonNull ConsentForm consentForm) {
 
                         if (hasListeners(CONSENT_FORM_LOADED)) {
                             Log.d(TAG, ("Consent form is LOADED! You should call showConsentForm()"));
@@ -710,10 +744,16 @@ public class AdmobModule extends KrollModule
      */
 
     @Kroll.method
-    public Boolean isGDPR() {
-        Context context = TiApplication.getInstance();
-        SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
+    public boolean isGDPR(){
+        return isGDPR(TiApplication.getInstance());
+    }
+
+    public boolean isGDPR(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        //Context context = TiApplication.getInstance();
+        //SharedPreferences prefs = context.getSharedPreferences("default_preferences", Context.MODE_PRIVATE);
         int gdpr = prefs.getInt("IABTCF_gdprApplies", 0);
+        Log.d(TAG, "gdprApplies: " + gdpr);
         return gdpr == 1;
     }
 
