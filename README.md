@@ -178,7 +178,7 @@ const reload_max_tries_case_error = 4;
 let reload_max_tries = 0;  
   
 let appOpenAd = Admob.createAppOpenAd({  
-    adUnitId: "ca-app-pub-3940256099942544/3419835294", //USE YOUR AD_UNIT
+    adUnitId: "ca-app-pub-3940256099942544/9257395921", //USE YOUR AD_UNIT
 });  
   
 appOpenAd.addEventListener(Admob.AD_FAILED_TO_SHOW, function (e) {

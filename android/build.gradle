@@ -37,7 +37,7 @@ dependencies {
 
  	//MEDIATION
  	/* inMobi */
-	implementation 'com.google.ads.mediation:inmobi:10.8.3.0'
+	implementation 'com.google.ads.mediation:inmobi:10.8.7.0'
 	/* AppLovin */
-    implementation 'com.google.ads.mediation:applovin:13.2.0.1'
+    implementation 'com.google.ads.mediation:applovin:13.3.1.1'
  }
